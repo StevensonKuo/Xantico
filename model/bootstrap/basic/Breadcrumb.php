@@ -47,6 +47,7 @@ class Breadcrumb extends Typography
                         $_li->setCustomClass("active");
                         
                         $_li->setInnerElements($item->text);
+//                         break;
                     } else if (!empty ($item->url)) { // breadcrumb 裡有 active 就沒 a
                         $_a = new HtmlTag("a");
                         $_a->setAttrs(array ("href" => $item->url));

@@ -12,6 +12,7 @@ class Table extends Typography
     protected $isStriped; // boolean 是否有條紋
     protected $isBordered; // boolean 是否有框
     protected $isCondensed; // boolean 是否為窄間距
+    protected $withHoverEffect; // boolean
     
     /**
      * 建構子
@@ -22,9 +23,13 @@ class Table extends Typography
     {
         parent::__construct("table:table", $vars, $attr);
         
-        $this->type     = array_key_exists("type", $vars) ? $vars ['type'] : "single";
-        $this->headers  = array_key_exists("headers", $vars) ? $vars ['type'] : "";
-        $this->cells    = array_key_exists("cells", $vars) ? $vars ['type'] : "";
+        $this->type     = "single";
+        $this->headers  = array_key_exists("headers", $vars) ? $vars ['headers'] : array();
+        $this->cells    = array_key_exists("cells", $vars) ? $vars ['cells'] : array();
+        $this->isBordered = array_key_exists("isBordered", $vars) ? $vars ['isBordered'] : false;
+        $this->isStriped = array_key_exists("isStriped", $vars) ? $vars ['isStriped'] : false;
+        $this->isCondensed = array_key_exists("isCondensed", $vars) ? $vars ['isCondensed'] : false;
+        $this->withHoverEffect = array_key_exists("withHoverEffect", $vars) ? $vars ['withHoverEffect'] : false;
         
         return $this;
     }
@@ -44,6 +49,9 @@ class Table extends Typography
         }
         if ($this->isCondensed == true) {
             $this->setCustomClass("table-condensed");
+        }
+        if ($this->withHoverEffect == true) {
+            $this->setCustomClass("table-hover");
         }
         
         if ($this->headers) {
@@ -229,6 +237,24 @@ class Table extends Typography
         $this->isCondensed = $isCondensed;
         return $this;
     }
+    
+    /**
+     * @return the $withHoverEffect
+     */
+    public function getWithHoverEffect()
+    {
+        return $this->withHoverEffect;
+    }
+
+    /**
+     * @param Ambigous <boolean, array> $withHoverEffect
+     */
+    public function setWithHoverEffect($withHoverEffect = true)
+    {
+        $this->withHoverEffect = $withHoverEffect;
+        return $this;
+    }
+
     
 }
 

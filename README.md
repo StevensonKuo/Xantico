@@ -34,7 +34,7 @@ $btPalette->setCustomScriptsFiles('https://v3.bootcss.com/assets/js/docs.min.js'
 
 (There still one line for customizing Style Sheet contents. I am going to skip it.)
 
-Then we can start to boost Bootstrap!
+Then we can start to put some colors!
 
 ### Create a Jumbotron for instance:
 

@@ -28,6 +28,7 @@ class Icon extends Typography
      * @return string
      */
     public function render ($display = false) {
+        $this->setAttrs(array ("aria-hidden" => "true"));
         if (!empty($this->iconSet)) {
             $class [] = $this->iconSet . " " . $this->iconSet . "-" . $this->icon;
         } else {
@@ -35,7 +36,7 @@ class Icon extends Typography
         }
         
         if (!empty($this->align))       $class [] = "icon-on-" . $this->align;
-        if (!empty($this->colorSet))    $class [] = "text-" . $this->colorSet;
+        if (!empty($this->textColorSet))    $class [] = "text-" . $this->textColorSet;
         
         $this->setCustomClass($class);
         $this->setText("\t");

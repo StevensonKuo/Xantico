@@ -9,6 +9,7 @@ class Dropdown extends Typography
     protected $activeIndex; // int
     protected $isBuildButton; // boolean, build menu only
     protected $isBuildMenu; // boolean, build button only
+    protected $alignment; // right/left
     protected $hasPopup; // boolean
     protected $expanded; // boolean
     
@@ -87,6 +88,9 @@ class Dropdown extends Typography
      */
     protected function buildMenu () {
         $_ul = new Typography("ul:dropdown-menu");
+        if ($this->alignment == "right") {
+            $_ul->setInnerElements("dropdown-menu-right");
+        }
         if ($this->button instanceof Typography && method_exists($this->button, "getId")) {
             $_id = $this->button->getId ();
         } else {
@@ -261,6 +265,21 @@ class Dropdown extends Typography
      */
     public function setButton(HtmlTag $button)
     {
+        $_attrs = $button->getAttrs();
+        $_attrKeys = array_keys($_attrs);
+        if (!in_array("data-toggle", $_attrKeys)) {
+            $button->setAttrs(array("data-toggle" => "dropdown"));
+        } 
+        if (!in_array("role", $_attrKeys)) {
+            $button->setAttrs(array("role" => "button"));   
+        }
+        if (!in_array("aria-haspopup", $_attrKeys)) {
+            $button->setAttrs(array("aria-haspopup" => json_encode($this->hasPopup)));
+        }
+        if (!in_array("aria-expanded", $_attrKeys)) {
+            $button->setAttrs(array ("aria-expanded" => json_encode($this->expanded)));
+        }
+        
         $this->button = $button;
         return $this;
     }
@@ -300,6 +319,29 @@ class Dropdown extends Typography
         $this->items = $items;
         return $this;
     }
+    
+    /**
+     * @return the $alignment
+     */
+    public function getAlignment()
+    {
+        return $this->alignment;
+    }
+
+    /**
+     * @param field_type $alignment [right|left]
+     */
+    public function setAlignment($alignment)
+    {
+        if (in_array ($alignment, array ("left", "right"))) {
+            $this->alignment = $alignment;
+        } else {
+            $this->alignment = "left";
+        }
+        
+        return $this;
+    }
+
 }
 
 /**

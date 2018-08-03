@@ -4,11 +4,9 @@ namespace model\bootstrap\basic;
 use model\bootstrap\basic\Typography;
 use model\bootstrap\HtmlTag;
 
-class Nav extends Typography 
+class Breadcrumb extends Typography 
 {
     protected $activeIndex; // int
-    protected $isPills; // boolean
-    protected $isTabs; // boolean
     
     /**
      * 建構子
@@ -20,13 +18,10 @@ class Nav extends Typography
     public function __construct($vars = array (), $attrs = array ())
     {
         
-        parent::__construct("ul:nav", $vars, $attrs);
+        parent::__construct("ol:breadcrumb", $vars, $attrs);
         
-        $this->type         = "nav";
-        $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : -1;
-        // @todo 這兩個屬性把他改成 type 吧... 
-        $this->isPills      = isset ($vars ['isPills']) ? $vars ['isPills'] : false;
-        $this->isTabs       = isset ($vars ['isTabs']) ? $vars ['isTabs'] : false;
+        $this->type         = "breadcrumb";
+        $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
         
         return $this;
     }
@@ -38,12 +33,6 @@ class Nav extends Typography
      */
     public function render($display = false)
     {
-        $_class = array ();
-        if ($this->isPills == true) $_class [] = "nav-pills";
-        else if ($this->isTabs == true)  $_class [] = "nav-tabs";
-        $this->setCustomClass($_class);
-//         $this->setAttrs(array ("role" => "tablist"));
-        
         if (!empty($this->items)) {
             foreach ($this->items as $key => $item) {
                 if ($item->text instanceof HtmlTag && $item->text->getTagName() == "li") {
@@ -51,14 +40,14 @@ class Nav extends Typography
                 } else {
                     $_li = new HtmlTag("li");
 //                      $_li->setAttrs(array ("role" => "presentation"));
+//                     if ($item->disabled == true) {
+//                         $_li->setCustomClass("disabled");
+//                     }
                     if ($key == $this->activeIndex || $item->active == true) { 
                         $_li->setCustomClass("active");
-                    }
-                    if ($item->disabled == true) { 
-                        $_li->setCustomClass("disabled");
-                    }
-                    
-                    if (!empty ($item->url)) {
+                        
+                        $_li->setInnerElements($item->text);
+                    } else if (!empty ($item->url)) { // breadcrumb 裡有 active 就沒 a
                         $_a = new HtmlTag("a");
                         $_a->setAttrs(array ("href" => $item->url));
                         if (is_string($item->text)) {
@@ -103,44 +92,9 @@ class Nav extends Typography
         $this->activeIndex = $activeIndex;
         return $this;
     }
-    /**
-     * @return the $isPills
-     */
-    public function getIsPills()
-    {
-        return $this->isPills;
-    }
-
-    /**
-     * @return the $isTabs
-     */
-    public function getIsTabs()
-    {
-        return $this->isTabs;
-    }
-
-    /**
-     * @param field_type $isPills
-     */
-    public function setIsPills($isPills = true)
-    {
-        $this->isPills = $isPills;
-        $this->isTabs = false;
-        return $this;
-    }
-
-    /**
-     * @param field_type $isTabs
-     */
-    public function setIsTabs($isTabs = true)
-    {
-        $this->isTabs = $isTabs;
-        $this->isPills = false;
-        return $this;
-    }
     
     /**
-     * @desc 需要檢查是不是 navlet 的物件.
+     * @desc 需要檢查是不是 crumb 的物件.
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::setItems()
      */
@@ -149,13 +103,13 @@ class Nav extends Typography
             for ($i = 0; $i < count($items); $i ++) {
                 if (is_array ($items[$i])) {
                     $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
-                    $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "";
+                    $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "#";
                     $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
                     $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
                     
-                    $items[$i] = new Navlet($_text, $_url, $_active, $_disabled);
-                } else if (!($items[$i] instanceof Navlet)) {
-                    $items[$i] = new Navlet($items[$i]);
+                    $items[$i] = new Crumb($_text, $_url, $_active, $_disabled);
+                } else if (!($items[$i] instanceof Crumb)) {
+                    $items[$i] = new Crumb($items[$i]);
                 }
             }
         }
@@ -163,20 +117,36 @@ class Nav extends Typography
         return $this;
     }
 
+    /**
+     * @desc 向前走一步, active index +1
+     */
+    public function stepForward () {
+        $_count = !empty($this->items) ? count($this->items) : 0;
+        $this->activeIndex = min($_count, ++$this->activeIndex);
+        return $this;
+    }
+    
+    /**
+     * @desc 向後退一步, active index -1
+     */
+    public function stepBackward () {
+        $this->activeIndex = max(0, --$this->activeIndex);
+        return $this;
+    }
 }
 
 /**
- * @desc nav 項目用小物件
+ * @desc breadcrumb 項目用小物件
  * @author metatronangelo
  *
  */
-class Navlet {
+class Crumb {
     var $text;
     var $url;
     var $active;
     var $disabled;
     
-    public function __construct($text = "", $url = "", $active = false, $disabled = false) {
+    public function __construct($text = "", $url = "#", $active = false, $disabled = false) {
         $this->text = $text;
         $this->url = $url;
         $this->active = $active;

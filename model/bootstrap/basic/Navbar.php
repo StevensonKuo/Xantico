@@ -46,7 +46,7 @@ class Navbar extends Typography
     public function render($display = false)
     {
         $_class [] = "navbar-" . $this->fgStyle;
-        if (!empty($this->bgStyle)) $_class [] = "bg-" . $this->fgStyle;
+        if (!empty($this->bgStyle)) $_class [] = "bg-" . $this->bgStyle;
         if ($this->isTop == true) $_class [] = "navbar-fixed-top";
         $this->setCustomClass($_class);
         

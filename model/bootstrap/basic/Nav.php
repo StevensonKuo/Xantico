@@ -6,9 +6,12 @@ use model\bootstrap\HtmlTag;
 
 class Nav extends Typography 
 {
+    public $screw; // Navlet
+    
     protected $activeIndex; // int
-    protected $isPills; // boolean
-    protected $isTabs; // boolean
+    protected $style;
+    
+    private static $styleArr = array ("tabs", "pills");
     
     /**
      * 建構子
@@ -24,9 +27,8 @@ class Nav extends Typography
         
         $this->type         = "nav";
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : -1;
-        // @todo 這兩個屬性把他改成 type 吧... 
-        $this->isPills      = isset ($vars ['isPills']) ? $vars ['isPills'] : false;
-        $this->isTabs       = isset ($vars ['isTabs']) ? $vars ['isTabs'] : false;
+        $this->style        = isset ($vars ['style']) ? $vars ['style'] : "";
+        $this->screw       = new Navlet();
         
         return $this;
     }
@@ -39,8 +41,7 @@ class Nav extends Typography
     public function render($display = false)
     {
         $_class = array ();
-        if ($this->isPills == true) $_class [] = "nav-pills";
-        else if ($this->isTabs == true)  $_class [] = "nav-tabs";
+        if (!empty($this->style)) $_class [] = "nav-" . $this->style;
         $this->setCustomClass($_class);
 //         $this->setAttrs(array ("role" => "tablist"));
         
@@ -103,41 +104,6 @@ class Nav extends Typography
         $this->activeIndex = $activeIndex;
         return $this;
     }
-    /**
-     * @return the $isPills
-     */
-    public function getIsPills()
-    {
-        return $this->isPills;
-    }
-
-    /**
-     * @return the $isTabs
-     */
-    public function getIsTabs()
-    {
-        return $this->isTabs;
-    }
-
-    /**
-     * @param field_type $isPills
-     */
-    public function setIsPills($isPills = true)
-    {
-        $this->isPills = $isPills;
-        $this->isTabs = false;
-        return $this;
-    }
-
-    /**
-     * @param field_type $isTabs
-     */
-    public function setIsTabs($isTabs = true)
-    {
-        $this->isTabs = $isTabs;
-        $this->isPills = false;
-        return $this;
-    }
     
     /**
      * @desc 需要檢查是不是 navlet 的物件.
@@ -162,6 +128,28 @@ class Nav extends Typography
         $this->items = $items;
         return $this;
     }
+    /**
+     * @return the $style
+     */
+    public function getStyle()
+    {
+        return $this->style;
+    }
+
+    /**
+     * @desc 樣式
+     * @param field_type $style [pills|tabs]
+     */
+    public function setStyle($style)
+    {
+        $style = strtolower($style);
+        if (!in_array($style, self::$styleArr)) {
+            $style = "";
+        }
+        $this->style = $style;
+        return $this;
+    }
+
 
 }
 

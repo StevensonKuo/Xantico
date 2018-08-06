@@ -11,6 +11,8 @@ class Carousel extends Typography
     protected $withControl; // boolean
     protected $interval; // int. ms
     
+    public $screw; // Slidle
+    
     const BOOTSTRAP_CAROUSEL_NEXT = "Next";
     const BOOTSTRAP_CAROUSEL_PREVIOUS = "Previous";
     
@@ -30,6 +32,7 @@ class Carousel extends Typography
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0; // Carousel 一定要有一個 active不然不會動, 和 nav 等不一樣
         $this->withIndicator= isset ($vars ['withIndicator']) ? $vars ['withIndicator'] : true;
         $this->withControl  = isset ($vars ['withControl']) ? $vars ['withControl'] : true;
+        $this->screw        = new Slidle();
         
         return $this;
     }

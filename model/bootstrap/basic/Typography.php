@@ -35,7 +35,7 @@ class Typography extends \model\bootstrap\HtmlTag
     public function __construct($type, $vars = array (), $attrs = array ())
     {
         $divX = explode(":", $type); // div:row, div:badge, div:page-header etc... 
-        $tagName = isset($divX [0]) ? $divX [0] : $type;
+        $tagName = isset($divX [0]) ? $divX [0] : (isset($divX [1]) ? "div" : $type);
         
         parent::__construct($tagName, $attrs);
         

@@ -6,7 +6,7 @@ use model\bootstrap\HtmlTag;
 
 class ListGroup extends Typography 
 {
-    
+    public $screw; // listle
     /**
      * 建構子
      * @param unknown $type
@@ -20,6 +20,7 @@ class ListGroup extends Typography
         parent::__construct("ul:list-group", $vars, $attrs);
         
         $this->type         = "list-group";
+        $this->screw        = new Listle();
         
         return $this;
     }

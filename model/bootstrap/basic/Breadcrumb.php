@@ -6,6 +6,7 @@ use model\bootstrap\HtmlTag;
 
 class Breadcrumb extends Typography 
 {
+    public $screw; // crumb
     protected $activeIndex; // int
     
     /**
@@ -20,8 +21,9 @@ class Breadcrumb extends Typography
         
         parent::__construct("ol:breadcrumb", $vars, $attrs);
         
-        $this->type         = "breadcrumb";
+//          $this->type         = "breadcrumb"; // parent 裡會設
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
+        $this->screw        = new Crumb();
         
         return $this;
     }

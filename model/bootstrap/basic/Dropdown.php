@@ -6,6 +6,8 @@ use model\bootstrap\HtmlTag;
 
 class Dropdown extends Typography  
 {
+    public $screw;  // Droplet 
+    
     protected $activeIndex; // int
     protected $isBuildButton; // boolean, build menu only
     protected $isBuildMenu; // boolean, build button only
@@ -15,6 +17,7 @@ class Dropdown extends Typography
     
     private $button; // instance of a 
     private $menu; // instance of ul
+    private static $typeArr = array ("btn-group", "dropdown", "dropup"); // 
     
     /**
      * 建構子
@@ -34,8 +37,9 @@ class Dropdown extends Typography
         $this->hasPopup     = isset ($vars ['hasPopup']) ? $vars ['hasPopup'] : true;
         $this->expanded     = isset ($vars ['expanded']) ? $vars ['expanded'] : false;
         
-        $this->button = null;
-        $this->menu = null;
+        $this->button       = null;
+        $this->menu         = null;
+        $this->screw        = new Droplet();
         
         return $this;
     }
@@ -339,6 +343,22 @@ class Dropdown extends Typography
             $this->alignment = "left";
         }
         
+        return $this;
+    }
+    
+    /**
+     * @desc 設定 dropdown 樣式
+     * {@inheritDoc}
+     * @param string $type [btn-group|dropdown|dropup] 
+     * @see \model\bootstrap\basic\Typography::setType()
+     */
+    public function setType ($type) {
+        // @todo 這另人不解, 那 btn-group 要用 dropup 怎麼辦?
+        $type = strtolower($type);
+        if (!in_array($type, self::$typeArr)) {
+            $type = "dropdown";
+        }
+        $this->type = $type;
         return $this;
     }
 

@@ -205,7 +205,7 @@ class BootstrapView
         );
         $nav->setActiveIndex(0) 
         ->setItems($navItems)
-        ->setIsPills();
+        ->setStyle("pills");
         
         $ph6 = new Typography("div:page-header");
         $ph6->setInnerElements(new Typography("h1", array ("text" => "Dropdown Menus")));
@@ -235,10 +235,10 @@ class BootstrapView
         );
         $nav3 = new Nav();
         $nav3->setItems($navItems)
-        ->setActiveIndex(0) 
-        ->setIsTabs();
+            ->setActiveIndex(0) 
+            ->setStyle("tabs");
         $nav4 = clone $nav3;
-        $nav4->setIsPills();
+        $nav4->setStyle("pills");
         
         $ph8 = new Typography("div:page-header");
         $ph8->setInnerElements(new Typography("h1", array ("text" => "Navbars")));

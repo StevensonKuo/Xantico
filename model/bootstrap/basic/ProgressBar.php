@@ -12,6 +12,8 @@ class ProgressBar extends Typography
     protected $nowSet; // array
     protected $isStriped; // boolean
     
+    public $screw; // PgBar;
+    
     /**
      * @desc contructor
      * @param array $vars [header]
@@ -28,6 +30,8 @@ class ProgressBar extends Typography
         $this->nowSet   = isset($vars['nowSet']) ? $vars['nowSet'] : array();
         $this->isStriped = isset($vars['isStriped']) ? $vars['isStriped'] : false;
         // alert 的 color set 預設為 success, 不為 default/primary
+        
+        $this->screw    = new PgBar();
         
         return $this;
     }

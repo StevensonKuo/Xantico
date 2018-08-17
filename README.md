@@ -21,7 +21,7 @@ This name is owned by a Mayan fire god. Btw it looks cool so I decide use it to 
 Once your can access my model, you can start your drawing! The first thing you need to do is initialize a Bootstrap Palette.
 
 ```php
-$btPalette = new Bootstrap();
+$btPalette = new Xantico();
 ```
 
 (you can see my sample code in view/BootstrapView.php.)

@@ -3,7 +3,7 @@ namespace view;
 
 use model\bootstrap\basic\Button; // 自己注意大小寫
 use model\bootstrap\basic\Typography;
-use model\bootstrap\Bootstrap;
+use model\bootstrap\Xantico;
 use model\bootstrap\basic\Jumbotron;
 use model\bootstrap\basic\Table;
 use model\bootstrap\basic\Image;
@@ -32,7 +32,7 @@ class BootstrapView
 {
     // set management.
     public function fetchView () {
-        $btPanel = new Bootstrap();
+        $btPanel = new Xantico();
         $btPanel->setIsLoadBootstrapFromCDN()->setIsLoadJQueryFromCDN();
         $btPanel->setCustomCSSFiles("https://v3.bootcss.com/dist/css/bootstrap-theme.min.css");
         $btPanel->setCustomScriptsFiles('https://v3.bootcss.com/assets/js/docs.min.js');
@@ -267,7 +267,7 @@ class BootstrapView
         
         $nvbItems [3] = new Navlet ($innerDropdown);
         $navbar2 = clone $navbar;
-        $navbar2->setFgStyle("inverse")
+        $navbar2->setStyle("inverse")
         ->assignItems($nvbItems);
         
         $nvbItems [3] = new Navlet ($innerDropdown);
@@ -436,7 +436,7 @@ class BootstrapView
                 
         $btPanel->setBodyContents(array($navbar3, $container));
         
-        echo memory_get_usage(true);
+        echo "Memory usage(real): " . memory_get_usage(true);
 //         echo Typography::getErrMsg();
         $btPanel->render(true);
     }

@@ -3,7 +3,7 @@ namespace model\bootstrap;
 
 use model\bootstrap\HtmlTag;
 
-class Bootstrap
+class Xantico
 {
     protected $defaultCSSFiles; // array 
     protected $defaultScriptsFiles; // array

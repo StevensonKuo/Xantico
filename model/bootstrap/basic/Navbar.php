@@ -8,7 +8,7 @@ class Navbar extends Typography
 {
     protected $header; // header-brand
     protected $bgStyle; // string
-    protected $fgStyle; // string
+    protected $style; // string
     protected $isFluid; // boolean
     protected $isTop; // boolean
     protected $collapseButton; // boolean
@@ -29,7 +29,7 @@ class Navbar extends Typography
         $this->type         = "navbar";
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
         $this->bgStyle      = isset ($vars ['bgStyle']) ? $vars ['bgStyle'] : "";
-        $this->fgStyle      = isset ($vars ['fgStyle']) ? $vars ['fgStyle'] : "default";
+        $this->style        = isset ($vars ['style']) ? $vars ['style'] : "default";
         $this->header       = isset ($vars ['header']) ? $vars ['header'] : null;
         $this->isFluid      = isset ($vars ['isFluid']) ? $vars ['isFluid'] : false;
         $this->isTop        = isset ($vars ['isTop']) ? $vars ['isTop'] : false;
@@ -45,7 +45,7 @@ class Navbar extends Typography
      */
     public function render($display = false)
     {
-        $_class [] = "navbar-" . $this->fgStyle;
+        $_class [] = "navbar-" . $this->style;
         if (!empty($this->bgStyle)) $_class [] = "bg-" . $this->bgStyle;
         if ($this->isTop == true) $_class [] = "navbar-fixed-top";
         $this->setCustomClass($_class);
@@ -142,11 +142,11 @@ class Navbar extends Typography
     }
 
     /**
-     * @return the $fgStyle
+     * @return the $style
      */
-    public function getFgStyle()
+    public function getStyle()
     {
-        return $this->fgStyle;
+        return $this->style;
     }
 
     /**
@@ -186,12 +186,12 @@ class Navbar extends Typography
 
     /**
      * @desc default|primary|dark|inverse
-     * @param Ambigous <boolean, array> $fgStyle
+     * @param Ambigous <boolean, array> $style
      */
-    public function setFgStyle($fgStyle)
+    public function setStyle($style)
     {
-        if (empty ($fgStyle)) $fgStyle = "default";
-        $this->fgStyle = $fgStyle;
+        if (empty ($style)) $style = "default";
+        $this->style = $style;
         return $this;
     }
 

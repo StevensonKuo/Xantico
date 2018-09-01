@@ -30,8 +30,6 @@ class Table extends Typography
         $this->isStriped = array_key_exists("isStriped", $vars) ? $vars ['isStriped'] : false;
         $this->isCondensed = array_key_exists("isCondensed", $vars) ? $vars ['isCondensed'] : false;
         $this->withHoverEffect = array_key_exists("withHoverEffect", $vars) ? $vars ['withHoverEffect'] : false;
-        
-        return $this;
     }
 
     /**

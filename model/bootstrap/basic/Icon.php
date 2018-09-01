@@ -19,7 +19,6 @@ class Icon extends Typography
         $this->icon     = isset($icon) ? $icon : "arrow-right";
         $this->iconSet  = isset ($vars ['iconSet']) ? $vars ['iconSet'] : "glyphicon";
         
-        return $this;
     }
     
     /**

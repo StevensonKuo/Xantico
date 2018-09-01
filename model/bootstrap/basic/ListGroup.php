@@ -22,7 +22,6 @@ class ListGroup extends Typography
         $this->type         = "list-group";
         $this->screw        = new Listle();
         
-        return $this;
     }
     
     /**
@@ -87,22 +86,22 @@ class ListGroup extends Typography
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::setItems()
      */
-    public function setItems($items) {
-        if (!empty($items)) {
-            for ($i = 0; $i < count($items); $i ++) {
-                if (is_array ($items[$i])) {
-                    $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
-                    $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "";
-                    $_heading = isset($items[$i] ['heading']) ? $items[$i] ['heading'] : "";
-                    $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
-                    $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
-                    
-                    $items[$i] = new Listle($_text, $_url, $_heading, $_active, $_disabled);
-                } else if (!($items[$i] instanceof Listle)) {
-                    $items[$i] = new Listle($items[$i]); 
-                }
+    public function setItems($items = array ()) {
+        if (!is_array($items)) $items = array ($items);
+        for ($i = 0; $i < count($items); $i ++) {
+            if (is_array ($items[$i])) {
+                $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
+                $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "";
+                $_heading = isset($items[$i] ['heading']) ? $items[$i] ['heading'] : "";
+                $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
+                $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
+                
+                $items[$i] = new Listle($_text, $_url, $_heading, $_active, $_disabled);
+            } else if (!($items[$i] instanceof Listle)) {
+                $items[$i] = new Listle($items[$i]); 
             }
         }
+        
         $this->items = $items;
         return $this;
     }

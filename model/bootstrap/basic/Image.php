@@ -34,7 +34,6 @@ class Image extends Typography
         $this->source   = isset ($vars ['source']) ? $vars ['source'] : $this->source;
         //         $this->theme    = isset ($vars ['theme']) ? $vars ['theme'] : "";
         
-        return $this;
     }
     
     /**

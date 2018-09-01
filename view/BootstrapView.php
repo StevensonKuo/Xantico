@@ -26,7 +26,7 @@ use model\bootstrap\basic\Droplet;
 /**
  * 
  * @author metatronangelo
- * @desc 會員套餐那一塊的 view models.
+ * @desc demo page view models.
  */
 class BootstrapView 
 {
@@ -204,8 +204,8 @@ class BootstrapView
             new Navlet(array("Messages", new Badge(3)), "#")
         );
         $nav->setActiveIndex(0) 
-        ->setItems($navItems)
-        ->setStyle("pills");
+            ->setItems($navItems)
+            ->setStyle("pills");
         
         $ph6 = new Typography("div:page-header");
         $ph6->setInnerElements(new Typography("h1", array ("text" => "Dropdown Menus")));
@@ -222,8 +222,8 @@ class BootstrapView
         );
         $dropdown->getButton()->setCustomClass("sr-only");
         $dropdown->setItems($ddItems)
-        ->setText (array ("Dropdown", new Typography("span:caret", array ("text" => "\t")))) 
-        ->setActiveIndex (0);
+            ->setText ("Dropdown") 
+            ->setActiveIndex (0);
         $ddDiv->setInnerElements($dropdown);
         
         $ph7 = new Typography("div:page-header");

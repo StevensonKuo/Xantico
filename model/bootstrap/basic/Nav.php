@@ -29,8 +29,6 @@ class Nav extends Typography
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : -1;
         $this->style        = isset ($vars ['style']) ? $vars ['style'] : "";
         $this->screw       = new Navlet();
-        
-        return $this;
     }
     
     /**

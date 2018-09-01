@@ -33,8 +33,6 @@ class Carousel extends Typography
         $this->withIndicator= isset ($vars ['withIndicator']) ? $vars ['withIndicator'] : true;
         $this->withControl  = isset ($vars ['withControl']) ? $vars ['withControl'] : true;
         $this->screw        = new Slidle();
-        
-        return $this;
     }
     
     /**

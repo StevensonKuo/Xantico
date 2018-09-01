@@ -21,7 +21,6 @@ class Panel extends Typography
 //         $this->flat         = key_exists('flat', $vars) ? $vars ['flat'] : true;
 //         $this->toolbox      = key_exists('toolbox', $vars) ? $vars ['toolbox'] : array ();
         
-        return $this;
     }
     
     /**

@@ -1,8 +1,11 @@
 <?php
 namespace model\bootstrap\basic;
+// require_once 'model/bootstrap/basic/ButtonGroup.php';
+// require_once 'model/bootstrap/basic/Icon.php';
 
 use model\bootstrap\basic\Typography;
 use model\bootstrap\HtmlTag;
+use model\bootstrap\basic\Icon;
 
 class Dropdown extends Typography  
 {
@@ -14,10 +17,13 @@ class Dropdown extends Typography
     protected $alignment; // right/left
     protected $hasPopup; // boolean
     protected $expanded; // boolean
+    protected $isDropup; // boolean
+    protected $isSplit; // boolean; for btn-group mode only
     
     private $button; // instance of a 
     private $menu; // instance of ul
-    private static $typeArr = array ("btn-group", "dropdown", "dropup"); // 
+    private $defaultIcon; // an arrow point down for dropdown btn.
+    private static $modeArr = array ("btn-group", "button-group", "dropdown"); // 
     
     /**
      * 建構子
@@ -36,29 +42,51 @@ class Dropdown extends Typography
         $this->isBuildMenu  = isset ($vars ['isBuildMenu']) ? $vars ['isBuildMenu'] : true;
         $this->hasPopup     = isset ($vars ['hasPopup']) ? $vars ['hasPopup'] : true;
         $this->expanded     = isset ($vars ['expanded']) ? $vars ['expanded'] : false;
+        $this->isDropup     = isset ($vars ['isDropup']) ? $vars ['isDropup'] : false;
+        $this->isSplit      = isset ($vars ['isSplit']) ? $vars ['isSplit'] : false;
         
         $this->button       = null;
         $this->menu         = null;
         $this->screw        = new Droplet();
-        
-        return $this;
+        $this->defaultIcon  = new Icon("caret");
     }
     
     /**
-     * 渲染（佔位）
+     * 渲染
      * @param string $display
      * @return unknown
      */
     public function render($display = false)
     {
 
-        if ($this->isBuildButton == true && empty($this->button)) {
-            $this->buildButton();
-            $this->html = $this->button->render();
-        }
-        if ($this->isBuildMenu == true && empty($this->menu)) {
-            $this->buildMenu();
-            $this->html .= $this->menu->render ();
+        if ($this->mode == "btn-group") {
+            $btnGroup = new ButtonGroup();
+            $btnGroup->setCustomClass($this->type);
+            if ($this->isSplit == true) {
+                if ($this->text) {// in split button dropdown, text will be set into a seperate button, 
+                    $_splitBtn = new Button(array("text" => $this->text));
+                    $btnGroup->setInnerElements($_splitBtn);
+                } else if (!empty($this->innerElements)) { // or concat the innerElements.
+                    $btnGroup->setInnerElements($this->innerElements);
+                }
+            }
+            if ($this->isBuildButton == true && empty($this->button)) {
+                $_btn = $this->buildButton();
+                $btnGroup->setInnerElements($_btn);
+            }
+            if ($this->isBuildMenu == true && empty($this->menu)) {
+                $_menu = $this->buildMenu();
+                $btnGroup->setInnerElements($_menu);
+            }
+        } else {
+            if ($this->isBuildButton == true && empty($this->button)) {
+                $this->buildButton();
+                $this->html = $this->button->render();
+            }
+            if ($this->isBuildMenu == true && empty($this->menu)) {
+                $this->buildMenu();
+                $this->html .= $this->menu->render ();
+            }
         }
         
         if ($display) {
@@ -72,19 +100,36 @@ class Dropdown extends Typography
      * @desc 建立觸發 dropdown 的那個按鈕(連結)
      */
     protected function buildButton () {
-        $_a = new Typography("a");
-        $_a->setCustomClass(array("dropdown-toggle"))
-        ->setId()
-        ->setInnerElements($this->text)
-        ->setAttrs(array ( // 這些之後應該都要變成屬性
-            "href" => "#",
-            "data-toggle" => "dropdown",
-            "role" => "button",
-            "aria-haspopup" => json_encode($this->hasPopup),
-            "aria-expanded" => json_encode($this->expanded) 
-        ));
         
-        $this->button = $_a;
+        if ($this->mode == "btn-group") {
+            $_btn = new Button();
+        } else {
+            $_btn = new Typography("a");
+        }
+        
+        $_btn->setCustomClass(array("dropdown-toggle"))
+            ->setId()
+            ->setAttrs(array ( // 這些之後應該都要變成屬性
+                "href" => "#",
+                "data-toggle" => "dropdown",
+                "role" => "button",
+                "aria-haspopup" => json_encode($this->hasPopup),
+                "aria-expanded" => json_encode($this->expanded) 
+            ));
+        
+        if (!empty($this->size)) { // size here are still in integer.
+            $_btn->setSize($this->size);
+        }
+        // only a single icon. icon style control by parent class dropdown/dropup.
+        $defaultText = new HtmlTag("span", array ("class" => "sr-only"));
+        $defaultText->setInnerText("Toggle Dropdown");
+        if ($this->isSplit) {
+            $this->innerElements = array($this->defaultIcon, $defaultText);
+        } else {
+            $this->innerElements = array($this->text, $this->defaultIcon, $defaultText);
+        }
+        
+        $this->button = $_btn;
     }
     
     /**
@@ -347,21 +392,39 @@ class Dropdown extends Typography
     }
     
     /**
-     * @desc 設定 dropdown 樣式
-     * {@inheritDoc}
-     * @param string $type [btn-group|dropdown|dropup] 
-     * @see \model\bootstrap\basic\Typography::setType()
+     * @return the $isDropup
      */
-    public function setType ($type) {
-        // @todo 這另人不解, 那 btn-group 要用 dropup 怎麼辦?
-        $type = strtolower($type);
-        if (!in_array($type, self::$typeArr)) {
-            $type = "dropdown";
-        }
-        $this->type = $type;
+    public function getIsDropup()
+    {
+        return $this->isDropup;
+    }
+
+    /**
+     * @param Ambigous <boolean, array> $isDropup
+     */
+    public function setIsDropup($isDropup)
+    {
+        $this->isDropup = $isDropup;
+        $this->type = "dropup";
+        
         return $this;
     }
 
+    /**
+     * @param field_type $mode [dropdown|btn-group]
+     */
+    public function setMode($mode)
+    {
+        $mode = strtolower($mode);
+        if (in_array($mode, self::$modeArr)) {
+            $this->mode = $mode;
+        } else {
+            // @todo format err msg.
+            $this->setErrMsg("You set a wrong mode of Dropdown.");
+        }
+        
+        return $this;
+    }
 }
 
 /**

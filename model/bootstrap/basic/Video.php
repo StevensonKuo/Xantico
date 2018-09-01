@@ -39,8 +39,6 @@ class Video
         $this->id       = isset($vars['id']) ? $vars ['id'] : "";
         $this->attrs    = $attrs;
         $this->items    = isset($vars['items']) ? (is_array($vars ['items']) ? $vars ['items'] : array ($vars ['items'])) : array ();
-        
-        return $this;
     }
     
     /**

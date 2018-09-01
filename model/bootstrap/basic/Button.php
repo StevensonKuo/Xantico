@@ -25,13 +25,13 @@ class Button extends Typography
             parent::__construct("button:btn", $vars, $attr);
         }
         
-        $this->badge        = key_exists('badge', $vars) && $vars ['badge'] instanceof Badge ? $vars ['badge'] : NULL;
-        $this->icon         = key_exists('icon', $vars) && $vars ['icon'] instanceof Icon ? $vars ['icon'] : NULL;
-        $this->isBlock      = key_exists('isBlock', $vars) ? true : false;
-        $this->isSubmit     = key_exists('isSubmit', $vars) ? true : false;
-        $this->isReset      = key_exists('isReset', $vars) ? true : false;
-        $this->isDisabled   = key_exists('isDisabled', $vars) ? true : false;
-        $this->isOutline    = key_exists('isOutline', $vars) ? true : false;
+        $this->badge        = key_exists('badge', $vars) && $vars ['badge'] instanceof Badge ? $vars ['badge'] : null;
+        $this->icon         = key_exists('icon', $vars) && $vars ['icon'] instanceof Icon ? $vars ['icon'] : null;
+        $this->isBlock      = key_exists('isBlock', $vars) ? $vars ['isBlock'] : false;
+        $this->isSubmit     = key_exists('isSubmit', $vars) ? $vars ['isSubmit'] : false;
+        $this->isReset      = key_exists('isReset', $vars) ? $vars ['isReset'] : false;
+        $this->isDisabled   = key_exists('isDisabled', $vars) ? $vars ['isDisabled'] : false;
+        $this->isOutline    = key_exists('isOutline', $vars) ? $vars ['isOutline'] : false;
         
         return $this;
     }
@@ -124,7 +124,7 @@ class Button extends Typography
      * light
      * white
      */
-    public function setColorSet($colorSet)
+    public function setColorSet($colorSet = "default")
     {
         $this->colorSet = strtolower($colorSet);
         return $this;
@@ -132,14 +132,15 @@ class Button extends Typography
     
     /**
      * 按鈕大小
-     * 可輸入 1~5, 數字愈大按鈕愈大 [miner|xs|sm|lg]
+     * 可輸入 1~5, 數字愈大按鈕愈大 [xs|sm|lg]
      * @param string $size
      */
     public function setSize($size)
     {
         switch ($size) {
             case 1:
-                $this->size = "miner";
+//                 $this->size = "miner";
+                $this->size = ""; // preserved.
                 break;
             case 2:
                 $this->size = "xs";

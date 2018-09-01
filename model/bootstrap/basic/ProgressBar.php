@@ -32,8 +32,6 @@ class ProgressBar extends Typography
         // alert 的 color set 預設為 success, 不為 default/primary
         
         $this->screw    = new PgBar();
-        
-        return $this;
     }
     
     /**

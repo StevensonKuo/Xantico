@@ -20,8 +20,6 @@ class Jumbotron extends Typography
         $this->header   = isset ($vars ['header']) ? $vars ['header'] : "";
         $this->contents = isset ($vars ['text']) ? $vars ['text'] : "";
         // text 在 parent 裡會設
-        
-        return $this;
     }
     
     /**

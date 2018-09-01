@@ -28,8 +28,6 @@ class Slider
         $this->scrollBar = isset($vars ['scrollBar']) ? $vars ['scrollBar'] : $this->scrollBar;
         $this->closeBtn = isset($vars ['closeBtn']) ? $vars ['closeBtn'] : $this->closeBtn;
         $this->isHidden = isset($vars ['isHidden']) ? $vars ['isHidden'] : $this->isHidden;
-        
-        return $this;
     }
 
     /**

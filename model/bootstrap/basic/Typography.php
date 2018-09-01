@@ -19,6 +19,7 @@ class Typography extends \model\bootstrap\HtmlTag
     protected $textClass; // array 
     protected $jQuery; // string
     protected $grids; // int or array(), Bootstrap Grids System
+    protected $mode; // for one more type/mode to switch what you want.
     
     private static $instanceCounter = 0; // int
     
@@ -64,8 +65,7 @@ class Typography extends \model\bootstrap\HtmlTag
         $this->items        = isset($vars['items']) ? (is_array($vars ['items']) ? $vars ['items'] : array ($vars ['items'])) : array ();
         $this->textClass    = isset($vars['textClass']) ? (is_array($vars ['textClass']) ? $vars ['textClass'] : array ($vars ['textClass'])) : array ();
         $this->grids        = isset($vars ['grids']) ? $vars ['grids'] : null;
-        
-        return $this;
+        $this->mode         = isset($vars ['mode']) ? $vars ['mode'] : null;
     }
     
     /**
@@ -237,14 +237,21 @@ class Typography extends \model\bootstrap\HtmlTag
     
     
     /**
-     * 設定 ol,ul,select, navi... 
+     * @desc 設定 ol,ul,select, navi... 
      * @param array $items
-     * @return \model\bootstrap\hplus\Typography
+     * @return \model\bootstrap\basic\Typography
      */
     public function setItems ($items) {
-        if (!is_array($items)) $items = array ($items);
-        $this->items = array_merge($this->items, $items);
+        if (empty($items)) return $this;
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $items = func_get_args();
+        } else {
+            if (!is_array($items)) $items = array ($items);
+        }
         
+        if ($this->items) $this->items = array_merge($this->items, $items);
+        else $this->items = $items;
         return $this;
     }
      
@@ -383,9 +390,11 @@ class Typography extends \model\bootstrap\HtmlTag
     }
 
     /**
+     * @todo list all color scene
+     * @desc set up scene color.
      * @param Ambigous <string, array> $colorSet
      */
-    public function setColorSet($colorSet)
+    public function setColorSet($colorSet = "default")
     {
         $this->colorSet = strtolower($colorSet);
         return $this;
@@ -482,6 +491,24 @@ class Typography extends \model\bootstrap\HtmlTag
             return null;
         }
     }
+    
+    /**
+     * @return the $mode
+     */
+    public function getMode()
+    {
+        return $this->mode;
+    }
+
+    /**
+     * @param field_type $mode
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+        return $this;
+    }
+
     
 }
 

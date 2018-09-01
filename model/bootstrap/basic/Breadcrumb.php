@@ -8,6 +8,7 @@ class Breadcrumb extends Typography
 {
     public $screw; // crumb
     protected $activeIndex; // int
+    protected $hideAfter; // boolean; hide levels after actived index.
     
     /**
      * 建構子
@@ -23,9 +24,8 @@ class Breadcrumb extends Typography
         
 //          $this->type         = "breadcrumb"; // parent 裡會設
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
+        $this->hideAfter    = isset ($vars ['hideAfter']) ? $vars ['hideAfter'] : true;
         $this->screw        = new Crumb();
-        
-        return $this;
     }
     
     /**
@@ -136,6 +136,24 @@ class Breadcrumb extends Typography
         $this->activeIndex = max(0, --$this->activeIndex);
         return $this;
     }
+    
+    /**
+     * @return the $hideAfter
+     */
+    public function getHideAfter()
+    {
+        return $this->hideAfter;
+    }
+
+    /**
+     * @param Ambigous <number, array> $hideAfter
+     */
+    public function setHideAfter($hideAfter = true)
+    {
+        $this->hideAfter = $hideAfter;
+        return $this;
+    }
+
 }
 
 /**

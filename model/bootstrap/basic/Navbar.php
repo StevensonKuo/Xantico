@@ -34,8 +34,6 @@ class Navbar extends Typography
         $this->isFluid      = isset ($vars ['isFluid']) ? $vars ['isFluid'] : false;
         $this->isTop        = isset ($vars ['isTop']) ? $vars ['isTop'] : false;
         $this->collapseButton = isset ($vars ['collapseButton']) ? $vars ['collapseButton'] : false;
-        
-        return $this;
     }
     
     /**

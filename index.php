@@ -1,7 +1,9 @@
 <?php
 require 'controller/BootstrapController.php';
 require 'view/BootstrapView.php';
+require 'view/BootstrapFormView.php';
 require 'model/bootstrap/Xantico.php';
+require 'model/bootstrap/iCaption.php';
 require 'model/bootstrap/HtmlTag.php';
 require 'model/bootstrap/basic/Typography.php';
 require 'model/bootstrap/basic/Jumbotron.php';

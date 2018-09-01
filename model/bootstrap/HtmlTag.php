@@ -1,9 +1,7 @@
 <?php
 namespace model\bootstrap;
 
-use model\bootstrap\basic\Dropdown;
-
-class HtmlTag
+class HtmlTag implements iCaption 
 {
     protected $innerText;    // string
     protected $cdata; // string
@@ -32,8 +30,6 @@ class HtmlTag
         $this->innerElements    = array ();
         $this->customClass      = array ();
         $this->customStyle      = array ();
-        
-        return $this;
     }
     
     /**
@@ -44,10 +40,16 @@ class HtmlTag
     public function render($display = false)
     {
         // @todo 把所有的 innerElements 都掃過一遍, 然後外部 tag 做相對應變化
-        foreach ($this->innerElements as $ele) {
-            // dropdown 問題
-            if ($ele instanceof Dropdown && !in_array("dropdown", $this->customClass)) {
-                $this->customClass [] = "dropdown";
+        if (!empty($this->innerElements)) {
+            foreach ($this->innerElements as $ele) {
+                // dropdown issue, if this dropdown is not a button-group and it's type not in class yet.
+                if (method_exists($ele, "getType") && method_exists($ele, "getMode")) {
+                    $_type = $ele->getType();
+                    $_mode = $ele->getMode ();
+                    if (($_type == "dropdown" || $_type == "dropup") && $_mode != "btn-group" && !in_array($_type, $this->customClass)) {
+                        $this->customClass [] = $_type;
+                    }
+                }
             }
         }
         
@@ -55,11 +57,13 @@ class HtmlTag
         
         if (!empty($this->customClass)) {
             array_walk($this->customClass, "htmlspecialchars"); // 怕裡面還有陣列，會出錯
+            $this->customClass = array_unique($this->customClass);
             $html .= " class=\"" . join(" ", $this->customClass) . "\"";
         }
         
         if (!empty($this->customStyle)) {
             array_walk($this->customStyle, "htmlspecialchars");
+            $this->customStyle = array_unique($this->customStyle);
             $html .= " style=\"" . join(" ", $this->customStyle) . "\"";
         }
         

@@ -1,7 +1,6 @@
 <?php
 namespace model\bootstrap\basic;
 
-
 use model\bootstrap\basic\Typography;
 
 class Form extends Typography
@@ -12,6 +11,7 @@ class Form extends Typography
     protected $enctype; // string
     protected $role; // string
     protected $formType; // string
+    protected $labelRatio; // array ();
     protected $formAction; // array
     
     /**
@@ -30,9 +30,8 @@ class Form extends Typography
         $this->id               = isset($vars['id']) ? $vars['id'] : null;
         $this->role             = isset($vars['role']) ? $vars['role'] : "form";
         $this->action           = isset($vars['action']) ? $vars['action'] : null;
+        $this->labelRatio       = isset($vars['labelRatio']) ? $vars ['labelRatio'] : null; // 字寬３欄寬９
         $this->formAction       = array ();
-        
-        return $this;
     }
     
     public function render($display = false) {
@@ -50,11 +49,67 @@ class Form extends Typography
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as $ele) {
                 if (empty($ele)) continue; // pass 空物件.
-                if ($ele instanceof Typography || true) {
-                    if (method_exists($ele, "setFormType")) $ele->setFormType($this->formType);
+                if ($ele instanceof Input) {
+                    $formGroup = new Typography("div:form-group");
+                    switch ($this->formType) {
+                        default:
+                        case "form-horizontal":
+                            if (empty($this->labelRatio)) $this->labelRatio = !empty($ele->getLabelRatio()) ? $ele->getLabelRatio() : array (3, 9);
+                            if (!empty($ele->getCaption())) {
+                                $_label = new Typography("div:label");
+                                $_label->setCustomClass(array("col-sm-" . $this->labelRatio [0], "control-label", "no-padding-right"));
+                                $_label->setAttrs(array ("for" => $ele->getId()));
+                                if ($ele->getIsRequired()) {
+                                    $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
+                                    $_label->setInnerElements($_requireIcon);
+                                }
+                                $_label->setInnerText($ele->getCaption());
+                            } else {
+                                $this->labelRatio [1] = $this->labelRatio [0] + $this->labelRatio [1];
+                            }
+                            
+                            // input 比格子短小的情況
+                            if (!isset($this->labelRatio [2]) && $this->labelRatio [0] + $this->labelRatio [1] != 12) {
+                                $this->labelRatio [2] = $this->labelRatio [1];
+                                $this->labelRatio [1] = 12 - $this->labelRatio [0];
+                                
+                                $divPartial1 = new Typography("div:col-sm-" . $this->labelRatio [1]);
+                                $divPartial2 = new Typography("div:row");
+                                $divPartial3 = new Typography("div:col-sm-" . $this->labelRatio [2]);
+                                $divPartial3->setInnerElements($ele);
+                                $divPartial2->setInnerElements($divPartial3);
+                                $formGroup->setInnerElements(array ($_label, $divPartial1, $divPartial2));
+                            } else {
+                                $divPartial = new Typography("div:col-sm-" . $this->labelRatio [1]);
+                                $formGroup->setInnerElements(array ($_label, $divPartial));
+                            }
+                            
+                            break;
+                        case "navbar-form":
+                            // @todo anything special for a navbar-form
+                        case "form-inline": // 內聯
+                            if (!empty($ele->getCaption())) {
+                                $_label = new Typography("div:label");
+                                $_label->setAttrs(array ("for" => $ele->getId()));
+                                if ($ele->getIsRequired()) {
+                                    $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
+                                    $_label->setInnerElements($_requireIcon);
+                                }
+                                $_label->setInnerText($ele->getCaption());
+                            }
+                            
+                            $formGroup->setInnerElements(array ($_label, $ele));
+                            break;
+                    }
+                    
+                    $newElements [] = $formGroup;
+                } else { // regular elements.
+                    $newElements [] = $ele; 
                 }
             }
         }
+        
+        $this->innerElements = $newElements;
         
         if ($this->formAction) {
             switch ($this->formType) {
@@ -66,40 +121,21 @@ class Form extends Typography
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
         }
     }
+
     /**
-     * @desc Form 轉字串
-     * @return string
+     * @desc set form method [get|post]
+     * @param string $method
+     * @return \model\bootstrap\basic\Form
      */
-    function __toString() {
-        if ($this->html) {
-            return $this->html;
-        } else {
-            try {
-                return $this->render();
-            } catch (\Exception $e) {
-                return "";
-            }
-        }
-        
-    }
-    
     public function setMethod ($method = "get") {
         $this->method = $method;
         return $this;
-    }
-    
-    /**
-     * variable jQuery getter.
-     * @return string
-     */
-    public function getJQuery () {
-        return $this->jQuery;
     }
     
     /**
@@ -180,11 +216,12 @@ class Form extends Typography
         if (!empty($formAction)) {
             if (!is_array($formAction)) $formAction = array ($formAction);
             foreach ($formAction as $action) {
-                if ($action instanceof \model\bootstrap\basic\Typography || true) {
+                if ($action instanceof \model\bootstrap\basic\Typography) {
                     // @todo 所有的元素還不是繼承 typography
                     $this->formAction [] = $action;
                 } else {
-                    throw new \Exception("Unsupported Form Action Elements.");
+                    // @todo formatting errmsg.
+                    $this->setErrMsg("Unsupported Form Action Elements.");
                 }
             }
         }

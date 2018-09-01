@@ -22,8 +22,6 @@ class Alert extends Typography
         $this->withCloseButton = isset($vars ['withCloseButton']) ? $vars ['withCloseButton'] : false;
         $this->colorSet = isset($vars ['colorSet']) ? $vars ['colorSet'] : "success"; 
         // alert 的 color set 預設為 success, 不為 default/primary
-        
-        return $this;
     }
     
     /**

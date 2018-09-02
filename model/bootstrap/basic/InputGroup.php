@@ -17,7 +17,7 @@ class InputGroup extends Typography
     }
     
     /**
-     * 
+     * @desc left addon + original inner elements + right addon = new inner elements.
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::render()
      */
@@ -26,13 +26,54 @@ class InputGroup extends Typography
         if (!empty($this->size)) {
             $this->setCustomClass("input-group-" . $this->size);
         }
-
+        $_elements = array ();
         if (!empty($this->leftAddon)) {
-            // @todo add left addons
+            foreach ($this->leftAddon as $left) {
+                if ($left instanceof Button || $left instanceof Dropdown) {
+                    if (!isset ($inputGroupBtn)) {
+                        $inputGroupBtn = new Typography("div:input-group-btn");
+                    }
+                    $inputGroupBtn->setInnerElements($left);
+                } else { // icon, string, other inputs
+                    if (!isset($inputGroupAddon)) {
+                        $inputGroupAddon = new Typography("div:input-group-addon");
+                    }
+                    $inputGroupAddon->setInnerElements($left);
+                }
+            }
+            if (isset ($inputGroupBtn)) {
+                $_elements [] = $inputGroupBtn;
+            }
+            if (isset($inputGroupAddon)) {
+                $_elements [] = $inputGroupAddon;
+            }
         }
+        
+        $_elements [] = array_merge($_elements, $this->innerElements);
+        
         if (!empty($this->rightAddon)) {
-            // @todo add right addons
+            foreach ($this->rightAddon as $right) {
+                if ($right instanceof Button || $right instanceof Dropdown) {
+                    if (!isset ($inputGroupBtn)) {
+                        $inputGroupBtn = new Typography("div:input-group-btn");
+                    }
+                    $inputGroupBtn->setInnerElements($right);
+                } else { // icon, string, other inputs
+                    if (!isset($inputGroupAddon)) {
+                        $inputGroupAddon = new Typography("div:input-group-addon");
+                    }
+                    $inputGroupAddon->setInnerElements($right);
+                }
+            }
+            if (isset ($inputGroupBtn)) {
+                $_elements [] = $inputGroupBtn;
+            }
+            if (isset($inputGroupAddon)) {
+                $_elements [] = $inputGroupAddon;
+            }
         }
+        
+        $this->innerElements = $_elements;
         
         parent::render();
         
@@ -44,7 +85,7 @@ class InputGroup extends Typography
     }
     
     /**
-     * @desc 按鈕大小, 可輸入 1~5, 數字愈大按鈕愈大 [xs|sm|lg]
+     * @desc input group size, same as something like button. [xs|sm|lg]
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::setSize()
      */
@@ -107,8 +148,4 @@ class InputGroup extends Typography
         $this->rightAddon = $rightAddon;
         return $this;
     }
-
-
-
-
 }

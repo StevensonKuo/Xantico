@@ -10,6 +10,7 @@ class Input extends Typography implements iRequiredInput {
     protected $defaultValue; // string
     protected $labelRatio; // array @todo labelRatio 的方法可能要改
     protected $textColorSet; // label text color set.
+    protected $help; // string, small text bellow the input field.
     protected $isDisabled; // boolean
     protected $isReadonly; // boolean
     protected $options; // array; for checkbox and radio.
@@ -17,11 +18,15 @@ class Input extends Typography implements iRequiredInput {
     protected $disabledOption = array (); // array|int|string for radio and checkbox.
     protected $isStacked; // boolean, for radios and checkboxes.
     protected $isMultiple; // boolean, for select
+    
+    protected $isRequired;
+    protected $validation;
+    
     //     protected $spinnerVars; // for number type.
     //     protected $isStatic; //
     //     protected $dataMask; // string 固定格式
     
-    private static $inputTypeArr = array ("text", "radio", "checkbox", "select", "button", "submit", "reset", "textarea", "number");
+    private static $inputTypeArr = array ("text", "email", "password", "hidden", "radio", "checkbox", "select", "button", "submit", "reset", "textarea", "number");
     /**
      * 建構子
      * @param string $inputType
@@ -32,11 +37,7 @@ class Input extends Typography implements iRequiredInput {
     {
         $inputType = strtolower($inputType);
         $this->inputType    = !empty($inputType) && in_array($inputType, self::$inputTypeArr) ? $inputType : "text";
-        
-        if (($this->inputType == "radio" || $this->inputType == "checkbox") && !empty($this->options) && count ($this->options) > 1) {
-            // multiple choices radio/checkbox will make a div tag.
-            parent::__construct("div:form-control", $vars, $attr);
-        } else if ($this->inputType == "textarea" || $this->inputType == "select") {
+        if ($this->inputType == "textarea" || $this->inputType == "select") {
             parent::__construct($this->inputType, $vars, $attr);
         } else { // text etc.
             parent::__construct("input", $vars, $attr);
@@ -56,7 +57,8 @@ class Input extends Typography implements iRequiredInput {
         $this->isStacked        = isset($vars ['isStacked']) ? $vars ['isStacked'] : false;
         $this->isMultiple       = isset($vars ['isMultiple']) ? $vars ['isMultiple'] : false;
 //         $this->spinnerVars  = array ("min" => 0, "max" => 999999999, "step" => 1);
-        
+        $this->isRequired       = isset($vars ['isRequired']) ? $vars ['isRequired'] : false;
+        $this->validation       = isset($vars ['validation']) ? $vars ['validation'] : array ();
     }
     
     /**
@@ -77,6 +79,8 @@ class Input extends Typography implements iRequiredInput {
             case "number":
                 // @todo 還不確定基本 bootstrap 有沒有數字 input
                 break;
+            case "password":
+            case "email": // This one might be from html5.
             case "button":
             case "reset":
             case "submit":
@@ -102,6 +106,7 @@ class Input extends Typography implements iRequiredInput {
                 $_attrs = $this->attrs;
                 if ($this->isStatic) {
                     // @todo static output
+                    // bootstrap 4.0 add form-control-plaintext to class. (and both readonly)
                 } else {
                     $_class [] = "form-control";
                     if (!empty($this->placeholder)) $_attrs ["placeholder"] = $this->placeholder;
@@ -157,22 +162,27 @@ class Input extends Typography implements iRequiredInput {
                 switch ($this->mode) {
                     default:
                     case "regular":
-                        if (is_array($this->options) && count ($this->options) > 1) {
+                        if (!empty($this->options)) {
                             foreach ($this->options as $opt) {
+                                $this->setTagName("div");
+                                $this->setCustomClass("fomr-control");
                                 $formCheck = new Typography("div:form-check");
                                 if ($this->isStacked == false) $formCheck->setCustomClass(array ("form-check-inline"));
                                 $_check = new Input($this->inputType);
-                                $_check->setOptions(array($opt)) // only one option will go else below.
-                                    ->setName ($this->name . ($this->inputType == "checkbox" ? "[]" : ""));
+                                $_check->setDefaultValue($opt->value);
+                                if (!empty($this->name)) {
+                                    $_check->setName($this->name . ($this->inputType == "checkbox" ? "[]" : ""));
+                                }
                                 if ($opt->active == true || (is_array($this->defaultOption) && in_array ($opt->value, $this->defaultOption))) {
-                                    $_check->setAttrs(array("checked" => "checked"));
+                                    $_check->setAttrs(array ("checked" => "checked"));
                                 }
                                 if ($opt->disabled == true || (is_array($this->disabledOption) && in_array ($opt->value, $this->disabledOption))) {
                                     $_check->setAttrs(array ("disabled" => "disabled"));
                                 }
-                                $_checkId = $_check->getId();
+                                $_checkId = $_check->setId()->getId(); // @todo only auto-id now.
                                 $_checkLabel = new Typography("label:form-check-label");
-                                $_checkLabel->setAttrs(array("for" => $_checkId));
+                                $_checkLabel->setAttrs(array("for" => $_checkId))
+                                ->setText($opt->text);
                                 $formCheck->setInnerElements(array($_check, $_checkLabel));
                                 
                                 $this->setInnerElements($formCheck);
@@ -180,10 +190,13 @@ class Input extends Typography implements iRequiredInput {
                                 unset ($_check);
                                 unset ($_checkLabel);
                             }
-                        } else if ($this->options [0] instanceof Option) {
-                            // unable to show label... 
-                            $this->setAttrs(array ("type" => $this->inputType, "value" => $this->options [0]->value)) 
-                                ->setCustomClass(array ("form-input-check"));
+                        } else {
+                            // unable to show label...
+                            $this->attrs ["type"] = $this->inputType;
+                            $this->defaultValue = $this->defaultValue . "";
+                            if (strlen($this->defaultValue) > 0) $this->attrs ['value'] = $this->defaultValue;
+                            if (!empty($this->name)) $this->attrs ['name'] = $this->name;
+                            $this->customClass = array ("form-input-check");
                         }
                     break;
                     case "button":
@@ -318,21 +331,23 @@ class Input extends Typography implements iRequiredInput {
             if (!in_array ("form-control", $this->getCustomClass())) $this->setCustomClass("form-control");
         }
         
-        for ($i = 0; $i < count($options); $i ++) {
-            if (is_array ($options[$i])) {
-                $_text      = isset($options[$i] ['text']) ? $options[$i] ['text'] : "";
-                $_val       = isset($options[$i] ['value']) ? $options[$i] ['value'] : $_text;
-                $_active    = isset($options[$i] ['active']) ? $options[$i] ['active'] : false;
-                $_disabled  = isset($options[$i] ['disabled']) ? $options[$i] ['disabled'] : false;
-                $_group     = isset($options[$i] ['group']) ? $options[$i] ['group'] : "";
+        $_newOptions = array ();
+        foreach ($options as $value => $text) {
+            if (is_array ($text)) {
+                $_text      = isset($text ['text']) ? $text ['text'] : "";
+                $_val       = isset($text ['value']) ? $text ['value'] : $_text;
+                $_active    = isset($text ['active']) ? $text ['active'] : false;
+                $_disabled  = isset($text ['disabled']) ? $text ['disabled'] : false;
+                $_group     = isset($text ['group']) ? $text ['group'] : "";
                 
-                $options[$i] = new Option($_text, $_val, $_active, $_disabled, $_group);
-            } else if (!($options[$i] instanceof Option)) {
-                $options[$i] = new Option($options[$i]);
+                $_newOptions [] = new Option($_text, $_val, $_active, $_disabled, $_group);
+            } else if (!($text instanceof Option) && !empty($text)) {
+                // option array is about key => value style. not a associative array.
+                $_newOptions [] = new Option($text, $value);
             }
         }
         
-        $this->options = $options;
+        $this->options = $_newOptions;
         
         return $this;
     }
@@ -452,7 +467,7 @@ class Input extends Typography implements iRequiredInput {
      * @param Input $input
      * @param string $message
      */
-    public function setRequiredEqualTo (Input $input, $message = "") {
+    public function setRequiredEqualTo (Typography $input, $message = "") {
         $this->isRequired = true;
         
         $equalToId = $input->getId();
@@ -593,6 +608,23 @@ class Input extends Typography implements iRequiredInput {
         $this->isMultiple = $isMultiple;
         return $this;
     }
+    /**
+     * @return the $help
+     */
+    public function getHelp()
+    {
+        return $this->help;
+    }
+
+    /**
+     * @param field_type $help
+     */
+    public function setHelp($help)
+    {
+        $this->help = $help;
+        return $this;
+    }
+
 
 
 

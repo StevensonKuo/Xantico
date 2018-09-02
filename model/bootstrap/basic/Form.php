@@ -2,6 +2,8 @@
 namespace model\bootstrap\basic;
 
 use model\bootstrap\basic\Typography;
+use model\bootstrap\HtmlTag;
+use model\bootstrap\iCaption;
 
 class Form extends Typography
 {
@@ -13,7 +15,8 @@ class Form extends Typography
     protected $formType; // string
     protected $labelRatio; // array ();
     protected $formAction; // array
-    
+
+    private static $formTypeArr = array ("inline", "form-inline", "form-horizontal", "horizontal", "navbar", "navbar-form", "fieldset", "");
     /**
      * @desc 建構子
      * @param string $formType
@@ -24,7 +27,7 @@ class Form extends Typography
     {
         parent::__construct("form", $vars, $attrs);
         // form-horizontal, form-inline, navbar-form, navbar-search
-        $this->formType         = isset($formType) ? $formType : null;
+        $this->formType         = isset($formType) ? $formType : null; // formtype alowed to be empty.
         $this->method           = isset($vars['method']) ? $vars['method'] : null; // get
         $this->name             = isset($vars['name']) ? $vars['name'] : null;
         $this->id               = isset($vars['id']) ? $vars['id'] : null;
@@ -36,7 +39,14 @@ class Form extends Typography
     
     public function render($display = false) {
         
-        $_class [] = $this->formType;
+        if ($this->formType == "inline") {
+            $this->formType = "form-inline";
+        } else if ($this->formType == "horizontal") {
+            $this->formType = "form-horizontal";
+        } else if ($this->formType == "navbar") {
+            $this->formType = "navbar-form";
+        }
+        if (!empty($this->formType)) $_class [] = $this->formType;
         $_attrs = array ();
         if ($this->action)  $_attrs ["action"] = $this->action;
         if ($this->method)  $_attrs ["method"] = $this->method;
@@ -52,7 +62,6 @@ class Form extends Typography
                 if ($ele instanceof Input) {
                     $formGroup = new Typography("div:form-group");
                     switch ($this->formType) {
-                        default:
                         case "form-horizontal":
                             if (empty($this->labelRatio)) $this->labelRatio = !empty($ele->getLabelRatio()) ? $ele->getLabelRatio() : array (3, 9);
                             if (!empty($ele->getCaption())) {
@@ -64,6 +73,8 @@ class Form extends Typography
                                     $_label->setInnerElements($_requireIcon);
                                 }
                                 $_label->setInnerText($ele->getCaption());
+                                
+                                $formGroup->setInnerElements($_label);
                             } else {
                                 $this->labelRatio [1] = $this->labelRatio [0] + $this->labelRatio [1];
                             }
@@ -78,27 +89,43 @@ class Form extends Typography
                                 $divPartial3 = new Typography("div:col-sm-" . $this->labelRatio [2]);
                                 $divPartial3->setInnerElements($ele);
                                 $divPartial2->setInnerElements($divPartial3);
-                                $formGroup->setInnerElements(array ($_label, $divPartial1, $divPartial2));
+                                $formGroup->setInnerElements(array ($divPartial1, $divPartial2));
                             } else {
-                                $divPartial = new Typography("div:col-sm-" . $this->labelRatio [1]);
-                                $formGroup->setInnerElements(array ($_label, $divPartial));
+                                $divPartial3 = new Typography("div:col-sm-" . $this->labelRatio [1]);
+                                $divPartial3->setInnerElements($ele);
+                                $formGroup->setInnerElements($divPartial3);
+                            }
+                            if (!empty($ele->getHelp())) {
+                                $_help = new HtmlTag("small");
+                                $_help->setCustomClass(array ("form-text", "text-muted"))
+                                ->setText($ele->getHelp());
+                                $divPartial3->setInnerElements($_help);
                             }
                             
                             break;
+                        default: // form type == ""
                         case "navbar-form":
                             // @todo anything special for a navbar-form
-                        case "form-inline": // 內聯
+                        case "form-inline": // enclose by form-group
                             if (!empty($ele->getCaption())) {
-                                $_label = new Typography("div:label");
+                                $_label = new Typography("label");
                                 $_label->setAttrs(array ("for" => $ele->getId()));
                                 if ($ele->getIsRequired()) {
                                     $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
                                     $_label->setInnerElements($_requireIcon);
                                 }
                                 $_label->setInnerText($ele->getCaption());
+                                
+                                $formGroup->setInnerElements($_label);
+                            }
+                            $formGroup->setInnerElements($ele);
+                            if (!empty($ele->getHelp())) {
+                                $_help = new HtmlTag("small");
+                                $_help->setCustomClass(array ("form-text", "text-muted"))
+                                ->setText($ele->getHelp());
+                                $formGroup->setInnerElements($_help);
                             }
                             
-                            $formGroup->setInnerElements(array ($_label, $ele));
                             break;
                     }
                     
@@ -163,10 +190,9 @@ class Form extends Typography
     }
     
     /**
-     * @param string $formType
-     * inline, horizontal, fieldset 內聯表單／水平表單／？
+     * @param string $formType [inline|horizontal|navbar|fieldset]
      */
-    public function setFormType($formType)
+    public function setFormType($formType = "")
     {
         $this->formType = $formType;
         return $this;
@@ -216,14 +242,17 @@ class Form extends Typography
         if (!empty($formAction)) {
             if (!is_array($formAction)) $formAction = array ($formAction);
             foreach ($formAction as $action) {
-                if ($action instanceof \model\bootstrap\basic\Typography) {
-                    // @todo 所有的元素還不是繼承 typography
-                    $this->formAction [] = $action;
-                } else {
-                    // @todo formatting errmsg.
-                    $this->setErrMsg("Unsupported Form Action Elements.");
-                }
+                // if ($action instanceof Typography) {
+                $this->formAction [] = $action;
             }
+        } else {
+            // set a defalut submit button
+            $submit = new Button();
+            $submit->setIsSubmit()
+            ->setColorSet("primary")
+            ->setText(iCaption::CAP_SUBMIT);
+            
+            $this->formAction [] = $submit;
         }
         
         return $this;

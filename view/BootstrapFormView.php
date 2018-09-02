@@ -22,6 +22,8 @@ use model\bootstrap\basic\Carousel;
 use model\bootstrap\basic\Slidle;
 use model\bootstrap\basic\Navlet;
 use model\bootstrap\basic\Droplet;
+use model\bootstrap\basic\Form;
+use model\bootstrap\basic\Input;
 
 /**
  * 
@@ -86,9 +88,23 @@ class BootstrapFormView
             ->setItems($nvbItems);
         
         // @todo Form here.
+        $form1 = new Form();
+        $inputEmail =  new Input("email");
+        $inputEmail->setCaption("Email Address")
+        ->setHelp("We'll never share your email with anyone else.")
+        ->setPlaceholder("Enter Email")
+        ->setId("exampleInputEmail1");
+        $inputPwd = new Input("password");
+        $inputPwd->setCaption("Password")
+        ->setPlaceholder("password")
+        ->setId("exampleInputPassword1");
+        $check = new Input("checkbox");
+        $check->setOptions(array ("Check me out"));
+        $form1->setFormAction()
+        ->setInnerElements(array ($inputEmail, $inputPwd, $check));
         
         $container = new Typography("div:container", null, array("role"=> "main"));
-        $container->setInnerElements(array ()) 
+        $container->setInnerElements(array ($form1)) 
             ->setCustomClass("theme-showcase");
                 
         $btPanel->setBodyContents(array($navbar, $container));

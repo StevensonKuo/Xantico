@@ -10,7 +10,7 @@ class Typography extends \model\bootstrap\HtmlTag
     protected $colorSet;// string
     protected $text;    // string
     protected $textColorSet; // string
-    protected $caption; // string
+    protected $caption; // string; !important different from text/innerText
     protected $title;// string
     protected $align;   // string
     protected $size; // int
@@ -394,7 +394,7 @@ class Typography extends \model\bootstrap\HtmlTag
      * @desc set up scene color.
      * @param Ambigous <string, array> $colorSet
      */
-    public function setColorSet($colorSet = "default")
+    public function setColorSet($colorSet)
     {
         $this->colorSet = strtolower($colorSet);
         return $this;

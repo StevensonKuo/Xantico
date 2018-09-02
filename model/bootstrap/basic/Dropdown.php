@@ -49,6 +49,7 @@ class Dropdown extends Typography
         $this->menu         = null;
         $this->screw        = new Droplet();
         $this->defaultIcon  = new Icon("caret");
+        $this->defaultIcon->setIconSet("");
     }
     
     /**
@@ -123,10 +124,10 @@ class Dropdown extends Typography
         // only a single icon. icon style control by parent class dropdown/dropup.
         $defaultText = new HtmlTag("span", array ("class" => "sr-only"));
         $defaultText->setInnerText("Toggle Dropdown");
-        if ($this->isSplit) {
-            $this->innerElements = array($this->defaultIcon, $defaultText);
+        if ($this->isSplit == true) {
+            $_btn->innerElements = array($this->defaultIcon, $defaultText);
         } else {
-            $this->innerElements = array($this->text, $this->defaultIcon, $defaultText);
+            $_btn->innerElements = array($this->text, $this->defaultIcon, $defaultText);
         }
         
         $this->button = $_btn;

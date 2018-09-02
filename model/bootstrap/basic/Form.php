@@ -46,6 +46,7 @@ class Form extends Typography
         } else if ($this->formType == "navbar") {
             $this->formType = "navbar-form";
         }
+        $_class = $this->customClass;
         if (!empty($this->formType)) $_class [] = $this->formType;
         $_attrs = array ();
         if ($this->action)  $_attrs ["action"] = $this->action;
@@ -57,6 +58,7 @@ class Form extends Typography
         $this->setAttrs($_attrs);
         
         if (!empty($this->innerElements)) {
+            $newElements = array ();
             foreach ($this->innerElements as $ele) {
                 if (empty($ele)) continue; // pass 空物件.
                 if ($ele instanceof Input) {
@@ -134,9 +136,9 @@ class Form extends Typography
                     $newElements [] = $ele; 
                 }
             }
-        }
+            $this->innerElements = $newElements;
+        } // end if !empty inner elements.
         
-        $this->innerElements = $newElements;
         
         if ($this->formAction) {
             switch ($this->formType) {

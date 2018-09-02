@@ -24,6 +24,8 @@ use model\bootstrap\basic\Navlet;
 use model\bootstrap\basic\Droplet;
 use model\bootstrap\basic\Form;
 use model\bootstrap\basic\Input;
+use model\bootstrap\basic\Select;
+use model\bootstrap\basic\Textarea;
 
 /**
  * 
@@ -103,9 +105,33 @@ class BootstrapFormView
         $form1->setFormAction()
         ->setInnerElements(array ($inputEmail, $inputPwd, $check));
         
+        $form2 = new Form();
+        $inputEmail2 = new Input("email");
+        $inputEmail2->setPlaceholder("name@example.com")
+        ->setId("exampleFormControlInput1")
+        ->setCaption("Email address");
+        
+        $inputSelect = new Select();
+        $inputSelect->setCaption("Example select")
+        ->setId("exampleFormControlSelect1")
+        ->setOptions(array (1, 2, 3, 4, 5));
+        
+        $inputSelect2 = clone $inputSelect;
+        $inputSelect2->setIsMultiple(true)
+        ->setCaption("Example multiple select")
+        ->setId("exampleFormControlSelect2");
+        
+        $textarea = new Textarea();
+        $textarea->setRows(3)
+        ->setCaption("Example textarea")
+        ->setId("exampleFormControlTextarea1");
+        
+        $form2->setInnerElements(array ($inputEmail2, $inputSelect, $inputSelect2, $textarea));
+        
         $container = new Typography("div:container", null, array("role"=> "main"));
-        $container->setInnerElements(array ($form1)) 
-            ->setCustomClass("theme-showcase");
+        $container->setInnerElements(array ($form1, $form2))
+        ->setCaption("Example textarea")
+        ->setCustomClass("theme-showcase");
                 
         $btPanel->setBodyContents(array($navbar, $container));
         

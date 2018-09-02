@@ -13,6 +13,7 @@ class Input extends Typography implements iRequiredInput {
     protected $help; // string, small text bellow the input field.
     protected $isDisabled; // boolean
     protected $isReadonly; // boolean
+    protected $isStatic; // boolean; preserved
     protected $options; // array; for checkbox and radio.
     protected $defaultOption = array (); // array|int|string for radio and checkbox.
     protected $disabledOption = array (); // array|int|string for radio and checkbox.
@@ -35,7 +36,7 @@ class Input extends Typography implements iRequiredInput {
      */
     public function __construct($inputType = "text", $vars = array (), $attr = array ())
     {
-        $inputType = strtolower($inputType);
+        $inputType = trim(strtolower($inputType));
         $this->inputType    = !empty($inputType) && in_array($inputType, self::$inputTypeArr) ? $inputType : "text";
         if ($this->inputType == "textarea" || $this->inputType == "select") {
             parent::__construct($this->inputType, $vars, $attr);
@@ -54,6 +55,7 @@ class Input extends Typography implements iRequiredInput {
         $this->disabledOption   = isset($vars ['disabledOption']) ? $vars ['disabledOption'] : null;
         $this->isDisabled       = isset($vars ['isDisabled']) ? $vars ['isDisabled'] : false;
         $this->isReadonly       = isset($vars ['isReadonly']) ? $vars ['isReadonly'] : false;
+        $this->isStatic         = isset($vars ['isStatic']) ? $vars ['isStatic'] : false;
         $this->isStacked        = isset($vars ['isStacked']) ? $vars ['isStacked'] : false;
         $this->isMultiple       = isset($vars ['isMultiple']) ? $vars ['isMultiple'] : false;
 //         $this->spinnerVars  = array ("min" => 0, "max" => 999999999, "step" => 1);
@@ -87,7 +89,7 @@ class Input extends Typography implements iRequiredInput {
             case "text":
                 $_class = $this->customClass; // @todo 這個動作是不是其他的物件也要統一 ?
                 $_attrs = $this->attrs;
-                if ($this->isStatic) {
+                if ($this->isStatic == true) {
                     // @todo static output
                 } else {
                     $class [] = "form-control";
@@ -117,12 +119,14 @@ class Input extends Typography implements iRequiredInput {
                 }
                 $this->customClass = $_class;
                 $this->attrs = $_attrs;
+                if (empty($this->text)) $this->text = "\t"; // @todo have to resolve this issue. there can't be always one tab inside. 
                 break;
             case "select":
                 if ($this->isMultiple == true) {
-                    $this->setAttrs(array ("multiple" => "multiple", "name" => $this->name . "[]"));
-                } else {
-                    $this->setAttrs(array ("name" => $this->name));
+                    $this->setAttrs(array ("multiple" => "multiple"));
+                } 
+                if (!empty($this->name)) {
+                    $this->setAttrs(array ("name" => $this->name . ($this->isMultiple == true ? "[]" : "")));
                 }
                 if (is_array($this->options)) {
                     $_tmpOptGroup = "";
@@ -326,10 +330,6 @@ class Input extends Typography implements iRequiredInput {
     public function setOptions($options = array ())
     {
         if (!is_array($options)) $option = array ($options);
-        if (count($options) > 1) {
-            $this->setTagName("div");
-            if (!in_array ("form-control", $this->getCustomClass())) $this->setCustomClass("form-control");
-        }
         
         $_newOptions = array ();
         foreach ($options as $value => $text) {

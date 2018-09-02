@@ -24,6 +24,8 @@ require 'model/bootstrap/basic/Carousel.php';
 require 'model/bootstrap/basic/Form.php';
 require 'model/bootstrap/basic/iRequiredInput.php';
 require 'model/bootstrap/basic/Input.php';
+require 'model/bootstrap/basic/Select.php';
+require 'model/bootstrap/basic/Textarea.php';
 
 use controller\BootstrapController;
 

@@ -7,7 +7,7 @@ use view\BootstrapFormView;
 class BootstrapController {
     
     public function main () {
-        $page = $_REQUEST ['page'];
+        $page = isset($_REQUEST ['page']) ? $_REQUEST ['page'] : "";
         if (strtolower($page) == "form") {
             $view = new BootstrapFormView();
         } else {

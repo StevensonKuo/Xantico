@@ -9,6 +9,7 @@ class Select extends Input
     {
         parent::__construct("select", $vars, $attr);
         $this->options = $options;
+        
     }
 
 }

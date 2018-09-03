@@ -65,10 +65,12 @@ class Form extends Typography
                     $formGroup = new Typography("div:form-group");
                     switch ($this->formType) {
                         case "form-horizontal":
+                            $formGroup->setCustomClass("row");
                             if (empty($this->labelRatio)) $this->labelRatio = !empty($ele->getLabelRatio()) ? $ele->getLabelRatio() : array (3, 9);
                             if (!empty($ele->getCaption())) {
-                                $_label = new Typography("div:label");
-                                $_label->setCustomClass(array("col-sm-" . $this->labelRatio [0], "control-label", "no-padding-right"));
+                                $_label = new Typography("label");
+                                if ($this->formType == "form-inline") $_label->setCustomClass("sr-only");
+                                $_label->setCustomClass("col-sm-" . $this->labelRatio [0]);
                                 $_label->setAttrs(array ("for" => $ele->getId()));
                                 if ($ele->getIsRequired()) {
                                     $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
@@ -81,6 +83,12 @@ class Form extends Typography
                                 $this->labelRatio [1] = $this->labelRatio [0] + $this->labelRatio [1];
                             }
                             
+                            if (!empty($ele->getHelp())) {
+                                $_help = new HtmlTag("small");
+                                $_help->setCustomClass(array ("form-text", "text-muted"))
+                                ->setText($ele->getHelp());
+                            }
+                            
                             // input 比格子短小的情況
                             if (!isset($this->labelRatio [2]) && $this->labelRatio [0] + $this->labelRatio [1] != 12) {
                                 $this->labelRatio [2] = $this->labelRatio [1];
@@ -91,17 +99,18 @@ class Form extends Typography
                                 $divPartial3 = new Typography("div:col-sm-" . $this->labelRatio [2]);
                                 $divPartial3->setInnerElements($ele);
                                 $divPartial2->setInnerElements($divPartial3);
-                                $formGroup->setInnerElements(array ($divPartial1, $divPartial2));
+                                if ($_help) {
+                                    $divPartial4 = new Typography("div:col-sm-" . ($this->labelRatio [1] - $this->labelRatio [2]));
+                                    $divPartial4->setInnerElements($_help);
+                                    $divPartial2->setInnerElements($divPartial4);
+                                }
+                                $divPartial1->setInnerElements($divPartial2);
+                                $formGroup->setInnerElements($divPartial1);
                             } else {
-                                $divPartial3 = new Typography("div:col-sm-" . $this->labelRatio [1]);
-                                $divPartial3->setInnerElements($ele);
-                                $formGroup->setInnerElements($divPartial3);
-                            }
-                            if (!empty($ele->getHelp())) {
-                                $_help = new HtmlTag("small");
-                                $_help->setCustomClass(array ("form-text", "text-muted"))
-                                ->setText($ele->getHelp());
-                                $divPartial3->setInnerElements($_help);
+                                $eleDiv = new Typography("div:col-sm-" . $this->labelRatio [1]);
+                                $eleDiv->setInnerElements(array ($ele));
+                                if (isset($_help)) $eleDiv->setInnerElements($_help);
+                                $formGroup->setInnerElements(array ($eleDiv));
                             }
                             
                             break;
@@ -111,6 +120,7 @@ class Form extends Typography
                         case "form-inline": // enclose by form-group
                             if (!empty($ele->getCaption())) {
                                 $_label = new Typography("label");
+                                if ($this->formType == "form-inline") $_label->setCustomClass("sr-only");
                                 $_label->setAttrs(array ("for" => $ele->getId()));
                                 if ($ele->getIsRequired()) {
                                     $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
@@ -120,6 +130,7 @@ class Form extends Typography
                                 
                                 $formGroup->setInnerElements($_label);
                             }
+                            
                             $formGroup->setInnerElements($ele);
                             if (!empty($ele->getHelp())) {
                                 $_help = new HtmlTag("small");
@@ -127,7 +138,6 @@ class Form extends Typography
                                 ->setText($ele->getHelp());
                                 $formGroup->setInnerElements($_help);
                             }
-                            
                             break;
                     }
                     
@@ -260,5 +270,29 @@ class Form extends Typography
         return $this;
     }
 
+    /**
+     * @desc 用在 horizontal 的表單裡，label 和 input 框的比例用
+     * @param Ambigous <unknown, multitype:number > $labelRatio
+     */
+    public function getLabelRatio()
+    {
+        return $this->labelRatio;
+    }
+    
+    /**
+     * @desc 用在 horizontal 的表單裡，label 和 input 框的比例用
+     * @param Ambigous <unknown, multitype:number > $labelRatio
+     */
+    public function setLabelRatio($labelRatio)
+    {
+        if (is_array ($labelRatio)) {
+            $this->labelRatio = $labelRatio;
+        } else {
+            $this->labelRatio = explode(":", $labelRatio);
+        }
+        
+        return $this;
+    }
+    
     
 }

@@ -21,11 +21,13 @@ require 'model/bootstrap/basic/Panel.php';
 require 'model/bootstrap/basic/ProgressBar.php';
 require 'model/bootstrap/basic/Icon.php';
 require 'model/bootstrap/basic/Carousel.php';
+require 'model/bootstrap/basic/PageHeader.php';
 require 'model/bootstrap/basic/Form.php';
 require 'model/bootstrap/basic/iRequiredInput.php';
 require 'model/bootstrap/basic/Input.php';
 require 'model/bootstrap/basic/Select.php';
 require 'model/bootstrap/basic/Textarea.php';
+require 'model/bootstrap/basic/FormRow.php';
 
 use controller\BootstrapController;
 

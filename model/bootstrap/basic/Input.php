@@ -27,7 +27,10 @@ class Input extends Typography implements iRequiredInput {
     //     protected $isStatic; //
     //     protected $dataMask; // string 固定格式
     
-    private static $inputTypeArr = array ("text", "email", "password", "hidden", "radio", "checkbox", "select", "button", "submit", "reset", "textarea", "number");
+    private static $inputTypeArr = array (
+        "text", "email", "password", "hidden", "radio", "checkbox", "file",  
+        "select", "button", "submit", "reset", "textarea", "number"
+    );
     /**
      * 建構子
      * @param string $inputType
@@ -56,7 +59,7 @@ class Input extends Typography implements iRequiredInput {
         $this->isDisabled       = isset($vars ['isDisabled']) ? $vars ['isDisabled'] : false;
         $this->isReadonly       = isset($vars ['isReadonly']) ? $vars ['isReadonly'] : false;
         $this->isStatic         = isset($vars ['isStatic']) ? $vars ['isStatic'] : false;
-        $this->isStacked        = isset($vars ['isStacked']) ? $vars ['isStacked'] : false;
+        $this->isStacked        = isset($vars ['isStacked']) ? $vars ['isStacked'] : true;
         $this->isMultiple       = isset($vars ['isMultiple']) ? $vars ['isMultiple'] : false;
 //         $this->spinnerVars  = array ("min" => 0, "max" => 999999999, "step" => 1);
         $this->isRequired       = isset($vars ['isRequired']) ? $vars ['isRequired'] : false;
@@ -86,25 +89,34 @@ class Input extends Typography implements iRequiredInput {
             case "button":
             case "reset":
             case "submit":
+            case "file":
             case "text":
                 $_class = $this->customClass; // @todo 這個動作是不是其他的物件也要統一 ?
                 $_attrs = $this->attrs;
+                $_attrs ["type"] = $this->inputType;
+                if (!empty($this->placeholder)) $_attrs ["placeholder"] = $this->placeholder;
+                if (!empty($this->defaultValue)) $_attrs ['value'] = $this->defaultValue;
+//                 if (!empty($this->size)) $_class [] = "form-control-" . $this->size; // bs 4.0
+                if ($this->isDisabled == true) $_attrs ["disabled"] = "disabled";
+                if ($this->isReadonly == true) $_attrs ["readonly"] = "readonly";
                 if ($this->isStatic == true) {
-                    // @todo static output
+                    /* bs 4.0
+                     $_class [] = "form-control-plaintext";
+                     $_attrs ["readonly"] = "readonly";
+                     */
+                    $this->setTagName("p");
+                    $_attrs = array ();
+                    $_class [] = "form-control";
+                    $this->text = $this->defaultValue;
                 } else {
-                    $class [] = "form-control";
-                    $this->setAttrs(array ("type" => $this->inputType));
-                    if (!empty($this->placeholder)) $_attrs ["placeholder"] = $this->placeholder;
-                    if (!empty($this->defaultValue)) $_attrs ['value'] = $this->defaultValue;
-                    if (!empty($this->isDisabled)) $_attrs ["disabled"] = "disabled";
-                    if (!empty($this->isReadonly)) $_attrs ["readonly"] = "readonly";
-                    if (!empty($this->size)) $_class [] = "form-control-" . $this->size;
+                    $_class [] = "form-control" . ($this->inputType == "file" ? "-file" : "");
                 }
+                
                 $this->customClass = $_class;
                 $this->attrs = $_attrs;
                 break;
             case "textarea":
-                $_class = $this->customClass; // @todo 這個動作是不是其他的物件也要統一 ?
+                $_class = $this->customClass;
                 $_attrs = $this->attrs;
                 if ($this->isStatic) {
                     // @todo static output
@@ -122,13 +134,18 @@ class Input extends Typography implements iRequiredInput {
                 if (empty($this->text)) $this->text = "\t"; // @todo have to resolve this issue. there can't be always one tab inside. 
                 break;
             case "select":
+                $_class = $this->customClass;
+                $_attrs = $this->attrs;
+                $_class [] = "form-control";
                 if ($this->isMultiple == true) {
-                    $this->setAttrs(array ("multiple" => "multiple"));
+                    $_attrs ["multiple"] = "multiple";
                 } 
                 if (!empty($this->name)) {
-                    $this->setAttrs(array ("name" => $this->name . ($this->isMultiple == true ? "[]" : "")));
+                    $_attrs ["name"] = $this->name . ($this->isMultiple == true ? "[]" : "");
                 }
-                if (is_array($this->options)) {
+                $this->customClass = $_class;
+                $this->attrs = $_attrs;
+                if (is_array($this->options) && !empty($this->options)) {
                     $_tmpOptGroup = "";
                     foreach ($this->options as $opt) {
                         $_option = new Typography("option");
@@ -173,6 +190,8 @@ class Input extends Typography implements iRequiredInput {
                                 $formCheck = new Typography("div:form-check");
                                 if ($this->isStacked == false) $formCheck->setCustomClass(array ("form-check-inline"));
                                 $_check = new Input($this->inputType);
+                                $_check->setCustomClass($this->getCustomClass());
+                                $_check->setAttrs($this->getAttrs());
                                 $_check->setDefaultValue($opt->value);
                                 if (!empty($this->name)) {
                                     $_check->setName($this->name . ($this->inputType == "checkbox" ? "[]" : ""));
@@ -200,7 +219,7 @@ class Input extends Typography implements iRequiredInput {
                             $this->defaultValue = $this->defaultValue . "";
                             if (strlen($this->defaultValue) > 0) $this->attrs ['value'] = $this->defaultValue;
                             if (!empty($this->name)) $this->attrs ['name'] = $this->name;
-                            $this->customClass = array ("form-input-check");
+                            $this->customClass [] = "form-input-check";
                         }
                     break;
                     case "button":
@@ -302,7 +321,11 @@ class Input extends Typography implements iRequiredInput {
      */
     public function setLabelRatio($labelRatio)
     {
-        $this->labelRatio = $labelRatio;
+        if (is_array ($labelRatio)) {
+            $this->labelRatio = $labelRatio;
+        } else {
+            $this->labelRatio = explode(":", $labelRatio);
+        }
         
         return $this;
     }
@@ -625,7 +648,22 @@ class Input extends Typography implements iRequiredInput {
         return $this;
     }
 
+    /**
+     * @return the $isStatic
+     */
+    public function getIsStatic()
+    {
+        return $this->isStatic;
+    }
 
+    /**
+     * @param Ambigous <boolean, array> $isStatic
+     */
+    public function setIsStatic($isStatic = true)
+    {
+        $this->isStatic = $isStatic;
+        return $this;
+    }
 
 
 }

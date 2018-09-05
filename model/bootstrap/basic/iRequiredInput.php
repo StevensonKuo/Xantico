@@ -7,7 +7,13 @@ interface iRequiredInput
 {
     // interface for method model, abs class for attribute model.
 
-    public function setRequired ($message = "", $isRequired = true);
+    public function getIsRequired();
+    
+    public function getValidation();
+    
+    public function setIsRequired ($message = "", $isRequired = true);
+    
+    public function setValidation($validation);
     
     public function setRequiredMinLength ($length, $message = "");
     
@@ -16,6 +22,7 @@ interface iRequiredInput
     public function setRequiredEqualTo (Typography $input, $message = "");
     
     public function setRequiredEmail ($message = "");
+    
     
 }
 

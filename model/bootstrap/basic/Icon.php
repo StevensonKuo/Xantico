@@ -18,6 +18,7 @@ class Icon extends Typography
         $this->type     = "icon";
         $this->icon     = isset($icon) ? $icon : "arrow-right";
         $this->iconSet  = isset ($vars ['iconSet']) ? $vars ['iconSet'] : "glyphicon";
+        $this->align    = "left"; // Icon default alignment is in left.
         
     }
     

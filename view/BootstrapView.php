@@ -22,6 +22,7 @@ use model\bootstrap\basic\Carousel;
 use model\bootstrap\basic\Slidle;
 use model\bootstrap\basic\Navlet;
 use model\bootstrap\basic\Droplet;
+use model\bootstrap\basic\Well;
 
 /**
  * 
@@ -81,7 +82,7 @@ class BootstrapView
         $lbl6 = clone $lbl;
         $lbl6->setColorSet("danger")->setText("Danger");
         $lbl7 = clone $lbl;
-        $lbl7->setColorSet("link")->setText("Link");
+        $lbl7->setIsLink()->setText("Link");
         $p1 = new Typography("p");
         $p1->setInnerElements(array($lbl, $lbl2, $lbl3, $lbl4, $lbl5, $lbl6, $lbl7));
         
@@ -401,9 +402,9 @@ class BootstrapView
         $phD = new Typography("div:page-header");
         $phD->setInnerElements(new Typography("h1", array ("text" => "Wells")));
         
-        $well = new Typography("div:well");
+        $well = new Well();
         $text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed diam eget risus varius blandit sit amet non magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Aenean lacinia bibendum nulla sed consectetur.";
-        $well->setInnerElements(new Typography("p", array ("text" => $text)));
+        $well->setText($text);
         
         $phE = new Typography("div:page-header");
         $phE->setInnerElements(new Typography("h1", array ("text" => "Carousel")));

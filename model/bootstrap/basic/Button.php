@@ -14,6 +14,7 @@ class Button extends Typography
     protected $isReset; // boolean
     protected $isDisabled; // boolean
     protected $isOutline; // boolean
+    protected $isLink; // boolean; use a tag
     protected $url; // string
     
     public function __construct($vars = array (), $attr = array())
@@ -32,6 +33,7 @@ class Button extends Typography
         $this->isReset      = key_exists('isReset', $vars) ? $vars ['isReset'] : false;
         $this->isDisabled   = key_exists('isDisabled', $vars) ? $vars ['isDisabled'] : false;
         $this->isOutline    = key_exists('isOutline', $vars) ? $vars ['isOutline'] : false;
+        $this->isLink       = key_exists('isLink', $vars) ? $vars ['isLink'] : false;
         
         return $this;
     }
@@ -45,12 +47,12 @@ class Button extends Typography
 //         $jQuery = "";
         $_text = "";
         $class = array ();
-        if (!empty($this->colorSet))        $class [] = "btn-" . $this->colorSet;
+        if ($this->isLink == true)          $class [] = "btn-link";
+        else if (!empty($this->colorSet))   $class [] = "btn-" . $this->colorSet;
         if (!empty($this->size))            $class [] = "btn-" . $this->size;
         if (!empty($this->border))          $class [] = "btn-" . $this->border;
         if ($this->isBlock == true)         $class [] = "btn-block";
         if ($this->isOutline == true)       $class [] = "btn-outline";
-        
         
         $buttonAttrs = array ();
         if (!empty($this->title))               $buttonAttrs ['title']      = $this->title;
@@ -96,7 +98,7 @@ class Button extends Typography
         if (!empty($this->badge) && $this->badge->getAlign() == "right") {
             $this->setInnerElements($this->badge);
         }
-        
+
         parent::render();
         
 //         $this->jQuery .= $jQuery;
@@ -258,6 +260,24 @@ class Button extends Typography
         $this->isReset = $isReset;
         return $this;
     }
+    
+    /**
+     * @return the $isLink
+     */
+    public function getIsLink()
+    {
+        return $this->isLink;
+    }
+
+    /**
+     * @param Ambigous <boolean, \model\bootstrap\basic\Icon> $isLink
+     */
+    public function setIsLink($isLink = true)
+    {
+        $this->isLink = $isLink;
+        return $this;
+    }
+
     
     
 }

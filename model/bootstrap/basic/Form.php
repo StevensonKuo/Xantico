@@ -15,6 +15,7 @@ class Form extends Typography
     protected $formType; // string
     protected $labelRatio; // array ();
     protected $formAction; // array
+    protected $isDisabled; // boolean
 
     private static $formTypeArr = array ("inline", "form-inline", "form-horizontal", "horizontal", "navbar", "navbar-form", "fieldset", "");
     /**
@@ -34,9 +35,15 @@ class Form extends Typography
         $this->role             = isset($vars['role']) ? $vars['role'] : "form";
         $this->action           = isset($vars['action']) ? $vars['action'] : null;
         $this->labelRatio       = isset($vars['labelRatio']) ? $vars ['labelRatio'] : null; // 字寬３欄寬９
-        $this->formAction       = array ();
+        $this->formAction       = isset ($vars['formAction']) ? $vars['formAction'] : array ();
+        $this->isDisabled       = isset ($vars ['isDisabled']) ? $vars ['isDisabled'] : false;
     }
     
+    /**
+     * @desc decorated input dependiing on form type.
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::render()
+     */
     public function render($display = false) {
         
         if ($this->formType == "inline") {
@@ -61,18 +68,24 @@ class Form extends Typography
             $newElements = array ();
             foreach ($this->innerElements as $ele) {
                 if (empty($ele)) continue; // pass 空物件.
-                if ($ele instanceof Input) {
+                if ($ele instanceof Input || $ele instanceof InputGroup || $ele instanceof Button) {
                     $formGroup = new Typography("div:form-group");
                     switch ($this->formType) {
                         case "form-horizontal":
                             $formGroup->setCustomClass("row");
                             if (empty($this->labelRatio)) $this->labelRatio = !empty($ele->getLabelRatio()) ? $ele->getLabelRatio() : array (3, 9);
-                            if (!empty($ele->getCaption())) {
+                            if (method_exists($ele, "getCaption") && !empty($ele->getCaption())) {
                                 $_label = new Typography("label");
                                 if ($this->formType == "form-inline") $_label->setCustomClass("sr-only");
                                 $_label->setCustomClass("col-sm-" . $this->labelRatio [0]);
-                                $_label->setAttrs(array ("for" => $ele->getId()));
-                                if ($ele->getIsRequired()) {
+                                if ($ele instanceof InputGroup && empty($ele->getId())) { // search input when input group id is empty.
+                                    $res = $ele->search("input");
+                                    $_for = isset ($res [0]) ? $res [0]->getId() : "";
+                                } else {
+                                    $_for = $ele->getId();
+                                }
+                                $_label->setAttrs(array ("for" => $_for));
+                                if (method_exists($ele, "getIsRequired") && $ele->getIsRequired()) {
                                     $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
                                     $_label->setInnerElements($_requireIcon);
                                 }
@@ -83,7 +96,7 @@ class Form extends Typography
                                 $this->labelRatio [1] = $this->labelRatio [0] + $this->labelRatio [1];
                             }
                             
-                            if (!empty($ele->getHelp())) {
+                            if (method_exists($ele, "getHelp") && !empty($ele->getHelp())) {
                                 $_help = new HtmlTag("small");
                                 $_help->setCustomClass(array ("form-text", "text-muted"))
                                 ->setText($ele->getHelp());
@@ -118,11 +131,17 @@ class Form extends Typography
                         case "navbar-form":
                             // @todo anything special for a navbar-form
                         case "form-inline": // enclose by form-group
-                            if (!empty($ele->getCaption())) {
+                            if (method_exists($ele, "getCaption") && !empty($ele->getCaption())) {
                                 $_label = new Typography("label");
                                 if ($this->formType == "form-inline") $_label->setCustomClass("sr-only");
-                                $_label->setAttrs(array ("for" => $ele->getId()));
-                                if ($ele->getIsRequired()) {
+                                if ($ele instanceof InputGroup && empty($ele->getId())) { // search input when input group id is empty.
+                                    $res = $ele->search("input");
+                                    $_for = isset ($res [0]) ? $res [0]->getId() : "";
+                                } else {
+                                    $_for = $ele->getId();
+                                }
+                                $_label->setAttrs(array ("for" => $_for));
+                                if (method_exists($ele, "getIsRequired") && $ele->getIsRequired()) {
                                     $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
                                     $_label->setInnerElements($_requireIcon);
                                 }
@@ -132,7 +151,7 @@ class Form extends Typography
                             }
                             
                             $formGroup->setInnerElements($ele);
-                            if (!empty($ele->getHelp())) {
+                            if (method_exists($ele, "getHelp") && !empty($ele->getHelp())) {
                                 $_help = new HtmlTag("small");
                                 $_help->setCustomClass(array ("form-text", "text-muted"))
                                 ->setText($ele->getHelp());
@@ -143,6 +162,15 @@ class Form extends Typography
                     
                     $newElements [] = $formGroup;
                 } else { // regular elements.
+                    // form row
+                    if ($ele instanceof Row) {
+                        if ($this->formType == "form-inline") {
+                            $ele->setForForm("inline");
+                        } else {
+                            $ele->setForForm(true);
+                        }
+                    }
+                    
                     $newElements [] = $ele; 
                 }
             }
@@ -156,6 +184,13 @@ class Form extends Typography
                     $this->setInnerElements($this->formAction);
                     break;
             }
+        }
+        
+        // By default, browsers will treat all native form controls (<input>, <select> and <button> elements) inside a <fieldset disabled> as disabled
+        if ($this->isDisabled == true) {
+            $disabledField = new HtmlTag("fieldset", array ("disabled" => "disabled"));
+            $disabledField->setInnerElements($this->innerElements);
+            $this->innerElements = array ($disabledField);  
         }
         
         parent::render();
@@ -293,6 +328,24 @@ class Form extends Typography
         
         return $this;
     }
+    
+    /**
+     * @return the $isDisabled
+     */
+    public function getIsDisabled()
+    {
+        return $this->isDisabled;
+    }
+
+    /**
+     * @param field_type $isDisabled
+     */
+    public function setIsDisabled($isDisabled = true)
+    {
+        $this->isDisabled = (boolean)$isDisabled;
+        return $this;
+    }
+
     
     
 }

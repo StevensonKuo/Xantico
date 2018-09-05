@@ -69,7 +69,7 @@ class Panel extends Typography
      */
     public function setBodyContents($bodyContents = array())
     {
-        $this->setInnerElements($bodyContents);   
+        $this->setInnerElements($bodyContents);
         return $this;
     }
     

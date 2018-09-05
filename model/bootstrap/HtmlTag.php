@@ -1,6 +1,8 @@
 <?php
 namespace model\bootstrap;
 
+use model\bootstrap\basic\Typography;
+
 class HtmlTag implements iCaption 
 {
     protected $innerText;    // string
@@ -13,6 +15,24 @@ class HtmlTag implements iCaption
 
     private static $errMsg;
     private $tagName;    // string
+    private static $unclosedTagsArr = array (
+        "area",
+        "base",
+        "br",
+        "col",
+        "command",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "keygen",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr"
+    );
     
     static private $indentlevel = 0; // ing, for text indent.
     
@@ -105,7 +125,11 @@ class HtmlTag implements iCaption
             }
             $html .= str_repeat("\t", --self::$indentlevel) . "</{$this->tagName}>";
         } else {
-            $html .= "/>";
+            if (!in_array ($this->tagName, self::$unclosedTagsArr)) {
+                $html .= "></{$this->tagName}>";
+            } else {
+                $html .= "/>";
+            }
         }
         
         $this->html = $html;
@@ -303,6 +327,7 @@ class HtmlTag implements iCaption
      */
     public function setInnerElements($innerElements = array ())
     {
+        // @todo need to get refered obj, to see how to pass by multiple arguments.
         if (empty($innerElements)) return $this;
         $numargs = func_num_args();
         if ($numargs >= 2) {
@@ -487,6 +512,5 @@ class HtmlTag implements iCaption
         }
     }
     
-
 }
 

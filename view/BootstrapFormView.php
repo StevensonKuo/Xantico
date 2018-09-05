@@ -27,9 +27,11 @@ use model\bootstrap\basic\Input;
 use model\bootstrap\basic\Select;
 use model\bootstrap\basic\Textarea;
 use model\bootstrap\basic\PageHeader;
-use model\bootstrap\basic\FormRow;
-use model\bootstrap\basic\FGrid;
+use model\bootstrap\basic\Row;
+use model\bootstrap\basic\Grid;
 use model\bootstrap\basic\Button;
+use model\bootstrap\basic\Well;
+use model\bootstrap\basic\InputGroup;
 
 /**
  * 
@@ -237,16 +239,18 @@ class BootstrapFormView
         $inputFirstName->setPlaceholder("First name");
         $inputLastName = new Input();
         $inputLastName->setPlaceholder("Last name");
-        $formRow = new FormRow();
-        $formRow->setItems(array ($inputFirstName, $inputLastName));
+        $formRow = new Row();
+        $formRow->setRowGrids(array ($inputFirstName, $inputLastName));
         $form12->setInnerElements($formRow);
+        $form12Well = new Well ();
+        $form12Well->setInnerElements($form12);
         
         // a complex example
         $form13 = new Form();
         $inputEmail3 = new Input("email", array ("caption" => "Email"), array ("id" => "inputEmail4", "placeholder" => "Email"));
         $inputPwd3 = new Input("password", array ("caption" => "Password"), array ("id" => "inputPassword4", "placeholder" => "Password", ));
-        $formRow2 = new FormRow();
-        $formRow2->setItems(array ($inputEmail3, $inputPwd3));
+        $formRow2 = new Row();
+        $formRow2->setRowGrids(array ($inputEmail3, $inputPwd3));
         $inputAddress = new Input();
         $inputAddress->setCaption("Address")
         ->setPlaceholder("1234 Main St")
@@ -266,11 +270,11 @@ class BootstrapFormView
         $inputZip = new Input();
         $inputZip->setCaption("Zip")
         ->setId("inputZip");
-        $formRow3 = new FormRow();
-        $formRow3->setItems(array (
+        $formRow3 = new Row();
+        $formRow3->setRowGrids(array (
             array ("input" => $inputCity, "width" => 6),
             array ("input" => $selectState, "width" => 4),
-            new FGrid($inputZip, 2)
+            new Grid($inputZip, 2)
         ));
         $check2 = new Input("checkbox");
         $check2->setOptions(array ("Check me out"))
@@ -281,7 +285,118 @@ class BootstrapFormView
         ->setColorSet("primary")
         ->setText("Sign in");
         $form13->setFormAction($btnSignin);
+        $form13Well = new Well();
+        $form13Well->setInnerElements($form13);
         
+        // forizontal form
+        $form14 = new Form ();
+        $form14->setFormType("horizontal");
+        $inputEmail4 = new Input("email");
+        $inputEmail4->setCaption("Email")
+        ->setPlaceholder("Email")
+        ->setId("inputEmail3");
+        $inputPwd4 = new Input("password");
+        $inputPwd4->setCaption("Password")
+        ->setPlaceholder("Password")
+        ->setId("inputPassword3");
+        $radio2 = new Input("radio");
+        $radio2->setOptions(array("First radio", "Second radio", "Thrid disabled radio"))
+        ->setCaption("Radios")
+        ->setName("gridRadios")
+        ->setDisabledOption(array (2));
+        $check3 = new Input("checkbox");
+        $check3->setCaption("Checkbox")
+        ->setOptions(array("Example checkbox"));
+        $form14->setInnerElements(array ($inputEmail4, $inputPwd4, $radio2, $check3))
+        ->setFormAction(clone $btnSignin)
+        ->setLabelRatio("2:10");
+        $form14Well = new Well();
+        $form14Well->setInnerElements($form14);
+        
+        // inline form with grid
+        $form15 = new Form();
+        $inputName = new Input();
+        $inputName->setPlaceholder("Jone Doe")
+        ->setCaption("Name")
+        ->setId("inlineFormInput");
+        $inputUser = new Input();
+        $inputUser->setId("inlineFormInputGroup")
+        ->setPlaceHolder ("Username");
+        $inputUserGrp = new InputGroup();
+        $inputUserGrp->setLeftAddon("@")
+        ->setCaption("Username")
+        ->setInnerElements($inputUser);
+        $check4 = new Input("checkbox");
+        $check4-> setOptions(array ("Remember me"));
+        $btn = new Button();
+        $btn->setIsSubmit()->setText("Submit")->setColorSet("primary");
+        $formRow4 = new Row();
+        $formRow4->setRowGrids(array(
+            new Grid($inputName, 4),
+            new Grid($inputUserGrp, 4),
+            new Grid($check4, 2),
+            new Grid($btn, 2) 
+        ))
+        ->setCustomClass("align-items-center");
+        $form15->setInnerElements(array ($formRow4));
+        $form15Well = new Well();
+        $form15Well->setInnerElements($form15);
+        
+        // direct set form to inline
+        $form16 = new Form();
+        $form16->setInnerElements(array (clone $inputName, clone $inputUserGrp, clone $check4))
+        ->setFormType("inline")
+        ->setFormAction(clone $btn);
+        $form16Well = new Well();
+        $form16Well-> setInnerElements($form16);
+        
+        // inline form with select, this one failed, but you can insert the checkbox and button into a row before.
+        $form17 = new Form();
+        $select = new Select();
+        $select->setCaption("Preference")
+        ->setOptions(array ("Choose...", "One", "Two", "Three"))
+        ->setId("inlineFormCustomSelectPref");
+        $check5 = new Input("checkbox");
+        $check5->setOptions(array ("Remember my preference"))
+        ->setId("customControlInline");
+        $form17Well = $form17->setInnerElements(array ($select, $check5))
+        ->setFormAction()
+        ->setFormType("inline")
+        ->enclose(new Well());
+        
+        // Help text
+        $pageHeader4 = new PageHeader("Help text");
+        $form18 = new Form();
+        $inputPwd5 = new Input("password");
+        $inputPwd5->setCaption("Password")
+        ->setId("inputPassword5")
+        ->setHelp("Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.");
+        $form18Well = $form18->setInnerElements($inputPwd5)->enclose(new Well());
+        
+        $inputPwd6 = new Input("password");
+        $well19 = $inputPwd6->setHelp("Must be 8-20 characters long.")
+        ->setId("inputPassword6")
+        ->setCaption("inputPassword6")
+        ->enclose(new Form())->setFormType("inline")->enclose(new Well);
+        
+        // disabled forms
+        $pageHeader5 = new PageHeader("Disabled forms");
+        $form20 = new Form();
+        $inputDisabled = new Input();
+        $inputDisabled->setCaption("Disabled input")
+        ->setPlaceholder("Disabled input")
+        ->setId("disabledTextInput");
+        $selectDisabled = new Select();
+        $selectDisabled->setCaption("Disabled select menu")
+        ->setOptions(array ("Disabled select"))
+        ->setId("disabledSelect");
+        $checkDisabled = new Input("checkbox");
+        $checkDisabled->setOptions(array ("Can't check this"))
+        ->setId("disabledFieldsetCheck");
+        $fieldset20 = $form20->setFormAction()
+        ->setIsDisabled()
+        ->setInnerElements(array ($inputDisabled, $selectDisabled, $checkDisabled))
+        ->enclose(new Well());
         
         
         // container
@@ -301,8 +416,18 @@ class BootstrapFormView
             $form10,
             $pageHeader3,
             $form11,
-            $form12,
-            $form13
+            $form12Well,
+            $form13Well,
+            $form14Well,
+            new Typography("h2", array ("text" => "Inline forms")),
+            $form15Well,
+            $form16Well, 
+            $form17Well,
+            $pageHeader4, 
+            $form18Well,
+            $well19,
+            $pageHeader5, 
+            $fieldset20 
         ))
         ->setCaption("Example textarea")
         ->setCustomClass("theme-showcase");

@@ -19,7 +19,6 @@ class Input extends Typography implements iRequiredInput {
     protected $disabledOption = array (); // array|int|string for radio and checkbox.
     protected $isStacked; // boolean, for radios and checkboxes.
     protected $isMultiple; // boolean, for select
-    
     protected $isRequired;
     protected $validation;
     
@@ -95,6 +94,7 @@ class Input extends Typography implements iRequiredInput {
                 $_attrs = $this->attrs;
                 $_attrs ["type"] = $this->inputType;
                 if (!empty($this->placeholder)) $_attrs ["placeholder"] = $this->placeholder;
+                if (!empty($this->name)) $_attrs ["name"] = $this->name;
                 if (!empty($this->defaultValue)) $_attrs ['value'] = $this->defaultValue;
 //                 if (!empty($this->size)) $_class [] = "form-control-" . $this->size; // bs 4.0
                 if ($this->isDisabled == true) $_attrs ["disabled"] = "disabled";
@@ -219,7 +219,7 @@ class Input extends Typography implements iRequiredInput {
                             $this->defaultValue = $this->defaultValue . "";
                             if (strlen($this->defaultValue) > 0) $this->attrs ['value'] = $this->defaultValue;
                             if (!empty($this->name)) $this->attrs ['name'] = $this->name;
-                            $this->customClass [] = "form-input-check";
+                            $this->customClass [] = "form-check-input";
                         }
                     break;
                     case "button":
@@ -449,7 +449,7 @@ class Input extends Typography implements iRequiredInput {
      *
      * @param string $message
      */
-    public function setRequired ($message = "", $isRequired = true) {
+    public function setIsRequired ($message = "", $isRequired = true) {
         $this->isRequired = $isRequired;
         $this->validation ['required'] = $isRequired;
         $this->validation ['requiredMessage'] = $message ? $message : "請填寫 " . $this->getCaption();
@@ -631,6 +631,7 @@ class Input extends Typography implements iRequiredInput {
         $this->isMultiple = $isMultiple;
         return $this;
     }
+
     /**
      * @return the $help
      */
@@ -664,8 +665,15 @@ class Input extends Typography implements iRequiredInput {
         $this->isStatic = $isStatic;
         return $this;
     }
-
-
+    
+    /**
+     * @param Ambigous <multitype:, array> $validation
+     */
+    public function setValidation($validation)
+    {
+        $this->validation = $validation;
+        return $this;
+    }
 }
 
 class Option {

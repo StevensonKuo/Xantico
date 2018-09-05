@@ -18,6 +18,7 @@ class Badge extends Typography
         
         $this->type     = "badge";
         $this->text     = !empty($text) ? $text : "badge";
+        $this->align    = "right"; // default alignment is in right.
     }
     
     /**

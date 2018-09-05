@@ -18,7 +18,7 @@ class Typography extends \model\bootstrap\HtmlTag
     protected $items; // array 
     protected $textClass; // array 
     protected $jQuery; // string
-    protected $grids; // int or array(), Bootstrap Grids System
+    protected $grid; // int or array(), Bootstrap Grids System
     protected $mode; // for one more type/mode to switch what you want.
     
     private static $instanceCounter = 0; // int
@@ -64,7 +64,7 @@ class Typography extends \model\bootstrap\HtmlTag
         $this->border       = isset($vars ['border']) ? $vars ['border'] : 0;
         $this->items        = isset($vars['items']) ? (is_array($vars ['items']) ? $vars ['items'] : array ($vars ['items'])) : array ();
         $this->textClass    = isset($vars['textClass']) ? (is_array($vars ['textClass']) ? $vars ['textClass'] : array ($vars ['textClass'])) : array ();
-        $this->grids        = isset($vars ['grids']) ? $vars ['grids'] : null;
+        $this->grid         = isset($vars ['grid']) ? $vars ['grid'] : null;
         $this->mode         = isset($vars ['mode']) ? $vars ['mode'] : null;
     }
     
@@ -96,11 +96,11 @@ class Typography extends \model\bootstrap\HtmlTag
         if (!empty($this->id)) $this->setAttrs(array ("id" => $this->id)); // 合併 id attr
         $this->innerText = isset($this->text) && !empty($this->text) ? $this->text : $this->innerText;
         
-        if (!empty($this->grids)) { // handle grids system.
-            if (is_array($this->grids)) {
+        if (!empty($this->grid)) { // handle grids system.
+            if (is_array($this->grid)) {
                 try {
-                    if (!empty($this->grids)) {
-                        foreach ($this->grids as $grid) {
+                    if (!empty($this->grid)) {
+                        foreach ($this->grid as $grid) {
                             $this->setCustomClass("col-" . $grid [0] . "-" . $grid [1]);
                         }
                     } else {
@@ -110,7 +110,7 @@ class Typography extends \model\bootstrap\HtmlTag
                     $this->errMsg = "Tag [{$this->tagName}] occurs error in operating grids: " . $e->getMessage();
                 }
             } else {
-                $this->setCustomClass("col-md-" . $this->grids);
+                $this->setCustomClass("col-md-" . $this->grid);
             }
         }
         
@@ -452,19 +452,19 @@ class Typography extends \model\bootstrap\HtmlTag
         return Typography::$instanceCounter;
     }
     /**
-     * @return the $grids
+     * @return the $grid
      */
-    public function getGrids()
+    public function getGrid()
     {
-        return $this->grids;
+        return $this->grid;
     }
 
     /**
-     * @param Ambigous <NULL, array> $grids
+     * @param Ambigous <NULL, array> $grid
      */
-    public function setGrids($grids)
+    public function setGrid($grid)
     {
-        $this->grids = $grids;
+        $this->grid = $grid;
         return $this;
     }
 
@@ -509,6 +509,57 @@ class Typography extends \model\bootstrap\HtmlTag
         return $this;
     }
 
+    /**
+     * @desc a search method like DOM does.
+     * @param unknown $keyword
+     * @return \model\bootstrap\HtmlTag[]|\model\bootstrap\basic\Typography[]|array[]|array[][]|unknown[][]|array[][][]|\model\bootstrap\HtmlTag|\model\bootstrap\basic\Typography|array|array[]|unknown[]|array[][]|NULL
+     */
+    public function search ($keyword) {
+        $results = array ();
+        if (!empty($this->innerElements)) {
+            foreach ($this->innerElements as &$ele) {
+                if ($ele instanceof HtmlTag) {
+                    if (preg_match("/^[.]/", $keyword)) {
+                        foreach ($this->customClass as $cls) {
+                            if (preg_match("/$keyword/i", $cls)) {
+                                $results [] = $ele;
+                            }
+                        }
+                    } else if (preg_match("/^#/", $keyword)) {
+                        if ($ele instanceof Typography) {
+                            if (preg_match("/$keyword/i", $ele->id)) {
+                                $results = $ele;
+                                break;
+                            }
+                        } else {
+                            foreach ($this->attrs as $key => $attr) {
+                                if ($key == "id" && preg_match("/$keyword/i", $attr)) {
+                                    $results [] = $ele;
+                                }
+                            }
+                        }
+                    } else if (preg_match("/$keyword/i", $ele->getTagName())) {
+                        $results [] = $ele;
+                    }
+                }
+            }
+        }
+        
+        if (!empty($results)) {
+            return $results;
+        } else {
+            return null;
+        }
+    }
     
+    /**
+     * @desc remember this will return the outer.
+     * @param HtmlTag $outer
+     * @return \model\bootstrap\HtmlTag
+     */
+    public function enclose (HtmlTag $outer) {
+        $outer->setInnerElements($this);
+        return $outer;
+    }
 }
 

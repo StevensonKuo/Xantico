@@ -1,6 +1,9 @@
 <?php
 namespace controller;
 
+require 'view/BootstrapView.php';
+require 'view/BootstrapFormView.php';
+
 use view\BootstrapView;
 use view\BootstrapFormView;
 

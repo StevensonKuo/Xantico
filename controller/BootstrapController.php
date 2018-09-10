@@ -2,21 +2,19 @@
 namespace controller;
 
 require 'view/BootstrapView.php';
-require 'view/BootstrapFormView.php';
 
 use view\BootstrapView;
-use view\BootstrapFormView;
 
 class BootstrapController {
     
     public function main () {
-        $page = isset($_REQUEST ['page']) ? $_REQUEST ['page'] : "";
-        if (strtolower($page) == "form") {
-            $view = new BootstrapFormView();
-        } else {
-            $view = new BootstrapView();
-        }
+        $page = isset($_REQUEST ['page']) ? strtolower($_REQUEST ['page']) : "default";
+        $view = new BootstrapView();
 
-        $view->fetchView();
+        if (method_exists($view, $page."View")) {
+            $view->{$page."View"}();
+        } else {
+            throw \Exception("View not found.");
+        }
     }
 }

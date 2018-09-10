@@ -4,6 +4,7 @@ namespace model\bootstrap\basic;
 use model\bootstrap\basic\Typography;
 use model\bootstrap\HtmlTag;
 use model\bootstrap\iCaption;
+use model\bootstrap\Xantico;
 
 class Form extends Typography
 {
@@ -16,8 +17,11 @@ class Form extends Typography
     protected $labelRatio; // array ();
     protected $formAction; // array
     protected $isDisabled; // boolean
-
+    protected $requireIcon; // Icon
+    
     private static $formTypeArr = array ("inline", "form-inline", "form-horizontal", "horizontal", "navbar", "navbar-form", "fieldset", "");
+    
+    public static $REQUIRED_HELP_PREFIX;
     /**
      * @desc 建構子
      * @param string $formType
@@ -37,6 +41,7 @@ class Form extends Typography
         $this->labelRatio       = isset($vars['labelRatio']) ? $vars ['labelRatio'] : null; // 字寬３欄寬９
         $this->formAction       = isset ($vars['formAction']) ? $vars['formAction'] : array ();
         $this->isDisabled       = isset ($vars ['isDisabled']) ? $vars ['isDisabled'] : false;
+        $this->requireIcon      = isset ($vars ['requireIcon']) && $vars ['requireIcon'] instanceof Icon ? $vars ['requireIcon'] : new Icon("asterisk", array ("textColorSet" => "danger"));
     }
     
     /**
@@ -45,14 +50,11 @@ class Form extends Typography
      * @see \model\bootstrap\basic\Typography::render()
      */
     public function render($display = false) {
-        
-        if ($this->formType == "inline") {
-            $this->formType = "form-inline";
-        } else if ($this->formType == "horizontal") {
-            $this->formType = "form-horizontal";
-        } else if ($this->formType == "navbar") {
-            $this->formType = "navbar-form";
+        if (Input::$AUTO_NAMING == true AND empty($this->name)) { // auto naming.
+            if (empty($this->id)) $this->setId();
+            $this->name = $this->id;
         }
+        
         $_class = $this->customClass;
         if (!empty($this->formType)) $_class [] = $this->formType;
         $_attrs = array ();
@@ -71,56 +73,67 @@ class Form extends Typography
                 if ($ele instanceof Input || $ele instanceof InputGroup || $ele instanceof Button) {
                     $formGroup = new Typography("div:form-group");
                     switch ($this->formType) {
+                        case "horizontal":
                         case "form-horizontal":
                             $formGroup->setCustomClass("row");
-                            if (empty($this->labelRatio)) $this->labelRatio = !empty($ele->getLabelRatio()) ? $ele->getLabelRatio() : array (3, 9);
+                            if (empty($this->labelRatio)) {
+                                $_labelRatio = !empty($ele->getLabelRatio()) ? $ele->getLabelRatio() : array (3, 9);
+                            } else {
+                                $_labelRatio = $this->labelRatio;
+                            }
                             if (method_exists($ele, "getCaption") && !empty($ele->getCaption())) {
                                 $_label = new Typography("label");
                                 if ($this->formType == "form-inline") $_label->setCustomClass("sr-only");
-                                $_label->setCustomClass("col-sm-" . $this->labelRatio [0]);
+                                $_label->setCustomClass("col-sm-" . $_labelRatio [0]);
                                 if ($ele instanceof InputGroup && empty($ele->getId())) { // search input when input group id is empty.
                                     $res = $ele->search("input");
                                     $_for = isset ($res [0]) ? $res [0]->getId() : "";
                                 } else {
                                     $_for = $ele->getId();
                                 }
+                                
                                 $_label->setAttrs(array ("for" => $_for));
-                                if (method_exists($ele, "getIsRequired") && $ele->getIsRequired()) {
-                                    $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
-                                    $_label->setInnerElements($_requireIcon);
+
+                                if (method_exists($ele, "getIsRequired") && $ele->getIsRequired() && !empty($this->requireIcon)) {
+                                    $_label->setInnerElements(array($this->requireIcon, $ele->getCaption()));
+                                } else {
+                                    $_label->setInnerText($ele->getCaption());
                                 }
-                                $_label->setInnerText($ele->getCaption());
                                 
                                 $formGroup->setInnerElements($_label);
                             } else {
-                                $this->labelRatio [1] = $this->labelRatio [0] + $this->labelRatio [1];
+                                $_labelRatio [1] = $_labelRatio [0] + $_labelRatio [1];
                             }
                             
                             if (method_exists($ele, "getHelp") && !empty($ele->getHelp())) {
-                                $_help = new HtmlTag("small");
-                                $_help->setCustomClass(array ("form-text", "text-muted"))
-                                ->setText($ele->getHelp());
+                                if (is_string($ele->getHelp())) {
+                                    $_help = new HtmlTag("small");
+                                    $_help->setCustomClass(array ("form-text", "text-muted"))
+                                    ->setText($ele->getHelp());
+                                } else {
+                                    $_help = $ele->getHelp();
+                                }
                             }
                             
                             // input 比格子短小的情況
-                            if (!isset($this->labelRatio [2]) && $this->labelRatio [0] + $this->labelRatio [1] != 12) {
-                                $this->labelRatio [2] = $this->labelRatio [1];
-                                $this->labelRatio [1] = 12 - $this->labelRatio [0];
+                            if (!isset($_labelRatio [2]) && $_labelRatio [0] + $_labelRatio [1] < 12) {
+                                $_labelRatio [2] = $_labelRatio [1];
+                                $_labelRatio [1] = 12 - $_labelRatio [0];
                                 
-                                $divPartial1 = new Typography("div:col-sm-" . $this->labelRatio [1]);
+                                $divPartial1 = new Typography("div:col-sm-" . $_labelRatio [1]);
                                 $divPartial2 = new Typography("div:row");
-                                $divPartial3 = new Typography("div:col-sm-" . $this->labelRatio [2]);
+                                $divPartial3 = new Typography("div:col-sm-" . $_labelRatio [2]);
                                 $divPartial3->setInnerElements($ele);
                                 $divPartial2->setInnerElements($divPartial3);
-                                if ($_help) {
-                                    $divPartial4 = new Typography("div:col-sm-" . ($this->labelRatio [1] - $this->labelRatio [2]));
+                                if (isset($_help)) {
+                                    $divPartial4 = new Typography("div:col-sm-" . ($_labelRatio [1] - $_labelRatio [2]));
                                     $divPartial4->setInnerElements($_help);
                                     $divPartial2->setInnerElements($divPartial4);
                                 }
                                 $divPartial1->setInnerElements($divPartial2);
                                 $formGroup->setInnerElements($divPartial1);
                             } else {
-                                $eleDiv = new Typography("div:col-sm-" . $this->labelRatio [1]);
+                                $eleDiv = new Typography("div:col-sm-" . $_labelRatio [1]);
                                 $eleDiv->setInnerElements(array ($ele));
                                 if (isset($_help)) $eleDiv->setInnerElements($_help);
                                 $formGroup->setInnerElements(array ($eleDiv));
@@ -128,8 +141,10 @@ class Form extends Typography
                             
                             break;
                         default: // form type == ""
+                        case "navbar":
                         case "navbar-form":
                             // @todo anything special for a navbar-form
+                        case "inline":
                         case "form-inline": // enclose by form-group
                             if (method_exists($ele, "getCaption") && !empty($ele->getCaption())) {
                                 $_label = new Typography("label");
@@ -145,16 +160,20 @@ class Form extends Typography
                                     $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
                                     $_label->setInnerElements($_requireIcon);
                                 }
-                                $_label->setInnerText($ele->getCaption());
+                                $_label->setText($ele->getCaption());
                                 
                                 $formGroup->setInnerElements($_label);
                             }
                             
                             $formGroup->setInnerElements($ele);
                             if (method_exists($ele, "getHelp") && !empty($ele->getHelp())) {
-                                $_help = new HtmlTag("small");
-                                $_help->setCustomClass(array ("form-text", "text-muted"))
-                                ->setText($ele->getHelp());
+                                if (is_string($ele->getHelp())) {
+                                    $_help = new HtmlTag("small");
+                                    $_help->setCustomClass(array ("form-text", "text-muted"))
+                                    ->setText($ele->getHelp());
+                                } else {
+                                    $_help = $ele->getHelp();
+                                }
                                 $formGroup->setInnerElements($_help);
                             }
                             break;
@@ -164,19 +183,16 @@ class Form extends Typography
                 } else { // regular elements.
                     // form row
                     if ($ele instanceof Row) {
-                        if ($this->formType == "form-inline") {
-                            $ele->setForForm("inline");
-                        } else {
-                            $ele->setForForm(true);
-                        }
+                        $ele->setForForm($this->formType);
+                        $ele->setRequireIcon($this->requireIcon);
                     }
                     
                     $newElements [] = $ele; 
                 }
-            }
+                
+            } // end of foreach innerElements
             $this->innerElements = $newElements;
         } // end if !empty inner elements.
-        
         
         if ($this->formAction) {
             switch ($this->formType) {
@@ -192,8 +208,33 @@ class Form extends Typography
             $disabledField->setInnerElements($this->innerElements);
             $this->innerElements = array ($disabledField);  
         }
-        
+
         parent::render();
+        
+        if (Input::$FORM_VALIDATION_METHOD == "jquery") {
+            // search at this time when all inputs been put inside of innerElements
+            $inputs = $this->search("input");
+            $selects = $this->search("select");
+            $textareas = $this->search("textarea");
+            $inputs = array_merge(array_merge($inputs, $selects), $textareas);
+            if (!empty($inputs)) {
+                $_validation = array ();
+                foreach ($inputs as $inpt) {
+                    if (method_exists($inpt, "getIsRequired")
+                        && method_exists($inpt, "getValidation")
+                        && $inpt->getIsRequired() == true) {
+                            if (method_exists($inpt, "getName") && !empty($inpt->getName ())) {
+                                $_validation [$inpt->getName()] = $inpt->getValidation ();
+                            } else {
+                                self::setErrMsg("[Notice] Required input needs a name. Passed. (Note: You could choice to enable auto-naming in class Input.)");
+                            }
+                        }
+                }
+                // add to jQuery.
+                $this->generateValidationRulesScript($_validation);
+                Xantico::$formValidationOn = true;
+            }
+        }
         
         if ($display == true) {
             echo $this->html;
@@ -241,7 +282,19 @@ class Form extends Typography
      */
     public function setFormType($formType = "")
     {
+        if (!in_array($formType, self::$formTypeArr)) {
+            self::setErrMsg("[Notice] Wrong from type going to be set.");
+            return $this;
+        }
         $this->formType = $formType;
+        if ($this->formType == "inline") {
+            $this->formType = "form-inline";
+        } else if ($this->formType == "horizontal") {
+            $this->formType = "form-horizontal";
+        } else if ($this->formType == "navbar") {
+            $this->formType = "navbar-form";
+        }
+        
         return $this;
     }
     
@@ -306,7 +359,7 @@ class Form extends Typography
     }
 
     /**
-     * @desc 用在 horizontal 的表單裡，label 和 input 框的比例用
+     * @desc getter of the ratio of labels and inputs.
      * @param Ambigous <unknown, multitype:number > $labelRatio
      */
     public function getLabelRatio()
@@ -315,7 +368,7 @@ class Form extends Typography
     }
     
     /**
-     * @desc 用在 horizontal 的表單裡，label 和 input 框的比例用
+     * @desc For form-horizontal, the ratio of labels and inputs.
      * @param Ambigous <unknown, multitype:number > $labelRatio
      */
     public function setLabelRatio($labelRatio)
@@ -346,6 +399,68 @@ class Form extends Typography
         return $this;
     }
 
+    /**
+     * @desc build form validation script (json). Have to note it uses input's name to recognize, not id.
+     * @param unknown $validation
+     * @return string
+     */
+    private function generateValidationRulesScript($validation) 
+    {
+        if (!empty($validation)) {
+            $validationRules = array ();
+            foreach ($validation as $name => $value) {
+                $validationRules ['rules'][$name]['required'] = true;
+                $validationRules ['messages'][$name]['required'] = self::$REQUIRED_HELP_PREFIX . isset($value ['requiredMessage']) ? $value ['requiredMessage'] : "";
+                if (isset($value ['maxlength'])) {
+                    $validationRules ['rules'][$name]['maxlength'] = $value ['maxlength'];
+                    $validationRules ['messages'][$name]['maxlength'] = self::$REQUIRED_HELP_PREFIX . $value ['maxlengthMessage'];
+                }
+                if (isset($value ['minlength'])) {
+                    $validationRules ['rules'][$name]['minlength'] = $value ['minlength'];
+                    $validationRules ['messages'][$name]['minlength'] = self::$REQUIRED_HELP_PREFIX . $value ['minlengthMessage'];
+                }
+                if (isset($value ['equalTo'])) {
+                    $validationRules ['rules'][$name]['equalTo'] = $value ['equalTo'];
+                    $validationRules ['messages'][$name]['equalTo'] = self::$REQUIRED_HELP_PREFIX . $value ['equalToMessage'];
+                }
+                if (isset($value ['email'])) {
+                    $validationRules ['rules'][$name]['email'] = true;
+                    $validationRules ['messages'][$name]['email'] = "．" . $value ['emailMessage'];
+                }
+            }
+            
+            if (!empty($this->id)) {
+                $this->jQuery .= "\$(\"#{$this->id}\").validate(" . json_encode($validationRules) . ")";
+            } else if (!empty($this->name)) {
+                $this->jQuery .= "\$(\"form[name={$this->name}]\").validate(" . json_encode($validationRules) . ")";
+            } else { // too late to set name automatic.
+                self::setErrMsg("[Warninng] You need a name for your fom to validate (setName() it).");
+            }
+            
+        }
+    }
+    
+    /**
+     * @return the $requireIcon
+     */
+    public function getRequireIcon()
+    {
+        return $this->requireIcon;
+    }
+    
+    /**
+     * @param \model\bootstrap\basic\Icon $requireIcon
+     */
+    public function setRequireIcon($requireIcon)
+    {
+        if ($requireIcon instanceof Icon) {
+            $this->requireIcon = $requireIcon;
+        } else {
+            $this->requireIcon = null;
+        }
+        
+        return $this;
+    }
     
     
 }

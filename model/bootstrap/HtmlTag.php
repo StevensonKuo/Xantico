@@ -6,6 +6,7 @@ use model\bootstrap\basic\Typography;
 class HtmlTag implements iCaption 
 {
     protected $innerText;    // string
+    protected $innerHtml; // string. quick html.
     protected $cdata; // string
     protected $innerElements; // array
     protected $customClass; // array 
@@ -59,14 +60,14 @@ class HtmlTag implements iCaption
      */
     public function render($display = false)
     {
-        // @todo 把所有的 innerElements 都掃過一遍, 然後外部 tag 做相對應變化
+        // @todo scan all innerElements, if you want to do any operation to those childs, add it here.
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as $ele) {
                 // dropdown issue, if this dropdown is not a button-group and it's type not in class yet.
                 if (method_exists($ele, "getType") && method_exists($ele, "getMode")) {
                     $_type = $ele->getType();
                     $_mode = $ele->getMode ();
-                    if (($_type == "dropdown" || $_type == "dropup") && $_mode != "btn-group" && !in_array($_type, $this->customClass)) {
+                    if (($_type == "dropdown" || $_type == "dropup") && $_mode != "button" && !in_array($_type, $this->customClass)) {
                         $this->customClass [] = $_type;
                     }
                 }
@@ -97,13 +98,34 @@ class HtmlTag implements iCaption
             }
         }
         
+        // if there are innerText and innerElements both exist at same time, append text as inner element.
+        if (!empty($this->innerHtml) && !empty($this->innerElements)) {
+            array_unshift($this->innerElements, trim($this->innerHtml));
+            $this->innerHtml = null;
+        }
+        if (!empty($this->innerText) && !empty($this->innerElements)) {
+            array_unshift($this->innerElements, $this->innerText);
+            $this->innerText = null;
+        }
+        
         if (!empty($this->innerText)) {
             try {
                 $html .= ">";
                 $html .= htmlspecialchars($this->innerText);
                 $html .= "</{$this->tagName}>";
             } catch (\Exception $e) {
-                self::$errMsg = "Something un-insertable. " . json_encode($this->innerText);
+                self::$errMsg = "[Warning] Something un-insertable: " . json_encode($this->innerText);
+            }
+        } else if (!empty($this->innerHtml)) {
+            try {
+                $html .= ">\n";
+                $htmlLines = explode("\t", $this->innerHtml);
+                foreach ($htmlLines as $ln) {
+                    $html .= str_repeat("\t", self::$indentlevel+1) . trim($ln);
+                }
+                $html .= "</{$this->tagName}>";
+            } catch (\Exception $e) {
+                self::$errMsg = "[Warning] Something un-insertable: " . json_encode($this->innerHtml);
             }
         } else if (!empty($this->cdata)) { 
             $html .= ">\n";
@@ -181,6 +203,15 @@ class HtmlTag implements iCaption
             $_items = array ();
             foreach ($this->items as &$it) {
                 if (is_object($it)) {
+                    // @todo still can't handle many 'must' field.
+                    $className = get_class($it);
+                    $_itObj = new \stdClass();
+                    eval("\$_itObj = new $className();");
+                    if (is_object($it->text)) {
+                        $_itObj->text = clone $it->text;
+                    } else {
+                        $_itObj->text = $it->text;
+                    }
                     $_items [] = clone $it;
                 } else {
                     $_items [] = $it;
@@ -188,6 +219,8 @@ class HtmlTag implements iCaption
             }
             $this->items = $_items;
         }
+        
+        $this->html = null; // reset render result;
     }
         
     /**
@@ -500,7 +533,7 @@ class HtmlTag implements iCaption
     }
 
     /**
-     * @desc 透過 index 取得單個 element. 
+     * @desc get inner element by index. 
      * @param unknown $index
      * @return unknown|NULL
      */
@@ -511,6 +544,35 @@ class HtmlTag implements iCaption
             return null;
         }
     }
+    
+    /**
+     * @desc set inner element by index.
+     * @param unknown $index
+     * @param unknown $ele
+     * @return \model\bootstrap\HtmlTag
+     */
+    public function setElement($index, $ele) {
+        $this->innerElements [$index] = $ele;
+        return $this;
+    }
+    
+    /**
+     * @return the $innerHtml
+     */
+    public function getInnerHtml()
+    {
+        return $this->innerHtml;
+    }
+
+    /**
+     * @param field_type $innerHtml
+     */
+    public function setInnerHtml($innerHtml)
+    {
+        $this->innerHtml = $innerHtml;
+        return $this;
+    }
+
     
 }
 

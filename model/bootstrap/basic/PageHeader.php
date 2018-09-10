@@ -22,7 +22,7 @@ class PageHeader extends Typography
     public function render($display = false) {
         $h1 = new HtmlTag("h1");
         $h1->setText($this->text);
-        unset ($this->text);
+        $this->text = "";
         
         $this->innerElements [] = $h1;
         

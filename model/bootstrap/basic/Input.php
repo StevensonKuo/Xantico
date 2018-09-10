@@ -30,6 +30,14 @@ class Input extends Typography implements iRequiredInput {
         "text", "email", "password", "hidden", "radio", "checkbox", "file",  
         "select", "button", "submit", "reset", "textarea", "number"
     );
+    private static $formValidationSourceArr = array (
+        "jquery", 
+        "browser" 
+    );
+    
+    public static $AUTO_NAMING = false;
+    public static $FORM_VALIDATION_METHOD = "jquery";
+    
     /**
      * 建構子
      * @param string $inputType
@@ -74,6 +82,10 @@ class Input extends Typography implements iRequiredInput {
     {
         $jQuery = "";
         if (!$this->caption) $this->caption = $this->text;
+        if (self::$AUTO_NAMING == true AND empty($this->name)) { // auto naming.
+            if (empty($this->id)) $this->setId();
+            $this->name = $this->id;
+        }
         
         switch ($this->inputType) {
             case "hidden":
@@ -96,6 +108,7 @@ class Input extends Typography implements iRequiredInput {
                 if (!empty($this->placeholder)) $_attrs ["placeholder"] = $this->placeholder;
                 if (!empty($this->name)) $_attrs ["name"] = $this->name;
                 if (!empty($this->defaultValue)) $_attrs ['value'] = $this->defaultValue;
+                if ($this->isRequired == true && self::$FORM_VALIDATION_METHOD == "browser") $_attrs ['required'] = "required"; 
 //                 if (!empty($this->size)) $_class [] = "form-control-" . $this->size; // bs 4.0
                 if ($this->isDisabled == true) $_attrs ["disabled"] = "disabled";
                 if ($this->isReadonly == true) $_attrs ["readonly"] = "readonly";
@@ -118,7 +131,8 @@ class Input extends Typography implements iRequiredInput {
             case "textarea":
                 $_class = $this->customClass;
                 $_attrs = $this->attrs;
-                if ($this->isStatic) {
+                if (false) {
+                // if ($this->isStatic) {
                     // @todo static output
                     // bootstrap 4.0 add form-control-plaintext to class. (and both readonly)
                 } else {
@@ -128,6 +142,7 @@ class Input extends Typography implements iRequiredInput {
                     if (!empty($this->isDisabled)) $_attrs ["disabled"] = "disabled";
                     if (!empty($this->isReadonly)) $_attrs ["readonly"] = "readonly";
                     if (!empty($this->size)) $_class [] = "form-control-" . $this->size;
+                    if ($this->isRequired == true && self::$FORM_VALIDATION_METHOD == "browser") $_attrs ['required'] = "required";
                 }
                 $this->customClass = $_class;
                 $this->attrs = $_attrs;
@@ -137,12 +152,9 @@ class Input extends Typography implements iRequiredInput {
                 $_class = $this->customClass;
                 $_attrs = $this->attrs;
                 $_class [] = "form-control";
-                if ($this->isMultiple == true) {
-                    $_attrs ["multiple"] = "multiple";
-                } 
-                if (!empty($this->name)) {
-                    $_attrs ["name"] = $this->name . ($this->isMultiple == true ? "[]" : "");
-                }
+                if ($this->isMultiple == true) $_attrs ["multiple"] = "multiple"; 
+                if (!empty($this->name)) $_attrs ["name"] = $this->name . ($this->isMultiple == true ? "[]" : "");
+                if ($this->isRequired == true && self::$FORM_VALIDATION_METHOD == "browser") $_attrs ['required'] = "required";
                 $this->customClass = $_class;
                 $this->attrs = $_attrs;
                 if (is_array($this->options) && !empty($this->options)) {
@@ -193,6 +205,7 @@ class Input extends Typography implements iRequiredInput {
                                 $_check->setCustomClass($this->getCustomClass());
                                 $_check->setAttrs($this->getAttrs());
                                 $_check->setDefaultValue($opt->value);
+                                $_check->setIsRequired($this->getIsRequired())->setValidation($this->getValidation());
                                 if (!empty($this->name)) {
                                     $_check->setName($this->name . ($this->inputType == "checkbox" ? "[]" : ""));
                                 }
@@ -201,6 +214,9 @@ class Input extends Typography implements iRequiredInput {
                                 }
                                 if ($opt->disabled == true || (is_array($this->disabledOption) && in_array ($opt->value, $this->disabledOption))) {
                                     $_check->setAttrs(array ("disabled" => "disabled"));
+                                }
+                                if ($this->isRequired == true && self::$FORM_VALIDATION_METHOD == "browser") {
+                                    $_check->setAttrs (array('required' => "required"));
                                 }
                                 $_checkId = $_check->setId()->getId(); // @todo only auto-id now.
                                 $_checkLabel = new Typography("label:form-check-label");
@@ -452,7 +468,7 @@ class Input extends Typography implements iRequiredInput {
     public function setIsRequired ($message = "", $isRequired = true) {
         $this->isRequired = $isRequired;
         $this->validation ['required'] = $isRequired;
-        $this->validation ['requiredMessage'] = $message ? $message : "請填寫 " . $this->getCaption();
+        $this->validation ['requiredMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_DEFAULT;
         
         return $this;
     }
@@ -466,7 +482,7 @@ class Input extends Typography implements iRequiredInput {
         $this->isRequired = true;
         
         $this->validation ['minlength'] = $length;
-        $this->validation ['minlengthMessage'] = $message ? $message : "欄位最少長度為 " . $length;
+        $this->validation ['minlengthMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_MINLENGTH . $length;
         
         return $this;
     }
@@ -480,7 +496,7 @@ class Input extends Typography implements iRequiredInput {
         $this->isRequired = true;
         
         $this->validation ['maxlength'] = $length;
-        $this->validation ['maxlengthMessage'] = $message ? $message : "欄位最大長度為 " . $length;
+        $this->validation ['maxlengthMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_MAXLENGTH . $length;
         
         return $this;
     }
@@ -493,13 +509,13 @@ class Input extends Typography implements iRequiredInput {
     public function setRequiredEqualTo (Typography $input, $message = "") {
         $this->isRequired = true;
         
-        $equalToId = $input->getId();
-        if (!$equalToId) {
-            // @todo format it.
-            $this->setErrMsg("You need an id for required settings.");
+        if (empty($input->getId())) {
+            $this->setErrMsg("[Notice] You need an id for required settings and ID is auto-generated.");
+            $input->setId();
         }
+        $equalToId = $input->getId();
         $this->validation ['equalTo'] = '#' . $equalToId;
-        $this->validation ['equalToMessage'] = $message ? $message : "與 " . $input->getCaption() . " 內容不相同";
+        $this->validation ['equalToMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_EQUALTO . $input->getCaption();
         
         return $this;
     }
@@ -513,7 +529,7 @@ class Input extends Typography implements iRequiredInput {
         $this->isRequired = true;
         
         $this->validation ['email'] = true;
-        $this->validation ['emailMessage'] = $message ? $message : "必須為 Email 格式";
+        $this->validation ['emailMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_EMAIL;
         
         return $this;
     }
@@ -553,7 +569,7 @@ class Input extends Typography implements iRequiredInput {
     */
     
     /**
-     * @desc 按鈕大小, 可輸入 1~5, 數字愈大按鈕愈大 [xs|sm|lg]
+     * @desc Button size, 1 ~ 5 map to [xs|sm|lg], the bigger number bigger size.
      * @param string $size
      */
     public function setSize($size)

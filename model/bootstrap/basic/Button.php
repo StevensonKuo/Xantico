@@ -34,6 +34,7 @@ class Button extends Typography
         $this->isDisabled   = key_exists('isDisabled', $vars) ? $vars ['isDisabled'] : false;
         $this->isOutline    = key_exists('isOutline', $vars) ? $vars ['isOutline'] : false;
         $this->isLink       = key_exists('isLink', $vars) ? $vars ['isLink'] : false;
+        $this->colorSet     = !empty($this->colorSet) ? $this->colorSet : "default"; // btn default color scene.
         
         return $this;
     }
@@ -82,7 +83,7 @@ class Button extends Typography
                 return;
             }
         }
-        unset($this->text); // !!! innerText 和 innerElements 只能擇一
+        $this->text = ""; // !!! innerText 和 innerElements 只能擇一
         
         if (!empty($this->badge) && $this->badge->getAlign() == "left") { // badge 優先
             $this->setInnerElements($this->badge);
@@ -133,8 +134,7 @@ class Button extends Typography
     }
     
     /**
-     * 按鈕大小
-     * 可輸入 1~5, 數字愈大按鈕愈大 [xs|sm|lg]
+     * @desc three sizes [xs|sm|lg]
      * @param string $size
      */
     public function setSize($size)

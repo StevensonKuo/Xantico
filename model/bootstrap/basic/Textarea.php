@@ -8,8 +8,12 @@ class Textarea extends Input
     
     public function __construct($vars = array (), $attrs = array ())
     {
+        $this->rows = isset ($vars ['rows']) ? $vars ['rows'] : "3";
+        $this->cols = isset ($vars ['cols']) ? $vars ['cols'] : null;
+        $attrs ['rows'] = $this->rows;
+        if ($this->cols === null) $attrs ['cols'] = $this->cols; 
+        
         parent::__construct("textarea", $vars, $attrs);
-        // @todo how many I shall set to rows and cols in a default textarea?
     }
     
     /**

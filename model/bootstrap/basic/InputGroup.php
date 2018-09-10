@@ -1,18 +1,20 @@
 <?php
 namespace model\bootstrap\basic;
 
-use bootstrap\basic\iRequiredInput;
-
-class InputGroup extends Typography implements iRequiredInput 
+class InputGroup extends Typography
 {
  
     protected $leftAddon; // icon, text ,button or an array of them.
-    protected $rightAddon; //
+    protected $rightAddon; // ...  
+    protected $inputBody; // Input
     protected $help; // string, small text bellow the input field.
-    protected $isRequired;
-    protected $validation;
     
-    
+
+    /**
+     * @desc @todo will crash when inner input has validation message.
+     * @param array $vars
+     * @param array $attr
+     */
     public function __construct($vars = array (), $attr = array())
     {
         parent::__construct("div:input-group", $vars, $attr);
@@ -36,50 +38,33 @@ class InputGroup extends Typography implements iRequiredInput
         
         $_elements = array ();
         
-        if (!empty($this->leftAddon)) {
-            foreach ($this->leftAddon as $left) {
-                if ($left instanceof Button || $left instanceof Dropdown) {
-                    if (!isset ($inputGroupBtn)) {
-                        $inputGroupBtn = new Typography("span:input-group-btn");
-                    }
-                    $inputGroupBtn->setInnerElements($left);
-                } else { // icon, string, other inputs
-                    if (!isset($inputGroupAddon)) {
-                        $inputGroupAddon = new Typography("span:input-group-addon");
-                    }
-                    $inputGroupAddon->setInnerElements($left);
-                }
+        if (!empty($this->leftAddon) && is_array($this->leftAddon)) {
+            if ($this->leftAddon[0] instanceof Button || $this->leftAddon[0] instanceof Dropdown) {
+                $inputGroupAddon = new Typography("span:input-group-btn");
+            } else { // icon, string, other inputs
+                $inputGroupAddon = new Typography("span:input-group-addon");
             }
-            if (isset ($inputGroupBtn)) {
-                $_elements [] = $inputGroupBtn;
-            }
-            if (isset($inputGroupAddon)) {
-                $_elements [] = $inputGroupAddon;
-            }
+            $inputGroupAddon->setInnerElements($this->leftAddon);
+            $_elements [] = $inputGroupAddon;
         }
         
-        $_elements = array_merge($_elements, $this->innerElements);
+        if (!empty($this->inputBody)) {
+            $_elements [] = $this->inputBody;
+            // put other inner element in below.
+        }
+        if (!empty($this->innerElements)) {
+            // It's too late to assign inner element attribute to $this here.
+            $_elements = array_merge($_elements, $this->innerElements);
+        }
         
-        if (!empty($this->rightAddon)) {
-            foreach ($this->rightAddon as $right) {
-                if ($right instanceof Button || $right instanceof Dropdown) {
-                    if (!isset ($inputGroupBtn)) {
-                        $inputGroupBtn = new Typography("span:input-group-btn");
-                    }
-                    $inputGroupBtn->setInnerElements($right);
-                } else { // icon, string, other inputs
-                    if (!isset($inputGroupAddon)) {
-                        $inputGroupAddon = new Typography("span:input-group-addon");
-                    }
-                    $inputGroupAddon->setInnerElements($right);
-                }
+        if (!empty($this->rightAddon) && is_array($this->rightAddon)) {
+            if ($this->rightAddon [0] instanceof Button || $this->rightAddon [0] instanceof Dropdown) {
+                $inputGroupAddon = new Typography("span:input-group-btn");
+            } else { // icon, string, other inputs
+                $inputGroupAddon = new Typography("span:input-group-addon");
             }
-            if (isset ($inputGroupBtn)) {
-                $_elements [] = $inputGroupBtn;
-            }
-            if (isset($inputGroupAddon)) {
-                $_elements [] = $inputGroupAddon;
-            }
+            $inputGroupAddon->setInnerElements($this->rightAddon);
+            $_elements [] = $inputGroupAddon;
         }
         
         $this->innerElements = $_elements;
@@ -124,6 +109,7 @@ class InputGroup extends Typography implements iRequiredInput
         
         return $this;
     }
+    
     /**
      * @return the $leftAddon
      */
@@ -178,101 +164,29 @@ class InputGroup extends Typography implements iRequiredInput
     }
     
     /**
-     *
-     * @param string $message
+     * @return the $inputBody
      */
-    public function setIsRequired ($message = "", $isRequired = true) {
-        $this->isRequired = $isRequired;
-        $this->validation ['required'] = $isRequired;
-        $this->validation ['requiredMessage'] = $message ? $message : "請填寫 " . $this->getCaption();
-        
-        return $this;
+    public function getInputBody()
+    {
+        return $this->inputBody;
     }
-    
+
     /**
-     *
-     * @param int $length
-     * @param string $message
+     * @param field_type $inputBody
      */
-    public function setRequiredMinLength ($length, $message = "") {
-        $this->isRequired = true;
-        
-        $this->validation ['minlength'] = $length;
-        $this->validation ['minlengthMessage'] = $message ? $message : "欄位最少長度為 " . $length;
-        
-        return $this;
-    }
-    
-    /**
-     *
-     * @param int $length
-     * @param string $message
-     */
-    public function setRequiredMaxLength ($length, $message = "") {
-        $this->isRequired = true;
-        
-        $this->validation ['maxlength'] = $length;
-        $this->validation ['maxlengthMessage'] = $message ? $message : "欄位最大長度為 " . $length;
-        
-        return $this;
-    }
-    
-    /**
-     *
-     * @param Input $input
-     * @param string $message
-     */
-    public function setRequiredEqualTo (Typography $input, $message = "") {
-        $this->isRequired = true;
-        
-        $equalToId = $input->getId();
-        if (!$equalToId) {
-            // @todo format it.
-            $this->setErrMsg("You need an id for required settings.");
+    public function setInputBody(Input $inputBody)
+    {
+        if (method_exists($inputBody, "getCaption") && !empty($inputBody->getCaption()) && empty($this->caption)) {
+            $this->caption = $inputBody->getCaption();
         }
-        $this->validation ['equalTo'] = '#' . $equalToId;
-        $this->validation ['equalToMessage'] = $message ? $message : "與 " . $input->getCaption() . " 內容不相同";
+        if (method_exists($inputBody, "getHelp") && !empty($inputBody->getHelp()) && empty($this->help)) {
+            $this->help = $inputBody->getHelp();
+        }
+        
+        $this->inputBody = $inputBody;
         
         return $this;
     }
-    
-    /**
-     *
-     * @param string $message
-     * @return \Bootstrap\Aceadmin\Input
-     */
-    public function setRequiredEmail ($message = "") {
-        $this->isRequired = true;
-        
-        $this->validation ['email'] = true;
-        $this->validation ['emailMessage'] = $message ? $message : "必須為 Email 格式";
-        
-        return $this;
-    }
-    
-    /**
-     * @return the $isRequired
-     */
-    public function getIsRequired()
-    {
-        return $this->isRequired;
-    }
-    
-    /**
-     * @return the $validation
-     */
-    public function getValidation()
-    {
-        return $this->validation;
-    }
-    
-    /**
-     * @param Ambigous <multitype:, array> $validation
-     */
-    public function setValidation($validation)
-    {
-        $this->validation = $validation;
-        return $this;
-    }
+
     
 }

@@ -11,6 +11,7 @@ class Navbar extends Typography
     protected $style; // string
     protected $isFluid; // boolean
     protected $isTop; // boolean
+    protected $isBottom; // boolean
     protected $collapseButton; // boolean
     protected $activeIndex; // int
     
@@ -45,7 +46,10 @@ class Navbar extends Typography
     {
         $_class [] = "navbar-" . $this->style;
         if (!empty($this->bgStyle)) $_class [] = "bg-" . $this->bgStyle;
-        if ($this->isTop == true) $_class [] = "navbar-fixed-top";
+        if ($this->isTop == "static") $_class [] = "navbar-static-top";
+        else if ($this->isTop == true) $_class [] = "navbar-fixed-top";
+        if ($this->isBottom == "static") $_class [] = "navbar-static-bottom";
+        else if ($this->isBottom == true) $_class [] = "navbar-fixed-bottom";
         $this->setCustomClass($_class);
         
         if ($this->isFluid == true) {
@@ -86,7 +90,7 @@ class Navbar extends Typography
         $_nav->setCustomClass("navbar-nav") 
         ->setActiveIndex($this->activeIndex)
         ->setItems($this->items);
-        unset ($this->items);
+        $this->items = array ();
         
         $_navBody->setInnerElements($_nav);
         // 如果還有其他元素, 把他放到 body 裡去, 像是 inline form
@@ -205,9 +209,10 @@ class Navbar extends Typography
     /**
      * @param Ambigous <boolean, array> $isTop
      */
-    public function setIsTop($isTop = true)
+    public function setIsTop($isTop = true, $static = false)
     {
-        $this->isTop = $isTop;
+        if ($isTop == true && $static == true) $this->isTop = "static";
+        else $this->isTop = $isTop;
         return $this;
     }
     
@@ -227,6 +232,25 @@ class Navbar extends Typography
         $this->collapseButton = $collapseButton;
         return $this;
     }
+    /**
+     * @return the $isBottom
+     */
+    public function getIsBottom()
+    {
+        return $this->isBottom;
+    }
+
+    /**
+     * @param field_type $isBottom
+     */
+    public function setIsBottom($isBottom = true, $static = false)
+    {
+        if ($isBottom == true && $static == true) $this->isBottom = "static"; 
+        else $this->isBottom = $isBottom;
+        
+        return $this;
+    }
+
 
 
     

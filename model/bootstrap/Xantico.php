@@ -22,9 +22,10 @@ class Xantico
     protected $isLoadOptionalCSS; // boolean
     protected $isLoadJQueryFromCDN; // boolean
     
-    public $elements; // BootstrapElements
-    public $bootstrapVersion; // string
-    public $jQueryVersion; // string
+    public static $elements = array (); // BootstrapElements
+    public static $bootstrapVersion     = '3.3.7'; // string
+    public static $jQueryVersion        = '2.2.2'; // string
+    public static $formValidationOn     = false; 
     
     const BOOTSTRAP_HREF    = '/static/admin/css/bootstrap.min.css'; // 自己 local 端的 bootstrap css path.
     const BOOTSTRAP_JS_HREF = '/static/admin/js/bootstrap.min.js'; // 自己 local 端的 bootstrap css path.
@@ -40,12 +41,13 @@ class Xantico
     const BOOTSTRAP_JS_CDN_INTEGRITY        = 'sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa';
     const JQUERY_CDN_HREF                   = 'https://code.jquery.com/jquery-2.2.4.min.js';
     const JQUERY_CDN_INTEGRITY              = 'sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=';
+    const JQUERY_FORM_VALIDATION_HREF       = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js';
+    // localization 
+    // https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_zh_TW.min.js
     
     public function __construct()
     {
         // bootstrap config
-        $this->bootstrapVersion = '3.3.7';
-        $this->jQueryVersion    = '2.2.2';
         $this->lang             = 'zh-cn';
         $this->encoding         = 'utf-8';
         
@@ -197,13 +199,36 @@ class Xantico
      * @return \model\bootstrap\HtmlTag
      */
     private function buildBody () {
-        $bodyTag = new HtmlTag("body");
-        $bodyTag->setInnerElements($this->bodyContents);
+        $bodyTag = new HtmlTag("body"); // need jQuery attribute
+        if (!empty($this->bodyContents)) {
+            $_html = "";
+            $_jQuery = "";
+            foreach ($this->bodyContents as $ctnt) {
+                if ($ctnt instanceof HtmlTag) {
+                    $_html .= $ctnt->render() . "\n";
+                    if (method_exists($ctnt, "getJQuery") && $ctnt->getJQuery()) {
+                        $_jQuery = $ctnt->getJQuery() . "\n";
+                    }
+                } else {
+                    $_html .= htmlspecialchars($ctnt) . "\n";
+                }
+            }
+            
+            $htmlLines = explode("\n", $_html);
+            // there are just two tabs under body tag.
+            $_html = implode("\n\t\t", $htmlLines);
+            $bodyTag->setInnerHtml($_html);
+            $bodyTag->truncateElements();
+            $this->scriptsContents = (!empty($this->scriptsContents) ? $this->scriptsContents . "\n" : "") . $_jQuery;
+        }
+        
+        if (Xantico::$formValidationOn == true) {
+            $this->customScriptsFiles [] = Xantico::JQUERY_FORM_VALIDATION_HREF;
+        }
         
         if (!empty($this->defaultScriptsFiles)) {
             foreach ($this->defaultScriptsFiles as $script) {
                 $_scriptTag = new HtmlTag("script", $script);
-                $_scriptTag->setInnerText("\t"); // script 不是 <script/> 的 tag
                 $bodyTag->setInnerElements($_scriptTag);
                 
                 unset($_scriptTag);
@@ -212,7 +237,6 @@ class Xantico
         if (!empty($this->customScriptsFiles)) {
             foreach ($this->customScriptsFiles as $script) {
                 $_scriptTag = new HtmlTag("script", array ("src" => $script));
-                $_scriptTag->setInnerText("\t");
                 $bodyTag->setInnerElements($_scriptTag);
                 
                 unset($_scriptTag);

@@ -5,6 +5,8 @@ require 'model/bootstrap/HtmlTag.php';
 require 'model/bootstrap/basic/Typography.php';
 require 'model/bootstrap/basic/Jumbotron.php';
 require 'model/bootstrap/basic/Button.php';
+require 'model/bootstrap/basic/ButtonGroup.php';
+require 'model/bootstrap/basic/ButtonToolbar.php';
 require 'model/bootstrap/basic/Table.php';
 require 'model/bootstrap/basic/Image.php';
 require 'model/bootstrap/basic/Badge.php';

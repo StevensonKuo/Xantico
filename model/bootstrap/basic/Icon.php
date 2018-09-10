@@ -39,7 +39,6 @@ class Icon extends Typography
         if (!empty($this->textColorSet))    $class [] = "text-" . $this->textColorSet;
         
         $this->setCustomClass($class);
-        $this->setText("\t");
         
         parent::render();
         

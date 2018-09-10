@@ -9,7 +9,7 @@ class Row extends Typography
 {
     protected $forForm; // string; form type.
     protected $columnSize; // string; for bs grid system.
-    protected $rowGrids; // array; row items.
+    protected $requireIcon; // Icon
     
     public $screw;
     
@@ -20,7 +20,7 @@ class Row extends Typography
         
         $this->forForm      = isset ($vars ['forForm']) ? $vars ['forForm'] : "";
         $this->columnSize   = isset ($vars ['columnSize']) ? $vars ['columnSize'] : "md";
-        $this->rowGrids     = isset ($vars ['rowGrids']) ? $vars ['rowGrids'] : array ();
+        $this->requireIcon  = isset ($vars ['requireIcon']) && $vars ['requireIcon'] instanceof Icon ? $vars ['requireIcon'] : new Icon("asterisk", array ("textColorSet" => "danger"));
     
         $this->screw =  new Grid(new Input());
     }
@@ -31,11 +31,13 @@ class Row extends Typography
      * @see \model\bootstrap\basic\Typography::render()
      */
     public function render($display = false) {
-        if (!empty($this->rowGrids)) {
-            foreach ($this->rowGrids as $input) {
-                $item = $input->input;
+        if (!empty($this->items)) {
+            foreach ($this->items as $input) {
+                $item = $input->text;
                 // @todo for form is different from for usual.
-                if ($item instanceof Input || $item instanceof InputGroup || $item instanceof Button) {
+                if ($item instanceof Input || $item instanceof InputGroup 
+                    || $item instanceof Select || $item instanceof Textarea  
+                    || $item instanceof Button || $item instanceof ButtonGroup || $item instanceof ButtonToolbar) {
                     if (!empty($input->width)) {
                         if (is_numeric($input->width)) {
                             $col = new Typography("div:col-{$this->columnSize}-" . $input->width);
@@ -46,36 +48,46 @@ class Row extends Typography
                         }
                         
                     } else {
-                        $input->width = round(12 / count($this->rowGrids)); 
+                        $input->width = round(12 / count($this->items)); 
                         $col = new Typography("div:col-{$this->columnSize}-" . $input->width);
                         // $col = new Typography("div:col"); // @todo bs 4.0
                     }
                     if (method_exists($item, "getCaption") && !empty($item->getCaption())) {
                         $_label = new Typography("label");
-                        if ($this->forForm == "inline") $_label->setCustomClass("sr-only");
+                        if ($this->forForm == "inline" || $this->forForm == "form-inline") {
+                            $_label->setCustomClass("sr-only");
+                        }
                         if ($item instanceof InputGroup && empty($item->getId())) { // search input when input group id is empty.
                             $res = $item->search("input");
                             $_for = isset ($res [0]) ? $res [0]->getId() : "";
                         } else {
                             $_for = $item->getId();
                         }
+                        
                         $_label->setAttrs(array ("for" => $_for));
-                        if (method_exists($item, "getisRequired") && $item->getIsRequired()) {
-                            $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
-                            $_label->setInnerElements($_requireIcon);
+                        
+                        if (method_exists($item, "getIsRequired") && $item->getIsRequired() && !empty($this->requireIcon)) {
+                            $_label->setInnerElements(array($this->requireIcon, $item->getCaption()));
+                        } else {
+                            $_label->setInnerText($item->getCaption());
                         }
-                        $_label->setInnerText($item->getCaption());
+                        
                         
                         $col->setInnerElements($_label);
                     }
                     $col->setInnerElements($item);
                     if (method_exists($item, "getHelp") && !empty($item->getHelp())) {
-                        $_help = new HtmlTag("small");
-                        $_help->setCustomClass(array ("form-text", "text-muted"))
-                        ->setText($item->getHelp());
+                        if (is_string($item->getHelp())) {
+                            $_help = new HtmlTag("small");
+                            $_help->setCustomClass(array ("form-text", "text-muted"))
+                            ->setText($item->getHelp());
+                        } else {
+                            $_help = $item->getHelp();
+                        }
                         $col->setInnerElements($_help);
                     }
                     $this->innerElements [] = $col;
+                    
                 } else {
                     if (!empty($input->width)) {
                         if (is_numeric($input->width)) {
@@ -87,7 +99,7 @@ class Row extends Typography
                         }
                         
                     } else {
-                        $input->width = round(12 / count($this->rowGrids));
+                        $input->width = round(12 / count($this->items));
                         $col = new Typography("div:col-{$this->columnSize}-" . $input->width);
                         // $col = new Typography("div:col"); // @todo bs 4.0
                     }
@@ -96,6 +108,7 @@ class Row extends Typography
                 }
             } 
         }
+        unset ($this->items);
         
         parent::render();
         
@@ -160,23 +173,16 @@ class Row extends Typography
         
         return $this;
     }
-    /**
-     * @return the $grids
-     */
-    public function getRowGrids()
-    {
-        return $this->rowGrids;
-    }
 
     /**
      * @param Ambigous <unknown, multitype:, array, NULL> $grids
      */
-    public function setRowGrids($grids)
+    public function setItems($grids)
     {
         if (!is_array($grids)) $grids = array ($grids);
         for ($i = 0; $i < count($grids); $i ++) {
             if (is_array ($grids[$i])) {
-                $_input = isset($grids[$i] ['input']) ? $grids[$i] ['input'] : new Input();
+                $_input = isset($grids[$i] ['text']) ? $grids[$i] ['text'] : new Input();
                 $_width = isset($grids[$i] ['width']) ? $grids[$i] ['width'] : null;
                 
                 $grids[$i] = new Grid($_input, $_width);
@@ -185,13 +191,31 @@ class Row extends Typography
             }
         }
         
-        $this->rowGrids = $grids;
+        $this->items = $grids;
         return $this;
     }
-
-
-
     
+    /**
+     * @return the $requireIcon
+     */
+    public function getRequireIcon()
+    {
+        return $this->requireIcon;
+    }
+
+    /**
+     * @param \model\bootstrap\basic\Icon $requireIcon
+     */
+    public function setRequireIcon($requireIcon)
+    {
+        if ($requireIcon instanceof Icon) {
+            $this->requireIcon = $requireIcon;
+        } else {
+            $this->requireIcon = null;
+        }
+        
+        return $this;
+    }
 }
 
 /**
@@ -199,11 +223,11 @@ class Row extends Typography
  * @author metatronangelo
  */
 class Grid {
-    var $input; // Input
+    var $text; // Input
     var $width; // int, max 12, could be null
     
-    public function __construct(HtmlTag $input, $width = null) {
-        $this->input = $input;
+    public function __construct($input = null, $width = null) {
+        $this->text = $input;
         $this->width = $width;
     }
 }

@@ -6,17 +6,20 @@ use model\bootstrap\HtmlTag;
 class Panel extends Typography  
 {
     protected $heading; // string; title.
-    protected $subTitle; // string
-    protected $flat; // boolean
-    protected $toolbox; //  array
+    protected $bodyContents; // string, HtmlTag
+    protected $footer; // string, HtmlTag
+//     protected $subTitle; // string
+//     protected $flat; // boolean
+//     protected $toolbox; //  array
     
-    public static $headingSize = 3;
+    public static $HEADING_SIZE = 3;
     
     public function __construct($vars = array (), $attrs = array ())
     {
         parent::__construct("div:panel", $vars, $attrs);
         $this->type         = "panel";
-        $this->heading      = key_exists('heading', $vars) ? $vars ['heading'] : "";
+        $this->heading      = isset ($vars ['heading']) ? $vars ['heading'] : "";
+        $this->footer       = isset ($vars ['footer']) ? $vars ['footer'] : "";
 //         $this->subTitle     = key_exists('subTitle', $vars) ? $vars ['subTitle'] : "";
 //         $this->flat         = key_exists('flat', $vars) ? $vars ['flat'] : true;
 //         $this->toolbox      = key_exists('toolbox', $vars) ? $vars ['toolbox'] : array ();
@@ -36,16 +39,24 @@ class Panel extends Typography
         
         $headingDiv = new HtmlTag("div");
         $headingDiv->setCustomClass("panel-heading");
-        $titleDiv = new HtmlTag("h" . self::$headingSize);
+        $titleDiv = new HtmlTag("h" . self::$HEADING_SIZE);
         $titleDiv->setCustomClass("panel-title")
         ->setInnerText($this->heading);
         $headingDiv->setInnerElements($titleDiv);
         
         $bodyDiv = new HtmlTag("div");
         $bodyDiv->setCustomClass("panel-body")
-        ->setInnerElements($this->innerElements);
+        ->setInnerElements($this->bodyContents);
         
-        $this->innerElements = array ($headingDiv, $bodyDiv);
+        $this->innerElements = array_merge(array ($headingDiv, $bodyDiv), $this->innerElements);
+        
+        if (!empty($this->footer)) {
+            $footDiv = new HtmlTag("div");
+            $footDiv->setCustomClass("panel-footer")
+            ->setInnerElements($this->footer);
+            $this->innerElements [] = $footDiv;
+        }
+        
         
         parent::render();
         
@@ -57,19 +68,30 @@ class Panel extends Typography
     }
 
     /**
-     * @ body contents 其實就是 innerElements
+     * @desc return bodyContents attr.
      * @return \model\bootstrap\the
      */
     public function getBodyContents () {
-        return $this->getInnerElements();
+        return $this->bodyContents; 
     }
     
     /**
+     * @desc body contents, different from InnerElements 
      * @param array $bodyContents
      */
-    public function setBodyContents($bodyContents = array())
+    public function setBodyContents($bodyContents = array ())
     {
-        $this->setInnerElements($bodyContents);
+        if (empty($bodyContents)) return $this;
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $bodyContents = func_get_args();
+        } else {
+            if (!is_array($bodyContents)) $bodyContents = array ($bodyContents);
+        }
+        
+        if ($this->bodyContents && is_array($this->bodyContents)) $this->bodyContents = array_merge($this->bodyContents, $bodyContents);
+        else $this->bodyContents = $bodyContents;
+        
         return $this;
     }
     

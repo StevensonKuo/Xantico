@@ -70,7 +70,7 @@ class ProgressBar extends Typography
                 $bar->setCustomClass("progress-bar-striped");
             } else if (!empty($this->colorSet)) {
                 $bar->setCustomClass("progress-bar-" . $this->colorSet);
-                unset($this->colorSet);
+                $this->colorSet = "";
             }
             
             $memo = new Typography("span:sr-only");
@@ -81,7 +81,7 @@ class ProgressBar extends Typography
         }
         
         $this->innerElements = $bars; 
-        unset ($this->text);
+        $this->text = "";
         
         parent::render();
         

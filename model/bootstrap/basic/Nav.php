@@ -9,9 +9,10 @@ class Nav extends Typography
     public $screw; // Navlet
     
     protected $activeIndex; // int
-    protected $style;
+    protected $style; // string
+    protected $isJustified; // boolean
     
-    private static $styleArr = array ("tabs", "pills");
+    private static $styleArr = array ("tabs", "pills", "stacked");
     
     /**
      * 建構子
@@ -28,6 +29,7 @@ class Nav extends Typography
         $this->type         = "nav";
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : -1;
         $this->style        = isset ($vars ['style']) ? $vars ['style'] : "";
+        $this->isJustified  = isset ($vars ['isJustified']) ? $vars ['isJustified'] : false;
         $this->screw       = new Navlet();
     }
     
@@ -40,6 +42,8 @@ class Nav extends Typography
     {
         $_class = array ();
         if (!empty($this->style)) $_class [] = "nav-" . $this->style;
+        if ($this->style == "stacked") $_class [] = "nav-pills";
+        if ($this->isJustified == true) $_class [] = "nav-justified";
         $this->setCustomClass($_class);
 //         $this->setAttrs(array ("role" => "tablist"));
         
@@ -135,7 +139,7 @@ class Nav extends Typography
     }
 
     /**
-     * @desc 樣式
+     * @desc pills or tabs
      * @param field_type $style [pills|tabs]
      */
     public function setStyle($style)
@@ -147,6 +151,24 @@ class Nav extends Typography
         $this->style = $style;
         return $this;
     }
+    
+    /**
+     * @return the $isJustified
+     */
+    public function getIsJustified()
+    {
+        return $this->isJustified;
+    }
+
+    /**
+     * @param Ambigous <boolean, array> $isJustified
+     */
+    public function setIsJustified($isJustified = true)
+    {
+        $this->isJustified = $isJustified;
+        return $this;
+    }
+
 
 
 }

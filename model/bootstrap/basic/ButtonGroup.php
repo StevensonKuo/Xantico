@@ -9,10 +9,15 @@ class ButtonGroup extends Typography
     
     public function __construct($vars = array (), $attr = array())
     {
-        parent::__construct("div:btn-group", $vars, $attr);
         
         $this->isVertical   = isset ($vars ['isVertical']) ? $vars ['isVertical'] : false;
         $this->justified    = isset ($vars ['justified']) ? $vars ['justified'] : false;
+        
+        if ($this->isVertical == true) {
+            parent::__construct("div:btn-group-vertical", $vars, $attr);
+        } else {
+            parent::__construct("div:btn-group", $vars, $attr);
+        }
     }
     
     /**
@@ -22,10 +27,15 @@ class ButtonGroup extends Typography
      */
     public function render ($display = false) {
         
-        $this->setAttrs(array ("role", "group"));
+        $this->setAttrs(array ("role" => "group"));
         
         if ($this->isVertical == true) {
-            $this->setType($this->getType() . "-vertical");
+            $_class = array ();
+            foreach ($this->customClass as $cls) {
+                $_class [] = str_replace("btn-group", "btn-group-vertical", $cls);
+            }
+            $this->customClass = $_class;
+            unset ($_class);
         }
         
         if (!empty($this->size)) {
@@ -98,7 +108,7 @@ class ButtonGroup extends Typography
     /**
      * @param Ambigous <boolean, unknown> $isVertical
      */
-    public function setIsVertical($isVertical)
+    public function setIsVertical($isVertical = true)
     {
         $this->isVertical = $isVertical;
         return $this;

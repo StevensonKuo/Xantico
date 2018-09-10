@@ -23,7 +23,7 @@ class Typography extends \model\bootstrap\HtmlTag
     
     private static $instanceCounter = 0; // int
     
-    public static $autoId = false;
+    public static $AUTO_ID = false;
     
 
     /**
@@ -47,7 +47,7 @@ class Typography extends \model\bootstrap\HtmlTag
         
         // other attributes initialize.
         ++self::$instanceCounter;
-        if (self::$autoId == true && !isset($vars['id'])) {
+        if (self::$AUTO_ID == true && !isset($vars['id'])) {
             $this->id = self::generateTagId($this);
         } else if (isset($vars['id']) && !empty($vars['id'])) {
             $this->id = $vars ['id'];
@@ -116,20 +116,16 @@ class Typography extends \model\bootstrap\HtmlTag
         
         parent::render();
         
-        $jQuery = "";
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as $ele) {
                 if (empty($ele)) continue; // pass 空物件.
-//                 if ($ele instanceof Typography) { // 還沒改完很多還不是 HtmlTag 延伸物件
-                if (true) {
-                    if (method_exists($ele, "getJQuery")) $jQuery .= $ele->getJQuery () . "\n";
+                if ($ele instanceof Typography && method_exists($ele, "getJQuery") && !empty($ele->getJQuery ())) {
+                    $this->jQuery .= $ele->getJQuery () . "\n";
                 }
             }
         }
         
-        $this->jQuery .= $jQuery;
-        
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -410,6 +406,7 @@ class Typography extends \model\bootstrap\HtmlTag
     }
 
     /**
+     * @desc universal alignment [left|center|right]
      * @param Ambigous <string, array> $align
      */
     public function setAlign($align)
@@ -480,19 +477,6 @@ class Typography extends \model\bootstrap\HtmlTag
     }
     
     /**
-     * @desc 透過 index 取得 item 
-     * @param unknown $index
-     * @return array|NULL
-     */
-    public function getItem($index) {
-        if (isset ($this->items [$index])) {
-            return $this->items [$index]; 
-        } else {
-            return null;
-        }
-    }
-    
-    /**
      * @return the $mode
      */
     public function getMode()
@@ -511,47 +495,58 @@ class Typography extends \model\bootstrap\HtmlTag
 
     /**
      * @desc a search method like DOM does.
+     * @desc use "%" to search a $keyword Xantico classes. like "%PageHeader" or "%ProgressBar"
      * @param unknown $keyword
-     * @return \model\bootstrap\HtmlTag[]|\model\bootstrap\basic\Typography[]|array[]|array[][]|unknown[][]|array[][][]|\model\bootstrap\HtmlTag|\model\bootstrap\basic\Typography|array|array[]|unknown[]|array[][]|NULL
+     * @return array 
      */
     public function search ($keyword) {
+        $keyword = trim(strtolower($keyword));
         $results = array ();
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as &$ele) {
                 if ($ele instanceof HtmlTag) {
-                    if (preg_match("/^[.]/", $keyword)) {
-                        foreach ($this->customClass as $cls) {
-                            if (preg_match("/$keyword/i", $cls)) {
-                                $results [] = $ele;
-                            }
+                    if (substr($keyword, 0, 1) == ".") {
+                        if (in_array($keyword, $ele->getCustomClass())) {
+                            $results [] = $ele;
                         }
-                    } else if (preg_match("/^#/", $keyword)) {
-                        if ($ele instanceof Typography) {
-                            if (preg_match("/$keyword/i", $ele->id)) {
-                                $results = $ele;
-                                break;
-                            }
+                    } else if (substr($keyword, 0, 1) == "#") {
+                        if ($ele instanceof Typography && $ele->getId() == $keyword) {
+                            $results [] = $ele;
                         } else {
-                            foreach ($this->attrs as $key => $attr) {
-                                if ($key == "id" && preg_match("/$keyword/i", $attr)) {
+                            foreach ($ele->getAttrs() as $key => $attr) {
+                                if ($key == "id" && $keyword == $attr) {
                                     $results [] = $ele;
                                 }
                             }
                         }
-                    } else if (preg_match("/$keyword/i", $ele->getTagName())) {
+                    } else if (substr($keyword, 0, 1) == "%") {
+                        $haystack = explode("\\", strtolower(get_class($ele)));
+                        if (isset($haystack [@count($haystack)-1]) && "%".$haystack [@count($haystack)-1] == $keyword) {
+                            $results [] = $ele;
+                        }
+                    } else if ($keyword == $ele->getTagName()) {
                         $results [] = $ele;
                     }
-                }
-            }
+                    
+                    // only innerElements will be searched, else like items and grids will coming later.
+                    if (!empty($ele->getInnerElements()) && method_exists($ele, "search")) {
+                        $innerResults = $ele->search($keyword);
+                        if ($innerResults != null) {
+                            $results = array_merge($results, $innerResults);
+                        }
+                    }
+                } // end of ele instance of HtmlTag
+                
+            } /// end of foreach ele
         }
         
         if (!empty($results)) {
             return $results;
         } else {
-            return null;
+            return array ();
         }
     }
-    
+
     /**
      * @desc remember this will return the outer.
      * @param HtmlTag $outer
@@ -561,5 +556,38 @@ class Typography extends \model\bootstrap\HtmlTag
         $outer->setInnerElements($this);
         return $outer;
     }
+    
+    /**
+     * @desc get item by index.
+     * @param unknown $index
+     * @return unknown|NULL
+     */
+    public function getItem($index) {
+        if (isset ($this->items [$index])) {
+            return $this->items [$index];
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * @desc set item by index.
+     * @param unknown $index
+     * @param unknown $ele
+     * @return \model\bootstrap\HtmlTag
+     */
+    public function setItem($index, $item) {
+        $this->items [$index] = $item;
+        return $this;
+    }
+    
+    /** 
+     * @desc instead syntax of cloning instance.
+     * @return \model\bootstrap\basic\Typography
+     */
+    public function cloneInstance() {
+        return clone $this;
+    }
+    
 }
 

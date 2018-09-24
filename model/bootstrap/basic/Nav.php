@@ -12,7 +12,7 @@ class Nav extends Typography
     protected $style; // string
     protected $isJustified; // boolean
     
-    private static $styleArr = array ("tabs", "pills", "stacked");
+    private static $styleArr = array ("tabs", "pills", "stacked", "navbar");
     
     /**
      * 建構子
@@ -28,7 +28,7 @@ class Nav extends Typography
         
         $this->type         = "nav";
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : -1;
-        $this->style        = isset ($vars ['style']) ? $vars ['style'] : "";
+        $this->style        = isset ($vars ['style']) ? $vars ['style'] : "tabs";
         $this->isJustified  = isset ($vars ['isJustified']) ? $vars ['isJustified'] : false;
         $this->screw       = new Navlet();
     }
@@ -41,8 +41,13 @@ class Nav extends Typography
     public function render($display = false)
     {
         $_class = array ();
-        if (!empty($this->style)) $_class [] = "nav-" . $this->style;
-        if ($this->style == "stacked") $_class [] = "nav-pills";
+        if ($this->style == "navbar") {
+            $_class [] = $this->style . "-nav";
+        } else if (!empty($this->style)) {
+            $_class [] = "nav-" . $this->style;
+            if ($this->style == "stacked") $_class [] = "nav-pills";
+        }
+        
         if ($this->isJustified == true) $_class [] = "nav-justified";
         $this->setCustomClass($_class);
 //         $this->setAttrs(array ("role" => "tablist"));
@@ -78,12 +83,13 @@ class Nav extends Typography
                 
                 $this->innerElements [] = $_li;
             }
-            unset ($this->items); //已經都整理好交給 innerElements 了, 不用再 pass 給 Typograph 的 render 處理
+            $this->items = null; // clear after pass to inner elements
+            
         }
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -108,7 +114,7 @@ class Nav extends Typography
     }
     
     /**
-     * @desc 需要檢查是不是 navlet 的物件.
+     * @desc check if item is instance of Navlet
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::setItems()
      */
@@ -174,7 +180,7 @@ class Nav extends Typography
 }
 
 /**
- * @desc nav 項目用小物件
+ * @desc trivial class for Nav
  * @author metatronangelo
  *
  */
@@ -184,7 +190,7 @@ class Navlet {
     var $active;
     var $disabled;
     
-    public function __construct($text = "", $url = "", $active = false, $disabled = false) {
+    public function __construct($text = "", $url = "", $active = false, $disabled = false, $align = "") {
         $this->text = $text;
         $this->url = $url;
         $this->active = $active;

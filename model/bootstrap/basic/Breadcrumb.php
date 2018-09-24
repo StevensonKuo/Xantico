@@ -11,8 +11,6 @@ class Breadcrumb extends Typography
     protected $hideAfter; // boolean; hide levels after actived index.
     
     /**
-     * 建構子
-     * @param unknown $type
      * @param array $vars
      * @param array $attrs
      * @return \model\bootstrap\basic\Typography
@@ -22,14 +20,13 @@ class Breadcrumb extends Typography
         
         parent::__construct("ol:breadcrumb", $vars, $attrs);
         
-//          $this->type         = "breadcrumb"; // parent 裡會設
+//          $this->type         = "breadcrumb"; // will be set in parent class.
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
         $this->hideAfter    = isset ($vars ['hideAfter']) ? $vars ['hideAfter'] : true;
         $this->screw        = new Crumb();
     }
     
     /**
-     * 渲染（佔位）
      * @param string $display
      * @return unknown
      */
@@ -49,7 +46,10 @@ class Breadcrumb extends Typography
                         $_li->setCustomClass("active");
                         
                         $_li->setInnerElements($item->text);
-//                         break;
+                        if ($this->hideAfter == true) {
+                            $this->innerElements [] = $_li;
+                            break;
+                        }
                     } else if (!empty ($item->url)) { // breadcrumb 裡有 active 就沒 a
                         $_a = new HtmlTag("a");
                         $_a->setAttrs(array ("href" => $item->url));
@@ -67,7 +67,7 @@ class Breadcrumb extends Typography
                 
                 $this->innerElements [] = $_li;
             }
-            unset ($this->items); //已經都整理好交給 innerElements 了, 不用再 pass 給 Typograph 的 render 處理
+            $this->items = null; // all items passed to inner elements. set to null to avoid render duplicated.
         }
         
         parent::render();
@@ -97,7 +97,7 @@ class Breadcrumb extends Typography
     }
     
     /**
-     * @desc 需要檢查是不是 crumb 的物件.
+     * @desc check if items are instance of <class>Crumb
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::setItems()
      */
@@ -121,19 +121,20 @@ class Breadcrumb extends Typography
     }
 
     /**
-     * @desc 向前走一步, active index +1
+     * @desc step forward, active index +1
      */
-    public function stepForward () {
-        $_count = !empty($this->items) ? count($this->items) : 0;
-        $this->activeIndex = min($_count, ++$this->activeIndex);
+    public function stepForward ($steps = 1) {
+        $_count = !empty($this->items) ? count($this->items)-1 : 0;
+        $this->activeIndex = min($_count, max($this->activeIndex + $steps, 0));
         return $this;
     }
     
     /**
-     * @desc 向後退一步, active index -1
+     * @desc step backward, active index -1
      */
-    public function stepBackward () {
-        $this->activeIndex = max(0, --$this->activeIndex);
+    public function stepBackward ($steps = 1) {
+        $_count = !empty($this->items) ? count($this->items)-1 : 0;
+        $this->activeIndex = min($_count, max($this->activeIndex - $steps, 0));
         return $this;
     }
     

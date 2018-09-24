@@ -154,6 +154,8 @@ class Dropdown extends Typography
             foreach ($this->items as $key => $item) {
                 if ($item->text instanceof HtmlTag && $item->text->getTagName() == "li") {
                     continue;
+                } else if (!($item instanceof Droplet)) {
+                    self::setErrMsg("[Notice] Set wrong trivial class to Dropdown. Use Droplet in Dropdown.");
                 } else if ($item->seperator == true) { // 分隔線
                     $_li = new HtmlTag("li");
                     $_li->setAttrs(array ("role" => "seperator"));
@@ -191,7 +193,7 @@ class Dropdown extends Typography
                 unset ($_li);
                 unset ($_ia);
             }
-            unset ($this->items); 
+            $this->items = null; 
         }
         
         $this->menu = $_ul;

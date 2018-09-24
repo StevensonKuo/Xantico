@@ -64,11 +64,7 @@ class Carousel extends Typography
                     $_div->setCustomClass("active");
                 }
                 
-                $_img = new Image();
-                $_img
-                ->setAttrs(array ("data-src" => $item->source))
-//                 ->setSource($item->source)
-                ->setAlt($item->text);
+                $_img = new HtmlTag("img", array ("data-src" => $item->source, "alt" => $item->text));
                 $_div->setInnerElements($_img);
                 if (!empty($item->text)) {
                     $_textDiv = new HtmlTag("div");
@@ -81,7 +77,7 @@ class Carousel extends Typography
                 $_body->setInnerElements($_div);
                 
                 if ($this->withIndicator == true) {
-                    // @todo indicator 不能點, 不知道為什麼... QQ
+                    // @todo I can't click indicator the shit... don't know why...  
                     $_li = new HtmlTag("li");
                     $_li->setAttrs(array ("data-target" => $this->id, "data-slide-to" => $key))
                     ->setText("\t");

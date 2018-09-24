@@ -2,13 +2,15 @@
 namespace model\bootstrap\basic;
 
 use model\bootstrap\basic\Typography;
+use model\bootstrap\HtmlTag;
 
-class Image extends Typography
+class Thumbnail extends Typography
 {
-    protected $width;
-    protected $height;
-    protected $alt;
-    protected $source;
+    protected $width; // int, or %
+    protected $height; // int, or %
+    protected $alt; // string
+    protected $source; // string
+    protected $url; // string
     //     protected $theme;
     
     const BOOTSTRAP_THUMBNAIL_DEFAULT_WIDTH = 200;
@@ -21,12 +23,11 @@ class Image extends Typography
      * @param array $attrs
      * @return \model\bootstrap\basic\Typography
      */
-    public function __construct($type = "", $vars = array (), $attrs = array ())
+    public function __construct($vars = array (), $attrs = array ())
     {
-        
         parent::__construct("img", $vars, $attrs);
         
-        $this->type     = strtolower($type);
+        $this->type     = "thumbnail";
         $this->width    = isset ($vars ['width']) ? $vars ['width'] : null;
         $this->height   = isset ($vars ['height']) ? $vars ['height'] : null;
         $this->alt      = isset ($vars ['alt']) ? $vars ['alt'] : "";
@@ -37,13 +38,11 @@ class Image extends Typography
     }
     
     /**
-     * 渲染（佔位）
      * @param string $display
      * @return unknown
      */
     public function render($display = false)
     {
-        
         if (!empty($this->width)) {
             $this->setAttrs(array("width" => $this->width));
         }
@@ -54,22 +53,39 @@ class Image extends Typography
             $this->setAttrs(array("alt" => $this->alt));
         }
         
-        switch ($this->type) {
-            case "thumbnail":
-            case "thumbnails":
-                if (empty($this->width)) $this->width = self::BOOTSTRAP_THUMBNAIL_DEFAULT_WIDTH;
-                if (empty($this->height)) $this->height = self::BOOTSTRAP_THUMBNAIL_DEFAULT_HEIGHT;
-                $this->setCustomClass("img-thumbnail");
-                $this->source = $this->source . "/" . $this->width. "x" . $this->height . (!empty($this->theme) ? "/" . $this->theme : "");
-                
-            default:
-                $this->setAttrs(array("src" => $this->source));
-                
-                parent::render();
-                break;
+        if (empty($this->width)) $this->width = self::BOOTSTRAP_THUMBNAIL_DEFAULT_WIDTH;
+        if (empty($this->height)) $this->height = self::BOOTSTRAP_THUMBNAIL_DEFAULT_HEIGHT;
+        if (empty($this->url) && empty($this->caption)) {
+            $this->setCustomClass("img-thumbnail");
+        }
+        $this->source = $this->source . "/" . $this->width. "x" . $this->height . (!empty($this->theme) ? "/" . $this->theme : "");
+        $this->setAttrs(array("src" => $this->source));
+        
+        parent::render();
+        
+        if (!empty($this->url)) {
+            $a = new HtmlTag("a");
+            $a->setAttrs(array("href" => $this->url))->setCustomClass("thumbnail");
+            $a->setInnerHtml($this->html);
+            $this->html = $a->render();
+        } 
+        
+        if (!empty($this->caption)) {
+            $div = new HtmlTag("div");
+            $div->setCustomClass("thumbnail");
+            $divCaption = new Typography("div:caption");
+            if (is_string($this->caption)) {
+                $captionP = new HtmlTag("p");
+                $captionP->setText($this->caption);
+                $divCaption->setInnerElements($captionP);
+            } else {// instance or array. 
+                $divCaption->setInnerElements($this->caption);
+            }
+            $div->setInnerElements($this->html, $divCaption);
+            $this->html = $div->render();
         }
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -162,28 +178,22 @@ class Image extends Typography
     }
     
     /**
-     * @return the $theme
-     *
-     public function getTheme()
-     {
-     return $this->theme;
-     }
-     
-     /**
-     * @param field_type $theme, [sky|vine|lava|gray|industrial|social]
-     *
-     public function setTheme($theme)
-     {
-     $_options = array ("sky", "vine", "lava", "gray", "industrial", "social");
-     if (in_array($theme, $_options)) {
-     $this->theme = $theme;
-     } else {
-     $this->theme = "";
-     }
-     
-     return $this;
-     }
+     * @return the $url
      */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param field_type $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
+    }
+
     
 }
 

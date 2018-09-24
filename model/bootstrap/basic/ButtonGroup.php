@@ -58,7 +58,7 @@ class ButtonGroup extends Typography
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;

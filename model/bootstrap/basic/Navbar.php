@@ -2,11 +2,12 @@
 namespace model\bootstrap\basic;
 
 use model\bootstrap\basic\Typography;
+use model\bootstrap\HtmlTag;
 
 
 class Navbar extends Typography 
 {
-    protected $header; // header-brand
+    protected $brand; // header-brand
     protected $bgStyle; // string
     protected $style; // string
     protected $isFluid; // boolean
@@ -31,14 +32,14 @@ class Navbar extends Typography
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
         $this->bgStyle      = isset ($vars ['bgStyle']) ? $vars ['bgStyle'] : "";
         $this->style        = isset ($vars ['style']) ? $vars ['style'] : "default";
-        $this->header       = isset ($vars ['header']) ? $vars ['header'] : null;
+        $this->brand       = isset ($vars ['brand']) ? $vars ['brand'] : null;
         $this->isFluid      = isset ($vars ['isFluid']) ? $vars ['isFluid'] : false;
         $this->isTop        = isset ($vars ['isTop']) ? $vars ['isTop'] : false;
         $this->collapseButton = isset ($vars ['collapseButton']) ? $vars ['collapseButton'] : false;
     }
     
     /**
-     * 渲染（佔位）
+     * @desc 
      * @param string $display
      * @return unknown
      */
@@ -46,7 +47,7 @@ class Navbar extends Typography
     {
         $_class [] = "navbar-" . $this->style;
         if (!empty($this->bgStyle)) $_class [] = "bg-" . $this->bgStyle;
-        if ($this->isTop == "static") $_class [] = "navbar-static-top";
+        if ($this->isTop === "static") $_class [] = "navbar-static-top";
         else if ($this->isTop == true) $_class [] = "navbar-fixed-top";
         if ($this->isBottom == "static") $_class [] = "navbar-static-bottom";
         else if ($this->isBottom == true) $_class [] = "navbar-fixed-bottom";
@@ -60,7 +61,7 @@ class Navbar extends Typography
         
         $_navHeader = new Typography("div:navbar-header");
         $_brand = new Typography("a:navbar-brand");
-        $_brand->setInnerElements($this->header);
+        $_brand->setInnerElements($this->brand);
         
         $_navBody = new Typography("div:navbar-collapse");
         $_navBody->setCustomClass("collapse")
@@ -86,17 +87,47 @@ class Navbar extends Typography
         
         $_navHeader->setInnerElements($_brand);
         
-        $_nav = new Nav();
-        $_nav->setCustomClass("navbar-nav") 
-        ->setActiveIndex($this->activeIndex)
-        ->setItems($this->items);
-        $this->items = array ();
+        if (!empty($this->items)) {
+            $_nav = new Nav();
+            $_nav->setStyle("navbar")
+            ->setActiveIndex($this->activeIndex)
+            ->setItems($this->items);
+            $this->items = array ();
+            
+            $_navBody->setInnerElements($_nav);
+        }
         
-        $_navBody->setInnerElements($_nav);
-        // 如果還有其他元素, 把他放到 body 裡去, 像是 inline form
-        if(!empty($this->getInnerElements())) {
-            $_navBody->setInnerElements($this->innerElements);
-            $this->truncateElements();
+        // anything else putting into, like inline form.
+        if(!empty($this->innerElements)) {
+            foreach ($this->innerElements as &$ele) {
+                if (is_string($ele)) {
+                    $textP = new HtmlTag("p");
+                    $textP->setCustomClass("navbar-text")->setCdata($ele);
+                    $_navBody->setInnerElements($textP);
+                } else {
+                    if ($ele instanceof HtmlTag) {
+                        if (method_exists($ele, "getAlign") && $ele->getAlign() == "right" && !in_array("navbar-right", $ele->getCustomClass())) {
+                            $ele->setCustomClass("navbar-right");
+                        }
+                        if (method_exists($ele, "getTagName") && $ele->getTagName() == "a" && !in_array("navbar-link", $ele->getCustomClass())) {
+                            $ele->setCustomClass("navbar-link");
+                        }
+                        if (method_exists($ele, "getTagName") && $ele->getTagName() == "p" && !in_array("navbar-text", $ele->getCustomClass())) {
+                            $ele->setCustomClass("navbar-text");
+                        }
+                        if (method_exists($ele, "getTagName") && $ele->getTagName() == "button" && !in_array("navbar-btn", $ele->getCustomClass())) {
+                            $ele->setCustomClass("navbar-btn");
+                        }
+                    }
+                    $_navBody->setInnerElements($ele);
+                }
+            }
+            $this->innerElements = null;
+        } else if (!empty($this->text)) {
+            $textP = new HtmlTag("p");
+            $textP->setCustomClass("navbar-text")->setText($this->text);
+            $_navBody->setInnerElements($textP);
+            $this->text = null;
         }
         $_container->setInnerElements(array ($_navHeader, $_navBody));
         $this->setInnerElements($_container);
@@ -130,9 +161,9 @@ class Navbar extends Typography
     /**
      * @return the $header
      */
-    public function getHeader()
+    public function getBrand()
     {
-        return $this->header;
+        return $this->brand;
     }
 
     /**
@@ -170,9 +201,9 @@ class Navbar extends Typography
     /**
      * @param Ambigous <NULL, array> $header
      */
-    public function setHeader($header)
+    public function setBrand($header)
     {
-        $this->header = $header;
+        $this->brand = $header;
         return $this;
     }
 

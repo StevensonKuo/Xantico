@@ -13,6 +13,7 @@ class Typography extends \model\bootstrap\HtmlTag
     protected $caption; // string; !important different from text/innerText
     protected $title;// string
     protected $align;   // string
+    protected $verticalAlign; // string
     protected $size; // int
     protected $border; // int
     protected $items; // array 
@@ -20,6 +21,12 @@ class Typography extends \model\bootstrap\HtmlTag
     protected $jQuery; // string
     protected $grid; // int or array(), Bootstrap Grids System
     protected $mode; // for one more type/mode to switch what you want.
+    protected $embedResponsive; // ratio, 16by9 or 4by3
+    
+    protected static $alignArr = array("right", "left", "center", "");
+    protected static $vAlignArr = array("top", "middle", "bottom", "");
+    protected static $contextualColorArr = array ("success", "default", "primary", "danger", "warning", "info");
+    protected static $embedTagsArr = array("iframe", "embed", "video", "object");
     
     private static $instanceCounter = 0; // int
     
@@ -27,7 +34,6 @@ class Typography extends \model\bootstrap\HtmlTag
     
 
     /**
-     * 建構子
      * @param string $type
      * @param array $vars
      * @param array $attrs
@@ -62,14 +68,15 @@ class Typography extends \model\bootstrap\HtmlTag
         $this->align        = isset($vars ['align']) ? $vars ['align'] : "";
         $this->size         = isset($vars ['size']) ? $vars ['size'] : 0;
         $this->border       = isset($vars ['border']) ? $vars ['border'] : 0;
-        $this->items        = isset($vars['items']) ? (is_array($vars ['items']) ? $vars ['items'] : array ($vars ['items'])) : array ();
-        $this->textClass    = isset($vars['textClass']) ? (is_array($vars ['textClass']) ? $vars ['textClass'] : array ($vars ['textClass'])) : array ();
+        $this->items        = isset($vars ['items']) ? (is_array($vars ['items']) ? $vars ['items'] : array ($vars ['items'])) : array ();
+        $this->textClass    = isset($vars ['textClass']) ? (is_array($vars ['textClass']) ? $vars ['textClass'] : array ($vars ['textClass'])) : array ();
         $this->grid         = isset($vars ['grid']) ? $vars ['grid'] : null;
         $this->mode         = isset($vars ['mode']) ? $vars ['mode'] : null;
+        $this->isEmbedResponsiveItem    
+                            = isset ($vars ['isEmbedResponsiveItem']) ? $vars ['isEmbedResponsiveItem'] : false;
     }
     
     /**
-     * 渲染（佔位）
      * @param string $display
      * @return unknown
      */
@@ -79,7 +86,7 @@ class Typography extends \model\bootstrap\HtmlTag
             if (in_array ($this->type, array ("ul", "ol", "select", "navi", "dropdown"))) {
                 foreach ($this->items as $item) {
                     if ($item instanceof HtmlTag && $item->getTagName() == "li") {
-                        // 若已經是 li 就丟進去
+                        // if the element are tag li already, it doesn't modify it.
                         $this->innerElements [] = $item;
                     } else {
                         $_li = new HtmlTag("li");
@@ -101,24 +108,53 @@ class Typography extends \model\bootstrap\HtmlTag
                 try {
                     if (!empty($this->grid)) {
                         foreach ($this->grid as $grid) {
-                            $this->setCustomClass("col-" . $grid [0] . "-" . $grid [1]);
+                            $this->customClass [] = "col-" . $grid [0] . "-" . $grid [1];
                         }
                     } else {
-                        $this->setCustomClass("col");
+                        $this->customClass [] = "col";
                     }
                 } catch (\Exception $e) {
                     $this->errMsg = "Tag [{$this->tagName}] occurs error in operating grids: " . $e->getMessage();
                 }
             } else {
-                $this->setCustomClass("col-md-" . $this->grid);
+                $this->customClass [] = "col-md-" . $this->grid;
+            }
+        }
+        
+        if (!empty($this->embedResponsive)) {
+            $embedRatio = explode(":", $this->$this->embedResponsive);
+            $this->customClass [] = "embed-responsive";
+            $this->customClass [] = "embed-responsive-" . join("by", $embedRatio);    
+        }
+        
+        // @todo scan all innerElements, if you want to do any operation to those childs, add it here.
+        if (!empty($this->innerElements)) {
+            foreach ($this->innerElements as &$ele) {
+                // dropdown issue, if this dropdown is not a button-group and it's type not in class yet.
+                if ($ele instanceof HtmlTag) {
+                    if (method_exists($ele, "getType") && method_exists($ele, "getMode")) {
+                        $_type = $ele->getType();
+                        $_mode = $ele->getMode ();
+                        if (($_type == "dropdown" || $_type == "dropup") && $_mode != "button" && !in_array($_type, $this->customClass)) {
+                            $this->customClass [] = $_type;
+                        }
+                    }
+                    
+                    if (!empty($this->embedResponsive) 
+                        && !in_array("embed-responsive-item", $ele->getCustomClass())
+                        && in_array($ele->getTagName(), self::$embedTagsArr)) {
+                            $ele->setCustomClass("embed-responsive-item");
+                    }
+                }
             }
         }
         
         parent::render();
         
+        // gathering jQuery scripts.
         if (!empty($this->innerElements)) {
-            foreach ($this->innerElements as $ele) {
-                if (empty($ele)) continue; // pass 空物件.
+            foreach ($this->innerElements as &$ele) {
+                if (empty($ele)) continue;
                 if ($ele instanceof Typography && method_exists($ele, "getJQuery") && !empty($ele->getJQuery ())) {
                     $this->jQuery .= $ele->getJQuery () . "\n";
                 }
@@ -395,7 +431,39 @@ class Typography extends \model\bootstrap\HtmlTag
         $this->colorSet = strtolower($colorSet);
         return $this;
     }
-
+    
+    // contextual class setter start.
+    public function setContextualClassSuccess () {
+        $this->colorSet = "success";
+        return $this;
+    }
+    
+    public function setContextualClassInfo () {
+        $this->colorSet = "info";
+        return $this;
+    }
+    
+    public function setContextualClassWarning () {
+        $this->colorSet = "warning";
+        return $this;
+    }
+    
+    public function setContextualClassDanger () {
+        $this->colorSet = "danger";
+        return $this;
+    }
+    
+    public function setContextualClassPrimary () {
+        $this->colorSet = "primary";
+        return $this;
+    }
+    
+    public function setContextualClassDefault () {
+        $this->colorSet = "default";
+        return $this;
+    }
+    // contextual class setter end.
+    
     /**
      * @param Ambigous <string, array> $textColorSet
      */
@@ -411,10 +479,30 @@ class Typography extends \model\bootstrap\HtmlTag
      */
     public function setAlign($align)
     {
+        $align = strtolower($align);
+        if (!in_array($align,  self::$alignArr)) {
+            $align = "";
+            $this->setErrMsg("[Warning] You set a wrong alignment: ". $align); // todo formatting err msg.
+        }
         $this->align = $align;
         return $this;
     }
-
+    
+    public function setAlignLeft () {
+        $this->verticalAlign = "left";
+        return $this;
+    }
+    
+    public function setAlignCenter () {
+        $this->verticalAlign = "center";
+        return $this;
+    }
+    
+    public function setAlignRight () {
+        $this->verticalAlign = "right";
+        return $this;
+    }
+    
     /**
      * @param Ambigous <string, array> $size
      */
@@ -423,8 +511,22 @@ class Typography extends \model\bootstrap\HtmlTag
         $this->size = $size;
         return $this;
     }
+    
+    public function setSizeLg() {
+        $this->size = "lg";
+        return $this;
+    }
 
-    /**
+    public function setSizeMd() {
+        $this->size = "md";
+        return $this;
+    }
+    
+    public function setSizeSm() {
+        $this->size = "sm";
+        return $this;
+    }
+/**
      * @param Ambigous <multitype:, array, multitype:array > $textClass
      */
     public function setTextClass($textClass = array ())
@@ -548,16 +650,6 @@ class Typography extends \model\bootstrap\HtmlTag
     }
 
     /**
-     * @desc remember this will return the outer.
-     * @param HtmlTag $outer
-     * @return \model\bootstrap\HtmlTag
-     */
-    public function enclose (HtmlTag $outer) {
-        $outer->setInnerElements($this);
-        return $outer;
-    }
-    
-    /**
      * @desc get item by index.
      * @param unknown $index
      * @return unknown|NULL
@@ -581,13 +673,62 @@ class Typography extends \model\bootstrap\HtmlTag
         return $this;
     }
     
-    /** 
-     * @desc instead syntax of cloning instance.
-     * @return \model\bootstrap\basic\Typography
+    /**
+     * @return the $verticalAlign
      */
-    public function cloneInstance() {
-        return clone $this;
+    public function getVerticalAlign()
+    {
+        return $this->verticalAlign;
     }
+
+    /**
+     * @param field_type $verticalAlign [top|middle|bottom]
+     */
+    public function setVerticalAlign($verticalAlign)
+    {
+        $verticalAlign = strtolower($verticalAlign);
+        if (in_array($verticalAlign, self::$vAlignArr)) {
+            $this->verticalAlign = $verticalAlign;
+        }
+        return $this;
+    }
+    
+    public function setVerticalAlignTop () {
+        $this->verticalAlign = "top";
+        return $this;
+    }
+
+    public function setVerticalAlignMiddle () {
+        $this->verticalAlign = "middle";
+        return $this;
+    }
+    
+    public function setVerticalAlignBottom () {
+        $this->verticalAlign = "bottom";
+        return $this;
+    }
+    
+    /**
+     * @return the $isEmbedResponsiveItem
+     */
+    public function getIsEmbedResponsive()
+    {
+        return $this->embedResponsive;
+    }
+
+    /**
+     * @param Ambigous <boolean, array> $isEmbedResponsiveItem
+     */
+    public function setIsEmbedResponsive($embedResponsive = "16:9")
+    {
+        $embedRatio = explode(":", $embedResponsive);
+        
+        if (!empty($embedRatio) && isset($embedRatio[0]) && isset($embedRatio [1]) && is_numeric($embedRatio[1]/$embedRatio[0])) {
+            $this->embedResponsive = $embedResponsive;
+        }
+        return $this;
+    }
+
     
 }
 

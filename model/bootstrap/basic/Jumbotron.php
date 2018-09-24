@@ -6,7 +6,8 @@ use model\bootstrap\basic\Typography;
 class Jumbotron extends Typography
 {
     protected $header; // string
-    protected $contents; // string, instead of text.
+    protected $bodyContents; // string, instead of text.
+    protected $isFullWidth; // boolean
     
     /**
      * @desc contructor
@@ -17,8 +18,9 @@ class Jumbotron extends Typography
     {
         parent::__construct("div:jumbotron", $vars, $attr);
         
-        $this->header   = isset ($vars ['header']) ? $vars ['header'] : "";
-        $this->contents = isset ($vars ['text']) ? $vars ['text'] : "";
+        $this->header       = isset ($vars ['header']) ? $vars ['header'] : "";
+        $this->bodyContents = isset ($vars ['bodyContents']) ? $vars ['bodyContents'] : array();
+        $this->isFullWidth  = isset ($vars ['isFullWidth']) ? $vars ['isFullWidth'] : array();
         // text 在 parent 裡會設
     }
     
@@ -29,9 +31,32 @@ class Jumbotron extends Typography
      */
     function render ($display = false) {
         $header = New Typography("h1", array ("text" => $this->header));
-        $text = New Typography("p", array ("text" => $this->contents));
+        if ($this->isFullWidth == true) {
+            $cntnr = new Typography("div:container");
+            $cntnr->setInnerElements($header);
+        } else {
+            $this->innerElements [] = $header;
+        }
         
-        $this->setInnerElements(array ($header, $text));
+        if (!empty($this->bodyContents)) {
+            foreach ($this->bodyContents as $body) {
+                $_text = New Typography("p");
+                if (is_string($body)) {
+                    $_text->setText($body);
+                } else {
+                    $_text->setInnerElements($body);
+                }
+                if ($this->isFullWidth == true && isset($cntnr)) {
+                    $cntnr->setInnerElements($_text);
+                } else {
+                    $this->innerElements [] = $_text;
+                }
+            }
+        }
+        
+        if ($this->isFullWidth == true && isset($cntnr)) {
+            $this->innerElements [] = $cntnr;
+        }
         
         parent::render();
         
@@ -58,20 +83,48 @@ class Jumbotron extends Typography
         $this->header = $header;
         return $this;
     }
+    
     /**
      * @return the $contents
      */
-    public function getText()
+    public function getBodyContents()
     {
-        return $this->contents;
+        return $this->bodyContents;
     }
 
     /**
-     * @param Ambigous <string, array> $contents
+     * @param Ambigous <multitype:, field_type> $bodyContents
      */
-    public function setText($contents)
+    public function setBodyContents($bodyContents = array ())
     {
-        $this->contents = $contents;
+        if (empty($bodyContents)) return $this;
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $bodyContents = func_get_args();
+        } else {
+            if (!is_array($bodyContents)) $bodyContents = array ($bodyContents);
+        }
+        
+        if ($this->bodyContents && is_array($this->bodyContents)) $this->bodyContents = array_merge($this->bodyContents, $bodyContents);
+        else $this->bodyContents = $bodyContents;
+        
+        return $this;
+    }
+    
+    /**
+     * @return the $isFullWidth
+     */
+    public function getIsFullWidth()
+    {
+        return $this->isFullWidth;
+    }
+
+    /**
+     * @param Ambigous <multitype:, array> $isFullWidth
+     */
+    public function setIsFullWidth($isFullWidth = true)
+    {
+        $this->isFullWidth = $isFullWidth;
         return $this;
     }
 

@@ -8,11 +8,12 @@ class Panel extends Typography
     protected $heading; // string; title.
     protected $bodyContents; // string, HtmlTag
     protected $footer; // string, HtmlTag
+    
 //     protected $subTitle; // string
 //     protected $flat; // boolean
 //     protected $toolbox; //  array
     
-    public static $HEADING_SIZE = 3;
+    public static $HEADING_SIZE = 0;
     
     public function __construct($vars = array (), $attrs = array ())
     {
@@ -20,6 +21,7 @@ class Panel extends Typography
         $this->type         = "panel";
         $this->heading      = isset ($vars ['heading']) ? $vars ['heading'] : "";
         $this->footer       = isset ($vars ['footer']) ? $vars ['footer'] : "";
+        $this->colorSet     = empty($this->colorSet) ? "default" : $this->colorSet;
 //         $this->subTitle     = key_exists('subTitle', $vars) ? $vars ['subTitle'] : "";
 //         $this->flat         = key_exists('flat', $vars) ? $vars ['flat'] : true;
 //         $this->toolbox      = key_exists('toolbox', $vars) ? $vars ['toolbox'] : array ();
@@ -37,18 +39,32 @@ class Panel extends Typography
             $this->setCustomClass("panel-" . $this->colorSet);    
         }
         
-        $headingDiv = new HtmlTag("div");
-        $headingDiv->setCustomClass("panel-heading");
-        $titleDiv = new HtmlTag("h" . self::$HEADING_SIZE);
-        $titleDiv->setCustomClass("panel-title")
-        ->setInnerText($this->heading);
-        $headingDiv->setInnerElements($titleDiv);
+        $_defaultPart = array ();
+        if (!empty($this->heading)) {
+            $headingDiv = new HtmlTag("div");
+            $headingDiv->setCustomClass("panel-heading");
+            if (self::$HEADING_SIZE > 0) {
+                $titleDiv = new HtmlTag("h" . self::$HEADING_SIZE);
+                $titleDiv->setCustomClass("panel-title")
+                ->setInnerText($this->heading);
+                $headingDiv->setInnerElements($titleDiv);
+            } else {
+                $headingDiv->setText($this->heading);
+            }
+            
+            $_defaultPart [] = $headingDiv;
+        }
         
-        $bodyDiv = new HtmlTag("div");
-        $bodyDiv->setCustomClass("panel-body")
-        ->setInnerElements($this->bodyContents);
+        if (!empty($this->bodyContents)) {
+            $bodyDiv = new HtmlTag("div");
+            $bodyDiv->setCustomClass("panel-body")
+            ->setInnerElements($this->bodyContents);
+            
+            $_defaultPart [] = $bodyDiv;
+        }
         
-        $this->innerElements = array_merge(array ($headingDiv, $bodyDiv), $this->innerElements);
+        // elements apart of heading and body will be appended follow.
+        $this->innerElements = array_merge($_defaultPart, $this->innerElements);
         
         if (!empty($this->footer)) {
             $footDiv = new HtmlTag("div");
@@ -139,6 +155,24 @@ class Panel extends Typography
         $this->heading = $heading;
         return $this;
     }
+    
+    /**
+     * @return the $footer
+     */
+    public function getFooter()
+    {
+        return $this->footer;
+    }
+
+    /**
+     * @param Ambigous <string, array> $footer
+     */
+    public function setFooter($footer)
+    {
+        $this->footer = $footer;
+        return $this;
+    }
+
 
     
 }

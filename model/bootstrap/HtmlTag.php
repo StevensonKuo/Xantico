@@ -39,7 +39,6 @@ class HtmlTag implements iCaption
     
 
     /**
-     * @desc 建構子
      * @param string $tagName
      * @param array $attrs
      * @return \model\bootstrap\HtmlTag
@@ -60,20 +59,6 @@ class HtmlTag implements iCaption
      */
     public function render($display = false)
     {
-        // @todo scan all innerElements, if you want to do any operation to those childs, add it here.
-        if (!empty($this->innerElements)) {
-            foreach ($this->innerElements as $ele) {
-                // dropdown issue, if this dropdown is not a button-group and it's type not in class yet.
-                if (method_exists($ele, "getType") && method_exists($ele, "getMode")) {
-                    $_type = $ele->getType();
-                    $_mode = $ele->getMode ();
-                    if (($_type == "dropdown" || $_type == "dropup") && $_mode != "button" && !in_array($_type, $this->customClass)) {
-                        $this->customClass [] = $_type;
-                    }
-                }
-            }
-        }
-        
         $html = "<" . $this->tagName;
         
         if (!empty($this->customClass)) {
@@ -129,8 +114,8 @@ class HtmlTag implements iCaption
             }
         } else if (!empty($this->cdata)) { 
             $html .= ">\n";
-            $html .= str_repeat("\t", self::$indentlevel++) . $this->cdata . "\n"; 
-            $html .= str_repeat("\t", self::$indentlevel--) . "</{$this->tagName}>";
+            $html .= trim($this->cdata) . "\n"; 
+            $html .= str_repeat("\t", self::$indentlevel) . "</{$this->tagName}>";
         } else if (!empty($this->innerElements)) {
             $html .= ">\n";
             self::$indentlevel++; 
@@ -509,7 +494,7 @@ class HtmlTag implements iCaption
     /**
      * @return the $tagName
      */
-    protected function getTagName()
+    public function getTagName()
     {
         return $this->tagName;
     }
@@ -572,7 +557,25 @@ class HtmlTag implements iCaption
         $this->innerHtml = $innerHtml;
         return $this;
     }
-
+    
+    /**
+     * @desc instead syntax of cloning instance.
+     * @return \model\bootstrap\basic\Typography
+     */
+    public function cloneInstance() {
+        return clone $this;
+    }
+    
+    /**
+     * @desc remember this will return the outer.
+     * @param HtmlTag $outer
+     * @return \model\bootstrap\HtmlTag
+     */
+    public function enclose (HtmlTag $outer) {
+        $outer->setInnerElements($this);
+        return $outer;
+    }
+    
     
 }
 

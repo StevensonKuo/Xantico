@@ -20,6 +20,11 @@ interface iCaption
     const CAP_MANDATORY     = "Required";
     const CAP_HISTORY_BACK  = "Back";
     const CAP_PROFILE       = "Detail";
+    const CAP_PREVIOUS      = "Previous";
+    const CAP_NEXT          = "Next";
+    const CAP_OLDER         = "Older";
+    const CAP_NEWER         = "Newer";
+    const CAP_DOWNLOAD      = "Download";
     
     const CAP_STATUS_ENABLE   = "Enabled";
     const CAP_STATUS_DISABLE  = "Diabled";

@@ -31,6 +31,10 @@ class Well extends Typography
             unset ($this->text);
         }
         
+        if (!empty($this->size)) {
+            $this->customClass [] = "well-" . $this->size;
+        }
+        
         
         parent::render();
         

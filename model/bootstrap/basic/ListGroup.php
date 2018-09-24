@@ -6,9 +6,11 @@ use model\bootstrap\HtmlTag;
 
 class ListGroup extends Typography 
 {
+    private static $modeArr = array ("button", "anchar", "");
+    
     public $screw; // listle
+    
     /**
-     * 建構子
      * @param unknown $type
      * @param array $vars
      * @param array $attrs
@@ -31,13 +33,24 @@ class ListGroup extends Typography
      */
     public function render($display = false)
     {
+        // decide parent tag.
+        if ($this->mode == "anchor") {
+            $this->setTagName("div");
+            $itemTag = "a";
+        } else if ($this->mode == "button") {
+            $this->setTagName("div");
+            $itemTag = "button";
+        } else {
+            $itemTag = "li";
+        }
+        
         if (!empty($this->items)) {
             foreach ($this->items as $key => $item) {
-                if (!empty($item->url)) {
+                if (empty($item->url) && $itemTag == "a") {
+                    $item->url = "#";
+                } else if (!empty($item->url)) { // if thera have been set url, force set the tag to <a/>.
                     $this->setTagName("div");
                     $itemTag = "a";
-                } else {
-                    $itemTag = "li";
                 }
                 
                 $_li = new HtmlTag($itemTag);
@@ -51,8 +64,11 @@ class ListGroup extends Typography
                 if ($itemTag == "a" && !empty($item->url)) {
                     $_li->setAttrs(array ("href" => $item->url));
                 }
+                if (!empty($item->context) && in_array($item->context, self::$contextualColorArr)) {
+                    $_li->setCustomClass("list-group-item-" . $item->context);
+                }
                 if (!empty($item->heading)) {
-                    $_heading = new HtmlTag("h" . Listle::$headingSize);
+                    $_heading = new HtmlTag("h" . Listle::$HEADING_SIZE);
                     $_heading->setCustomClass("list-group-item-heading")
                     ->setInnerText($item->heading);
                     $_paragraph = new HtmlTag("p");
@@ -69,12 +85,12 @@ class ListGroup extends Typography
                 
                 $this->innerElements [] = $_li;
             }
-            unset ($this->items); //已經都整理好交給 innerElements 了, 不用再 pass 給 Typograph 的 render 處理
+            $this->items = null;
         }
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -82,7 +98,7 @@ class ListGroup extends Typography
     }
  
     /**
-     * @desc 需要檢查是不是 listle 的物件. 
+     * @desc check if items are instances of Listle.
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::setItems()
      */
@@ -92,11 +108,12 @@ class ListGroup extends Typography
             if (is_array ($items[$i])) {
                 $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
                 $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "";
-                $_heading = isset($items[$i] ['heading']) ? $items[$i] ['heading'] : "";
                 $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
                 $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
+                $_heading = isset($items[$i] ['heading']) ? $items[$i] ['heading'] : "";
+                $_context = isset($items[$i] ['context']) ? strtolower($items[$i] ['context']) : "";
                 
-                $items[$i] = new Listle($_text, $_url, $_heading, $_active, $_disabled);
+                $items[$i] = new Listle($_text, $_url, $_active, $_disabled, $_heading, $_context);
             } else if (!($items[$i] instanceof Listle)) {
                 $items[$i] = new Listle($items[$i]); 
             }
@@ -105,6 +122,38 @@ class ListGroup extends Typography
         $this->items = $items;
         return $this;
     }
+    
+    /**
+     * @desc mode [regular|button|anchor]
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::setMode()
+     */
+    public function setMode($mode = "") {
+        $mode = strtolower($mode);
+        if (in_array($mode, self::$modeArr)) {
+            $this->mode = $mode;
+        }
+        return $this;
+    }
+    
+    /**
+     * @desc quick set mode to button
+     * @return \model\bootstrap\basic\ListGroup
+     */
+    public function setModeButton () {
+        $this->mode = "button";
+        return $this;
+    }
+
+    /**
+     * @desc quick set mode to anchor
+     * @return \model\bootstrap\basic\ListGroup
+     */
+    public function setModeAnchor () {
+        $this->mode = "anchor";
+        return $this;
+    }
+
 }
 
 /**
@@ -115,17 +164,19 @@ class ListGroup extends Typography
 class Listle { 
     var $text;
     var $url;
-    var $heading;
     var $active;
     var $disabled;
+    var $heading;
+    var $context;
     
-    static $headingSize = 4;
+    static $HEADING_SIZE = 4; // h1 ~ h6
     
-    public function __construct($text = "", $url = "", $heading = "", $active = false, $disabled = false) {
+    public function __construct($text = "", $url = "", $active = false, $disabled = false, $heading = "", $context = "") {
         $this->text = $text;
         $this->url = $url;
-        $this->heading = $heading;
         $this->active = $active;
         $this->disabled = $disabled; 
+        $this->heading = $heading;
+        $this->context = strtolower($context);
     }
 }

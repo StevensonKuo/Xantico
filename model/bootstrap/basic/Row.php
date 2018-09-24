@@ -8,10 +8,10 @@ use model\bootstrap\basic\Input;
 class Row extends Typography
 {
     protected $forForm; // string; form type.
-    protected $columnSize; // string; for bs grid system.
     protected $requireIcon; // Icon
     
-    public $screw;
+    public static $DEFAULT_GRID_SCREEN_SIZE = "md"; // string  
+    public $screw; // Grid
     
     public function __construct($vars = array (), $attr = array ())
     {
@@ -19,7 +19,6 @@ class Row extends Typography
         // @todo bs 4.0 if (forForm != "") div:form-row
         
         $this->forForm      = isset ($vars ['forForm']) ? $vars ['forForm'] : "";
-        $this->columnSize   = isset ($vars ['columnSize']) ? $vars ['columnSize'] : "md";
         $this->requireIcon  = isset ($vars ['requireIcon']) && $vars ['requireIcon'] instanceof Icon ? $vars ['requireIcon'] : new Icon("asterisk", array ("textColorSet" => "danger"));
     
         $this->screw =  new Grid(new Input());
@@ -40,16 +39,16 @@ class Row extends Typography
                     || $item instanceof Button || $item instanceof ButtonGroup || $item instanceof ButtonToolbar) {
                     if (!empty($input->width)) {
                         if (is_numeric($input->width)) {
-                            $col = new Typography("div:col-{$this->columnSize}-" . $input->width);
+                            $col = new Typography("div:col-" . self::$DEFAULT_GRID_SCREEN_SIZE . "-" . $input->width);
                         } else if (is_array($input->width)) {
                             $col = new Typography("div:" . $this->width [0]);
-                            array_shift($this->width);
-                            $col->setCustomClass($this->width); // @todo for now.. 
+                            array_shift($input->width);
+                            $col->setCustomClass($input->width); // @todo for now.. 
                         }
                         
                     } else {
                         $input->width = round(12 / count($this->items)); 
-                        $col = new Typography("div:col-{$this->columnSize}-" . $input->width);
+                        $col = new Typography("div:col-md-" . $input->width);
                         // $col = new Typography("div:col"); // @todo bs 4.0
                     }
                     if (method_exists($item, "getCaption") && !empty($item->getCaption())) {
@@ -91,16 +90,16 @@ class Row extends Typography
                 } else {
                     if (!empty($input->width)) {
                         if (is_numeric($input->width)) {
-                            $col = new Typography("div:col-{$this->columnSize}-" . $input->width);
+                            $col = new Typography("div:col-".self::$DEFAULT_GRID_SCREEN_SIZE."-" . $input->width);
                         } else if (is_array($input->width)) {
-                            $col = new Typography("div:" . $this->width [0]);
-                            array_shift($this->width);
-                            $col->setCustomClass($this->width); // @todo for now..
+                            $col = new Typography("div:" . $input->width [0]);
+                            array_shift($input->width);
+                            $col->setCustomClass($input->width); // @todo for now..
                         }
                         
                     } else {
                         $input->width = round(12 / count($this->items));
-                        $col = new Typography("div:col-{$this->columnSize}-" . $input->width);
+                        $col = new Typography("div:col-md-" . $input->width);
                         // $col = new Typography("div:col"); // @todo bs 4.0
                     }
                     $col->setInnerElements($item);
@@ -136,44 +135,6 @@ class Row extends Typography
         return $this;
     }
     
-    /**
-     * @return the $columnSize
-     */
-    public function getColumnSize()
-    {
-        return $this->columnSize;
-    }
-
-    /**
-     * @param field_type $columnSize
-     */
-    public function setColumnSize($columnSize)
-    {
-        switch ($columnSize) {
-            case 1:
-                //                 $this->size = "miner"; // preserved.
-            case 2:
-                $this->columnSize = "xs";
-                break;
-            case 3:
-                $this->columnSize = "sm";
-                break;
-            case 4:
-                $this->columnSize = "md";
-                break;
-            case 5:
-                $this->columnSize = "lg";
-                break;
-            default:
-                $this->columnSize = $columnSize;
-                
-        }
-        
-        $this->columnSize = $columnSize;
-        
-        return $this;
-    }
-
     /**
      * @param Ambigous <unknown, multitype:, array, NULL> $grids
      */
@@ -224,7 +185,7 @@ class Row extends Typography
  */
 class Grid {
     var $text; // Input
-    var $width; // int, max 12, could be null
+    var $width; // int, max 12, could be null, could be array
     
     public function __construct($input = null, $width = null) {
         $this->text = $input;

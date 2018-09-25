@@ -35,7 +35,7 @@ class HtmlTag implements iCaption
         "wbr"
     );
     
-    static private $indentlevel = 0; // ing, for text indent.
+    private static $indentlevel = 0; // ing, for text indent.
     
 
     /**
@@ -114,7 +114,8 @@ class HtmlTag implements iCaption
             }
         } else if (!empty($this->cdata)) { 
             $html .= ">\n";
-            $html .= trim($this->cdata) . "\n"; 
+            $_cdataLines = explode("\n", $this->cdata);
+            $html .= str_repeat("\t", self::$indentlevel+1) . join("\n" . str_repeat("\t", self::$indentlevel+1), $_cdataLines) . "\n"; 
             $html .= str_repeat("\t", self::$indentlevel) . "</{$this->tagName}>";
         } else if (!empty($this->innerElements)) {
             $html .= ">\n";
@@ -141,7 +142,7 @@ class HtmlTag implements iCaption
         
         $this->html = $html;
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;

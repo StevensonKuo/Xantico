@@ -252,7 +252,7 @@ class Input extends Typography implements iRequiredInput {
                 break;
             case "date-picker":
             case "time-picker":
-                switch($this->type) {
+                switch($this->mode) {
                     default:
                     case "regular":
                     case "year":

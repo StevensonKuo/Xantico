@@ -19,9 +19,12 @@ class Form extends Typography
     protected $isDisabled; // boolean
     protected $requireIcon; // Icon
     
+    public static $REQUIRED_HELP_PREFIX = "";
+    
     private static $formTypeArr = array ("inline", "form-inline", "form-horizontal", "horizontal", "navbar", "navbar-form", "fieldset", "");
     
-    public static $REQUIRED_HELP_PREFIX;
+    const JQUERY_FORM_VALIDATION_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js';
+    
     /**
      * @desc 建構子
      * @param string $formType
@@ -230,9 +233,11 @@ class Form extends Typography
                             }
                         }
                 }
-                // add to jQuery.
+                // add examine script to $jQuery.
                 $this->generateValidationRulesScript($_validation);
-                Xantico::$formValidationOn = true;
+                if (!in_array(Form::JQUERY_FORM_VALIDATION_URL, Xantico::$defaultScriptsFiles)) {
+                    Xantico::$defaultScriptsFiles [] = self::JQUERY_FORM_VALIDATION_URL;
+                }
             }
         }
         

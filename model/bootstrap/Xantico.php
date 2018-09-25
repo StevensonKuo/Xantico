@@ -5,11 +5,8 @@ use model\bootstrap\HtmlTag;
 
 class Xantico
 {
-    protected $defaultCSSFiles; // array 
-    protected $defaultScriptsFiles; // array
     protected $customCSSFiles; // string
     protected $customScriptsFiles; // string
-    
     protected $bodyContents; // array 
     protected $headContents; // array
     protected $CSSContents; // string
@@ -19,95 +16,54 @@ class Xantico
     protected $encoding; // string
     protected $isResponsive; // boolean
     protected $isLoadBootstrapFromCDN; // boolean
-    protected $isLoadOptionalCSS; // boolean
     protected $isLoadJQueryFromCDN; // boolean
     
-    public static $elements = array (); // BootstrapElements
-    public static $bootstrapVersion     = '3.3.7'; // string
-    public static $jQueryVersion        = '2.2.2'; // string
-    public static $formValidationOn     = false; 
+    public static $elements = array (); // all Typography classes will be gathered into here.
+    public static $defaultCSSFiles = array (); // array
+    public static $defaultScriptsFiles = array (); // array
     
-    const BOOTSTRAP_HREF    = '/static/admin/css/bootstrap.min.css'; // 自己 local 端的 bootstrap css path.
-    const BOOTSTRAP_JS_HREF = '/static/admin/js/bootstrap.min.js'; // 自己 local 端的 bootstrap css path.
-    const JQUERY_HREF       = '/static/admin/js/jquery.min.js'; // 自己 local 端的 jquery path.
-    const SHARED_CSS_PATH   = '/static/admin/css/plugins/';
-    const SHARED_JS_PATH    = '/static/admin/js/plugins/';
+    const BOOTSTRAP_VERSION                 = '3.3.7'; // string
+    const JQUERY_VERSION                    = '2.2.2'; // string
     
-    const BOOTSTRAP_CDN_HREF                = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
+    const BOOTSTRAP_HREF                    = '/static/admin/css/bootstrap.min.css'; // local bootstrap css path.
+    const BOOTSTRAP_JS_HREF                 = '/static/admin/js/bootstrap.min.js'; // local bootstrap css path.
+    const JQUERY_HREF                       = '/static/admin/js/jquery.min.js'; // local jquery path.
+    const SHARED_CSS_PATH                   = '/static/admin/css/plugins/';
+    const SHARED_JS_PATH                    = '/static/admin/js/plugins/';
+    
+    const BOOTSTRAP_CDN_URL                 = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
     const BOOTSTRAP_CDN_INTEGRITY           = 'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u';
-    const BOOTSTRAP_OPTIONAL_CDN_HREF       = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css';
+    const BOOTSTRAP_OPTIONAL_CDN_URL        = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css';
     const BOOTSTRAP_OPTIONAL_CDN_INTEGRITY  = 'sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp';
-    const BOOTSTRAP_JS_CDN_HREF             = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js';
+    const BOOTSTRAP_JS_CDN_URL              = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js';
     const BOOTSTRAP_JS_CDN_INTEGRITY        = 'sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa';
-    const JQUERY_CDN_HREF                   = 'https://code.jquery.com/jquery-2.2.4.min.js';
+    const JQUERY_CDN_URL                    = 'https://code.jquery.com/jquery-2.2.4.min.js';
     const JQUERY_CDN_INTEGRITY              = 'sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=';
-    const JQUERY_FORM_VALIDATION_HREF       = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js';
     // localization 
     // https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_zh_TW.min.js
     
     public function __construct()
     {
         // bootstrap config
-        $this->lang             = 'zh-cn';
-        $this->encoding         = 'utf-8';
+        $this->lang                     = 'zh-cn';
+        $this->encoding                 = 'utf-8';
         
         // default bootstrap
-        $this->defaultCSSFiles      = array ();
-        $this->defaultScriptsFiles  = array ();
-        $this->customCSSFiles       = array ();
-        $this->customScriptsFiles   = array ();
-        $this->headContents         = array ();
-        $this->bodyContents         = array ();
+        $this->customCSSFiles           = array ();
+        $this->customScriptsFiles       = array ();
+        $this->headContents             = array ();
+        $this->bodyContents             = array ();
         
         $this->isResponsive             = true;
         $this->isLoadBootstrapFromCDN   = false;
         $this->isLoadJQueryFromCDN      = false;
-        $this->isLoadOptionalCSS        = false;
         // bootstrap config end.
     }
     
     public function render ($display = false) {
-        // default js
-        if ($this->isLoadJQueryFromCDN) {
-            $this->defaultScriptsFiles [] = array (
-                "src" => self::JQUERY_CDN_HREF,
-                "integrity" => self::JQUERY_CDN_INTEGRITY,
-                "crossorigin" => "anonymous"
-            );
-        }
         
-        if ($this->isLoadBootstrapFromCDN) {
-            $this->defaultCSSFiles [] = array (
-                "rel" => "stylesheet",
-                "href" => self::BOOTSTRAP_CDN_HREF,
-                "integrity" => self::BOOTSTRAP_CDN_INTEGRITY,
-                "crossorigin" => "anonymous"
-            );
-            $this->defaultScriptsFiles [] = array (
-                "src" => self::BOOTSTRAP_JS_CDN_HREF,
-                "integrity" => self::BOOTSTRAP_JS_CDN_INTEGRITY,
-                "crossorigin" => "anonymous"
-            );
-            
-            if ($this->isLoadOptionalCSS) {
-                $this->defaultCSSFiles [] = array (
-                    "rel" => "stylesheet",
-                    "href" => self::BOOTSTRAP_OPTIONAL_CDN_HREF,
-                    "integrity" => self::BOOTSTRAP_OPTIONAL_CDN_INTEGRITY,
-                    "crossorigin" => "anonymous"
-                );
-                
-            }
-        } else {
-            // add your bootstrap css file path here.
-            $this->defaultCSSFiles [] = array (
-                "href" => self::BOOTSTRAP_HREF,
-                "rel" => "stylesheet"
-            );
-        }
-        
-        $head = $this->buildHead();
         $body = $this->buildBody();
+        $head = $this->buildHead();
         $html = $this->buildHtml($head, $body);
         
         if ($display == false) {
@@ -116,35 +72,50 @@ class Xantico
             echo $html;
         }
         
-        /*
-         * 
-         * <!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <title>Hello, world!</title>
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
-</html>
-
-         */
     }
     
     private function buildHead () {
+        if (!empty(self::$defaultCSSFiles)) {
+            $_cfiles = array ();
+            foreach (self::$defaultCSSFiles as $cfile) {
+                if (is_string($cfile)) {
+                    $_cfiles [] = array ("rel" => "stylesheet", 'href' => $cfile);
+                } else if (is_array($cfile)) {
+                    $_cfiles [] =  $cfile;
+                }
+            }
+            self::$defaultCSSFiles = $_cfiles;
+        }
+        
+        if ($this->isLoadBootstrapFromCDN == true) {
+            // @todo take out this optional css.
+            array_unshift(self::$defaultCSSFiles, array (
+                "rel" => "stylesheet",
+                "href" => self::BOOTSTRAP_OPTIONAL_CDN_URL,
+                "integrity" => self::BOOTSTRAP_OPTIONAL_CDN_INTEGRITY,
+                "crossorigin" => "anonymous"
+            ));
+            
+            array_unshift(self::$defaultCSSFiles, array (
+                "rel" => "stylesheet",
+                "href" => self::BOOTSTRAP_CDN_URL,
+                "integrity" => self::BOOTSTRAP_CDN_INTEGRITY,
+                "crossorigin" => "anonymous"
+            ));
+            
+            array_unshift(self::$defaultScriptsFiles, array (
+                "src" => self::BOOTSTRAP_JS_CDN_URL,
+                "integrity" => self::BOOTSTRAP_JS_CDN_INTEGRITY,
+                "crossorigin" => "anonymous"
+            ));
+        } else {
+            // add your bootstrap css file path here.
+            array_unshift(self::$defaultCSSFiles, array (
+                "href" => self::BOOTSTRAP_HREF,
+                "rel" => "stylesheet"
+            ));
+        }
+        
         $head = new HtmlTag("head");
         $head->setInnerElements(new HtmlTag("meta", array ("charset" => $this->encoding)));
         if ($this->isResponsive) {
@@ -153,8 +124,8 @@ class Xantico
                         "content" => "width=device-width, initial-scale=1, shrink-to-fit=no"
                 )));
         }
-        if (!empty($this->defaultCSSFiles)) {
-            foreach ($this->defaultCSSFiles as $css) {
+        if (!empty(self::$defaultCSSFiles)) {
+            foreach (self::$defaultCSSFiles as $css) {
                 $_cssTag = new HtmlTag("link", $css);
                 $head->setInnerElements($_cssTag);
                 
@@ -222,12 +193,29 @@ class Xantico
             $this->scriptsContents = (!empty($this->scriptsContents) ? $this->scriptsContents . "\n" : "") . $_jQuery;
         }
         
-        if (Xantico::$formValidationOn == true) {
-            $this->customScriptsFiles [] = Xantico::JQUERY_FORM_VALIDATION_HREF;
+        // default js
+        if (!empty(self::$defaultScriptsFiles)) {
+            $_jfiles = array ();
+            foreach (self::$defaultScriptsFiles as $jfile) {
+                if (is_string($jfile)) {
+                    $_jfiles [] = array ('src' => $jfile);
+                } else if (is_array($jfile)) {
+                    $_jfiles [] =  $jfile;
+                }
+            }
+            self::$defaultScriptsFiles = $_jfiles;
         }
         
-        if (!empty($this->defaultScriptsFiles)) {
-            foreach ($this->defaultScriptsFiles as $script) {
+        if ($this->isLoadJQueryFromCDN) {
+            array_unshift(self::$defaultScriptsFiles, array (
+                "src" => self::JQUERY_CDN_URL,
+                "integrity" => self::JQUERY_CDN_INTEGRITY,
+                "crossorigin" => "anonymous"
+            ));
+        }
+        
+        if (!empty(self::$defaultScriptsFiles)) {
+            foreach (self::$defaultScriptsFiles as $script) {
                 $_scriptTag = new HtmlTag("script", $script);
                 $bodyTag->setInnerElements($_scriptTag);
                 
@@ -250,22 +238,6 @@ class Xantico
         }
         
         return $bodyTag;
-    }
-    
-    /**
-     * @return the $defaultCSSFiles
-     */
-    public function getDefaultCSSFiles()
-    {
-        return $this->defaultCSSFiles;
-    }
-
-    /**
-     * @return the $defaultScriptsFiles
-     */
-    public function getDefaultScriptsFiles()
-    {
-        return $this->defaultScriptsFiles;
     }
 
     /**
@@ -346,45 +318,6 @@ class Xantico
     public function getIsLoadOptionalCSS()
     {
         return $this->isLoadOptionalCSS;
-    }
-
-    /**
-     * @param multitype:multitype:string   $defaultCSSFiles
-     */
-    public function setDefaultCSSFiles($defaultCSSFiles = array ())
-    {
-        if (empty($defaultCSSFiles)) return $this;
-        
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
-            $defaultCSSFiles = func_get_args();
-        } else {
-            if (!is_array($defaultCSSFiles)) $defaultCSSFiles = array ($defaultCSSFiles);
-        }
-        
-        if ($this->defaultCSSFiles && is_array($this->defaultCSSFiles)) $this->defaultCSSFiles = array_merge($this->defaultCSSFiles, $defaultCSSFiles);
-        else $this->defaultCSSFiles = $defaultCSSFiles;
-        
-        return $this;
-    }
-
-    /**
-     * @param field_type $defaultScriptsFiles
-     */
-    public function setDefaultScriptsFiles($defaultScriptsFiles = array ())
-    {
-        if (empty($defaultScriptsFiles)) return $this;
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
-            $defaultScriptsFiles = func_get_args();
-        } else {
-            if (!is_array($defaultScriptsFiles)) $defaultScriptsFiles = array ($defaultScriptsFiles);
-        }
-        
-        if ($this->defaultScriptsFiles && is_array($this->defaultScriptsFiles)) $this->defaultScriptsFiles = array_merge($this->defaultScriptsFiles, $defaultScriptsFiles);
-        else $this->defaultScriptsFiles = $defaultScriptsFiles;
-        
-        return $this;
     }
 
     /**

@@ -34,3 +34,4 @@ require 'model/bootstrap/basic/Breadcrumb.php';
 require 'model/bootstrap/basic/Pagination.php';
 require 'model/bootstrap/basic/Media.php';
 require 'model/bootstrap/basic/MediaList.php';
+require 'model/bootstrap/plugins//Video.php';

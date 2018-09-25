@@ -72,8 +72,8 @@ class Typography extends \model\bootstrap\HtmlTag
         $this->textClass    = isset($vars ['textClass']) ? (is_array($vars ['textClass']) ? $vars ['textClass'] : array ($vars ['textClass'])) : array ();
         $this->grid         = isset($vars ['grid']) ? $vars ['grid'] : null;
         $this->mode         = isset($vars ['mode']) ? $vars ['mode'] : null;
-        $this->isEmbedResponsiveItem    
-                            = isset ($vars ['isEmbedResponsiveItem']) ? $vars ['isEmbedResponsiveItem'] : false;
+        $this->embedResponsive
+                            = isset ($vars ['embedResponsive']) ? $vars ['embedResponsive'] : "";
     }
     
     /**
@@ -122,7 +122,7 @@ class Typography extends \model\bootstrap\HtmlTag
         }
         
         if (!empty($this->embedResponsive)) {
-            $embedRatio = explode(":", $this->$this->embedResponsive);
+            $embedRatio = explode(":", $this->embedResponsive);
             $this->customClass [] = "embed-responsive";
             $this->customClass [] = "embed-responsive-" . join("by", $embedRatio);    
         }
@@ -156,7 +156,7 @@ class Typography extends \model\bootstrap\HtmlTag
             foreach ($this->innerElements as &$ele) {
                 if (empty($ele)) continue;
                 if ($ele instanceof Typography && method_exists($ele, "getJQuery") && !empty($ele->getJQuery ())) {
-                    $this->jQuery .= $ele->getJQuery () . "\n";
+                    $this->jQuery = (!empty($this->jQuery) ? $this->jQuery . "\n" : "" ) . trim($ele->getJQuery ());
                 }
             }
         }
@@ -206,7 +206,7 @@ class Typography extends \model\bootstrap\HtmlTag
     }
 
     /**
-     * 設置 HTML ID. 若不代值會自動產生
+     * @desc HTML ID. auto-generating if not specified.
      * @param unknown $id
      * @return \model\bootstrap\basic\Typography
      */
@@ -222,7 +222,7 @@ class Typography extends \model\bootstrap\HtmlTag
     }
     
     /**
-     * 回傳 HTML ID 值
+     * @desc return id value.
      * @return string id;
      */
     public function getId () {
@@ -269,7 +269,7 @@ class Typography extends \model\bootstrap\HtmlTag
     
     
     /**
-     * @desc 設定 ol,ul,select, navi... 
+     * @desc for ol,ul,select, navi... items are different from innerElements that will be decorated before input into inner elements.
      * @param array $items
      * @return \model\bootstrap\basic\Typography
      */
@@ -711,7 +711,7 @@ class Typography extends \model\bootstrap\HtmlTag
     /**
      * @return the $isEmbedResponsiveItem
      */
-    public function getIsEmbedResponsive()
+    public function getEmbedResponsive()
     {
         return $this->embedResponsive;
     }
@@ -719,7 +719,7 @@ class Typography extends \model\bootstrap\HtmlTag
     /**
      * @param Ambigous <boolean, array> $isEmbedResponsiveItem
      */
-    public function setIsEmbedResponsive($embedResponsive = "16:9")
+    public function setEmbedResponsive($embedResponsive = "16:9")
     {
         $embedRatio = explode(":", $embedResponsive);
         

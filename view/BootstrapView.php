@@ -42,6 +42,7 @@ use model\bootstrap\basic\Pagination;
 use model\bootstrap\basic\Thumbnail;
 use model\bootstrap\basic\Media;
 use model\bootstrap\basic\MediaList;
+use model\bootstrap\plugins\Video;
 
 
 /**
@@ -376,9 +377,9 @@ class BootstrapView
         // @todo 要改... 不直接支援 heading 了
         $listGroup3 = new ListGroup();
         $listGroup3->setItems(array (
-            new Listle("Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.", "#", "List group item heading", true),
-            new Listle("Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.", "#", "List group item heading"),
-            new Listle("Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.", "#", "List group item heading"),
+            new Listle("Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.", "#", true, false, "List group item heading"),
+            new Listle("Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.", "#", false, false, "List group item heading"),
+            new Listle("Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.", "#", false, false, "List group item heading"),
         ));
         $lgDiv3 = new Typography("div:col-sm-4");
         $lgDiv3->setInnerElements($listGroup3);
@@ -1672,7 +1673,7 @@ class BootstrapView
         $mediaList->setInnerElements(array($media8));
         
         $pageHeader20 = new PageHeader("List group");
-        // @todo
+        
         $lstGrp = new ListGroup();
         $lstGrp->setItems(array(
             new Listle("Cras justo odio"),
@@ -1805,8 +1806,20 @@ class BootstrapView
         $well13 = clone $well11;
         $well13->setSizeSm();
         
-        //@todo final video embed
+        $pageHeader23 = new PageHeader("Responsive embed");
+        $embedRspDiv = new Typography("div");
+        $embedRspDiv->setEmbedResponsive("4:3");
+        $embedRspDiv->setInnerElements(new Typography("iframe", null, array ("src" => "http://localhost/Xantico/index.php?page=form#", "allowfullscreen" => "true")));
         
+        $pageHeader24 = new PageHeader("Video (Plyr, a demo of plugins)");
+        $video = new Video();
+        $video->setSource("http://video.touchforu.com/sv/7da05c-163ecbf7536/7da05c-163ecbf7536.mp4")
+        ->setModuleType("plyr")
+        ->setWithControls();
+        $row10 = new Row();
+        $row10->setItems(array (
+            new Grid($video, 6),
+        ));
         
         // container
         $container = new Typography("div:container", null, array("role"=> "main"));
@@ -1956,11 +1969,15 @@ class BootstrapView
             $panel4->enclose(clone $bsExample),
             $panel5->enclose(clone $bsExample),
             $panel6->enclose(clone $bsExample),
+            $pageHeader23,
+            $embedRspDiv->enclose(clone $bsExample),
             $pageHeader22,
             $well11->enclose(clone $bsExample),
             new Typography("h2", array ("text" => "Optional classes")),
             $well12->enclose(clone $bsExample),
-            $well13->enclose(clone $bsExample)
+            $well13->enclose(clone $bsExample),
+            $pageHeader24, 
+            $row10->enclose(clone $bsExample)
         ));
         // bootstrap palette
         $btPanel->setBodyContents(array($container));

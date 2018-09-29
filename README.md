@@ -1,5 +1,5 @@
 # Xantico
-A PHP Bootstrap helper to build compatible html code automatically by object oriental programming.
+A PHP helper to build Bootstrap compatible html code automatically by object oriental programming.
 
 ## Demo
 Please check the demo pages:

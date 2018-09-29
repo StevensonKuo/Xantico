@@ -20,7 +20,7 @@ class Alert extends Typography
         
         $this->type             = "alert";
         $this->isDismissible    = isset($vars ['isDismissible']) ? $vars ['isDismissible'] : false;
-        $this->colorSet         = !empty($this->colorSet) ? $this->colorSet : "success"; 
+        $this->context         = !empty($this->context) ? $this->context : "success"; 
     }
     
     /**
@@ -30,13 +30,13 @@ class Alert extends Typography
      */
     function render ($display = false) {
         $this->attrs ["role"] = "alert";
-        $this->customClass [] = "alert-" . $this->colorSet;
+        $this->customClass [] = "alert-" . $this->context;
         
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as &$ele) {
                 if (method_exists($ele, "getTagName") && $ele->getTagName() == "a" && $this->type == "alert") {
                     if (!in_array("alert-link", $ele->getCustomClass())) {
-                        $ele->setCustomClass("alert-link");
+                        $ele->appendCustomClass("alert-link");
                     }
                 }
             }
@@ -45,11 +45,11 @@ class Alert extends Typography
         if ($this->isDismissible == true) {
             $this->customClass [] = "alert-dismissible";
             $closeBtn = new HtmlTag("button");
-            $closeBtn->setCustomClass("close");
-            $closeBtn->setAttrs(array ("data-dismiss" => "alert", "aria-label" => "Close"));
+            $closeBtn->appendCustomClass("close");
+            $closeBtn->appendAttrs(array ("data-dismiss" => "alert", "aria-label" => "Close"));
             $icon = new HtmlTag("span", array ("aria-hidden" => "true"));
             $icon->setCdata("&times;");
-            $closeBtn->setInnerElements($icon);
+            $closeBtn->appendInnerElements($icon);
             array_unshift($this->innerElements, $closeBtn);
         }
         

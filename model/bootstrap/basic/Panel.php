@@ -21,7 +21,7 @@ class Panel extends Typography
         $this->type         = "panel";
         $this->heading      = isset ($vars ['heading']) ? $vars ['heading'] : "";
         $this->footer       = isset ($vars ['footer']) ? $vars ['footer'] : "";
-        $this->colorSet     = empty($this->colorSet) ? "default" : $this->colorSet;
+        $this->context     = empty($this->context) ? "default" : $this->context;
 //         $this->subTitle     = key_exists('subTitle', $vars) ? $vars ['subTitle'] : "";
 //         $this->flat         = key_exists('flat', $vars) ? $vars ['flat'] : true;
 //         $this->toolbox      = key_exists('toolbox', $vars) ? $vars ['toolbox'] : array ();
@@ -35,19 +35,19 @@ class Panel extends Typography
      */
     public function render($display = false)
     {
-        if (!empty($this->colorSet)) {
-            $this->setCustomClass("panel-" . $this->colorSet);    
+        if (!empty($this->context)) {
+            $this->appendCustomClass("panel-" . $this->context);    
         }
         
         $_defaultPart = array ();
         if (!empty($this->heading)) {
             $headingDiv = new HtmlTag("div");
-            $headingDiv->setCustomClass("panel-heading");
+            $headingDiv->appendCustomClass("panel-heading");
             if (self::$HEADING_SIZE > 0) {
                 $titleDiv = new HtmlTag("h" . self::$HEADING_SIZE);
-                $titleDiv->setCustomClass("panel-title")
+                $titleDiv->appendCustomClass("panel-title")
                 ->setInnerText($this->heading);
-                $headingDiv->setInnerElements($titleDiv);
+                $headingDiv->appendInnerElements($titleDiv);
             } else {
                 $headingDiv->setText($this->heading);
             }
@@ -57,8 +57,8 @@ class Panel extends Typography
         
         if (!empty($this->bodyContents)) {
             $bodyDiv = new HtmlTag("div");
-            $bodyDiv->setCustomClass("panel-body")
-            ->setInnerElements($this->bodyContents);
+            $bodyDiv->appendCustomClass("panel-body")
+            ->appendInnerElements($this->bodyContents);
             
             $_defaultPart [] = $bodyDiv;
         }
@@ -68,8 +68,8 @@ class Panel extends Typography
         
         if (!empty($this->footer)) {
             $footDiv = new HtmlTag("div");
-            $footDiv->setCustomClass("panel-footer")
-            ->setInnerElements($this->footer);
+            $footDiv->appendCustomClass("panel-footer")
+            ->appendInnerElements($this->footer);
             $this->innerElements [] = $footDiv;
         }
         
@@ -92,10 +92,9 @@ class Panel extends Typography
     }
     
     /**
-     * @desc body contents, different from InnerElements 
-     * @param array $bodyContents
+     * @param Ambigous <multitype:, field_type> $bodyContents
      */
-    public function setBodyContents($bodyContents = array ())
+    public function appendBodyContents($bodyContents = array ())
     {
         if (empty($bodyContents)) return $this;
         $numargs = func_num_args();
@@ -108,6 +107,38 @@ class Panel extends Typography
         if ($this->bodyContents && is_array($this->bodyContents)) $this->bodyContents = array_merge($this->bodyContents, $bodyContents);
         else $this->bodyContents = $bodyContents;
         
+        return $this;
+    }
+    
+    /**
+     * @desc setter, merge all argvs.
+     * @param array $bodyContents
+     * @return \model\bootstrap\basic\Jumbotron
+     */
+    public function setBodyContents($bodyContents = array ())
+    {
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $bodyContents = func_get_args();
+        } else {
+            if (!is_array($bodyContents)) $bodyContents = array ($bodyContents);
+        }
+        
+        $this->bodyContents = $bodyContents;
+        
+        return $this;
+    }
+    
+    public function getBody ($index) {
+        if (isset($this->bodyContents [$index])) {
+            return $this->bodyContents [$index];
+        } else {
+            return null;
+        }
+    }
+    
+    public function setBody ($index, $content) {
+        $this->bodyContents [$index] = $content;
         return $this;
     }
     

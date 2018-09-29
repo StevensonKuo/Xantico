@@ -53,7 +53,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * 渲染
+     * @desc render into a html tag.
      * @param string $display
      * @return unknown
      */
@@ -62,7 +62,7 @@ class HtmlTag implements iCaption
         $html = "<" . $this->tagName;
         
         if (!empty($this->customClass)) {
-            array_walk($this->customClass, "htmlspecialchars"); // 怕裡面還有陣列，會出錯
+            array_walk($this->customClass, "htmlspecialchars");
             $this->customClass = array_unique($this->customClass);
             $html .= " class=\"" . join(" ", $this->customClass) . "\"";
         }
@@ -79,7 +79,7 @@ class HtmlTag implements iCaption
                     $html .= " {$attrName}=\"". htmlspecialchars($attrValue) ."\"";
                 }
             } catch (\Exception $e) {
-                self::$errMsg = "HtmlTag Render Fail." . json_encode($this);
+                self::$errMsg = "[Error] HtmlTag Render Fail." . json_encode($this);
             }
         }
         
@@ -99,7 +99,7 @@ class HtmlTag implements iCaption
                 $html .= htmlspecialchars($this->innerText);
                 $html .= "</{$this->tagName}>";
             } catch (\Exception $e) {
-                self::$errMsg = "[Warning] Something un-insertable: " . json_encode($this->innerText);
+                self::$errMsg = "[Error] Something un-insertable: " . json_encode($this->innerText);
             }
         } else if (!empty($this->innerHtml)) {
             try {
@@ -110,7 +110,7 @@ class HtmlTag implements iCaption
                 }
                 $html .= "</{$this->tagName}>";
             } catch (\Exception $e) {
-                self::$errMsg = "[Warning] Something un-insertable: " . json_encode($this->innerHtml);
+                self::$errMsg = "[Error] Something un-insertable: " . json_encode($this->innerHtml);
             }
         } else if (!empty($this->cdata)) { 
             $html .= ">\n";
@@ -125,7 +125,7 @@ class HtmlTag implements iCaption
                 if ($ele instanceof HtmlTag && method_exists($ele, "render")) {
                     $html .= str_repeat("\t", self::$indentlevel) . $ele->render() . "\n";
                 } else if (is_array($ele)) {
-                    self::$errMsg = "inner element is an array." . json_encode($ele);
+                    self::$errMsg = "[Error] Inner element is an array." . json_encode($ele);
                     continue;
                 } else {
                     $html .= str_repeat("\t", self::$indentlevel) . $ele . "\n";
@@ -151,8 +151,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * magic function to string.
-     *
+     * @desc magic function to string.
      * @return string
      */
     function __toString()
@@ -163,14 +162,14 @@ class HtmlTag implements iCaption
             try {
                 return $this->render();
             } catch (\Exception $e) {
-                self::$errMsg = "Something refused to become a string. " . $e->getMessage();
+                self::$errMsg = "[Warning] Something refused to become a string. " . $e->getMessage();
                 return "";
             }
         }
     }
     
     /**
-     * @desc clone 時把內部的元素和項目也都 copy 一份
+     * @desc clone all items from innerElements, body contents and items.
      */
     public function __clone() {
         if (!empty($this->innerElements)) {
@@ -185,26 +184,6 @@ class HtmlTag implements iCaption
             $this->innerElements = $_elements;
         }
         
-        if(!empty($this->items)) {
-            $_items = array ();
-            foreach ($this->items as &$it) {
-                if (is_object($it)) {
-                    // @todo still can't handle many 'must' field.
-                    $className = get_class($it);
-                    $_itObj = new \stdClass();
-                    eval("\$_itObj = new $className();");
-                    if (is_object($it->text)) {
-                        $_itObj->text = clone $it->text;
-                    } else {
-                        $_itObj->text = $it->text;
-                    }
-                    $_items [] = clone $it;
-                } else {
-                    $_items [] = $it;
-                }
-            }
-            $this->items = $_items;
-        }
         
         $this->html = null; // reset render result;
     }
@@ -240,15 +219,15 @@ class HtmlTag implements iCaption
      * @desc customClass setter
      * @param multitype: $customClass
      */
-    public function setCustomClass($customClass = array ())
+    public function appendCustomClass($customClass = array ())
     {
         if (empty($customClass)) return $this;
         
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $customClass = func_get_args();
-        } else {
-            if (!is_array($customClass)) $customClass = array ($customClass);
+        } else if (!is_array($customClass)) {
+            $customClass = array ($customClass);
         }
         
         if(!empty($this->customClass)) $this->customClass = array_merge($this->customClass, $customClass);
@@ -258,18 +237,16 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc 不 merge 版本
+     * @desc setter, merge all argvs.
      * @param multitype: $customClass
      */
-    public function assignCustomClass($customClass = array ())
+    public function setCustomClass($customClass = array ())
     {
-        if (empty($customClass)) return $this;
-        
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $customClass = func_get_args();
-        } else {
-            if (!is_array($customClass)) $customClass = array ($customClass);
+        } else if (!is_array($customClass)) {
+            $customClass = array ($customClass);
         }
         
         $this->customClass = $customClass;
@@ -277,18 +254,7 @@ class HtmlTag implements iCaption
         return $this;
     }
     
-    public function truncateClass () {
-        $this->customClass = array ();
-        return $this;
-    }
-    
-    public function truncateStyle () {
-        $this->customStyle = array ();
-        return $this;
-    }
-    
     /**
-     * 回傳自訂的 HTML Style 值。
      * @return array
      */
     public function getCustomStyle()
@@ -296,21 +262,19 @@ class HtmlTag implements iCaption
         return $this->customStyle;
     }
     
-    
     /**
-     * 設定自訂的 HTML Style 值
      * @param array $customStyles
      * @return \model\bootstrap\basic\Button
      */
-    public function setCustomStyle($customStyle = array ())
+    public function appendCustomStyle($customStyle = array ())
     {
         if (empty($customStyle)) return $this;
         
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $customStyle = func_get_args();
-        } else {
-            if (!is_array($customStyle)) $customStyle = array ($customStyle);
+        } else if (!is_array($customStyle)) {
+            $customStyle = array ($customStyle);
         }
         
         if (!empty($this->customStyle)) $this->customStyle = array_merge($this->customStyle, $customStyle);
@@ -320,19 +284,17 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc 不 merge 版本
+     * @desc setter
      * @param array $customStyles
      * @return \model\bootstrap\basic\Button
      */
-    public function assignCustomStyle($customStyle = array ())
+    public function setCustomStyle($customStyle = array ())
     {
-        if (empty($customStyle)) return $this;
-        
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $customStyle = func_get_args();
-        } else {
-            if (!is_array($customStyle)) $customStyle = array ($customStyle);
+        } else if (!is_array($customStyle)) {
+            $customStyle = array ($customStyle);
         }
         
         $this->customStyle = $customStyle;
@@ -344,15 +306,15 @@ class HtmlTag implements iCaption
      * @desc innerElements setter.
      * @param array <multitype:, unknown> $innerElements
      */
-    public function setInnerElements($innerElements = array ())
+    public function appendInnerElements($innerElements = array ())
     {
-        // @todo need to get refered obj, to see how to pass by multiple arguments.
+        // @todo perhaps need to get refered obj, to see how to pass by multiple arguments.
         if (empty($innerElements)) return $this;
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $innerElements = func_get_args();
-        } else {
-            if (!is_array($innerElements)) $innerElements = array ($innerElements);
+        } else if (!is_array($innerElements)) {
+            $innerElements = array ($innerElements);
         }
         
         if ($this->innerElements) $this->innerElements = array_merge($this->innerElements, $innerElements);
@@ -361,17 +323,16 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc 不 merge 的版本
+     * @desc do assign, not merge.
      * @param array <multitype:, unknown> $innerElements
      */
-    public function assignInnerElements($innerElements = array ())
+    public function setInnerElements($innerElements = array ())
     {
-        if (empty($innerElements)) return $this;
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $innerElements = func_get_args();
-        } else {
-            if (!is_array($innerElements)) $innerElements = array ($innerElements);
+        } else if (!is_array($innerElements)) {
+            $innerElements = array ($innerElements);
         }
         
         $this->innerElements = $innerElements;
@@ -407,9 +368,10 @@ class HtmlTag implements iCaption
     }
     
     /**
+     * @desc append to attrs
      * @param Ambigous <multitype:, array> $attrs
      */
-    public function setAttrs($attrs =  array ())
+    public function appendAttrs($attrs =  array ())
     {
         if (empty($attrs)) return $this;
         
@@ -427,18 +389,16 @@ class HtmlTag implements iCaption
     }
 
     /**
-     * @desc 不 merge 版本
+     * @desc do assign, not merge. And you can truncate it by assign an empty array.
      * @param Ambigous <multitype:, array> $attrs
      */
-    public function assignAttrs($attrs =  array ())
+    public function setAttrs($attrs =  array ())
     {
-        if (empty($attrs)) return $this;
-        
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $attrs = func_get_args();
-        } else {
-            if (!is_array($attrs)) $attrs = array ($attrs);
+        } else if (!is_array($attrs)) {
+            $attrs = array ($attrs);
         }
         
         $this->attrs = $attrs;
@@ -446,11 +406,6 @@ class HtmlTag implements iCaption
         return $this;
     }
     
-    public function truncateAttrs () {
-        $this->attrs = array ();
-        return $this;
-    }
-
     /**
      * @return the $cdata
      */
@@ -476,20 +431,18 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc 清空現有元素
-     * @return \model\bootstrap\HtmlTag
-     */
-    public function truncateElements () {
-        $this->innerElements = array ();
-        return $this;
-    }
-    
-    /**
      * @return the $errMsg
      */
-    public static function getErrMsg()
+    public static function getErrMsg($display = false)
     {
-        return self::$errMsg;
+        if ($display == true) {
+            echo "<pre>\n";
+            print_r(self::$errMsg);
+            echo "\n</pre>";
+        } else {
+            return self::$errMsg;
+        }
+        
     }
     
     /**
@@ -514,7 +467,7 @@ class HtmlTag implements iCaption
      */
     protected static function setErrMsg($errMsg)
     {
-        // @todo 目前設了 error message 好像都還是找不到
+        // @todo could be better
         self::$errMsg = $errMsg;
     }
 
@@ -573,7 +526,7 @@ class HtmlTag implements iCaption
      * @return \model\bootstrap\HtmlTag
      */
     public function enclose (HtmlTag $outer) {
-        $outer->setInnerElements($this);
+        $outer->appendInnerElements($this);
         return $outer;
     }
     

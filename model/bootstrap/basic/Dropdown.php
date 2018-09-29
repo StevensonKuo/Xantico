@@ -46,8 +46,15 @@ class Dropdown extends Typography
         
         $this->button       = null;
         $this->menu         = null;
-        $this->screw        = new Droplet();
         $this->defaultIcon  = new Icon("caret", array ("iconSet" => ""));
+        $this->screw        = array (
+            "text"      => "&nbsp;",
+            "url"       => "",
+            "head"      => false,
+            "seperator" => false,
+            "active"    => false,
+            "disabled"  => false 
+        );         
     }
     
     /**
@@ -61,10 +68,11 @@ class Dropdown extends Typography
             case "button":
                 $this->customClass [] = $this->type;
                 if ($this->isSplit == true) {
-                    if ($this->text) {// in split button dropdown, text will be set into a seperate button,
-                        $_splitBtn = new Button(array("text" => $this->text));
-                        if (!empty($this->colorSet)) $_splitBtn->setColorSet($this->colorSet);
-                        if (!empty($this->size)) $_splitBtn->setColorSet($this->size);
+                    if ($this->innerText) {// in split button dropdown, text will be set into a seperate button,
+                        $_splitBtn = new Button();
+                        $_splitBtn->setInnerText($this->innerText);
+                        if (!empty($this->context)) $_splitBtn->setContext($this->context);
+                        if (!empty($this->size)) $_splitBtn->setContext($this->size);
                         $this->innerElements [] = $_splitBtn;
                     }
                 }
@@ -76,7 +84,7 @@ class Dropdown extends Typography
                     if (empty($this->menu)) $this->buildMenu();
                     $this->innerElements [] = $this->menu;
                 }
-                $this->text = null;
+                $this->innerText = null;
                 
                 parent::render();
                 break;
@@ -106,16 +114,15 @@ class Dropdown extends Typography
         
         if ($this->mode == "button") {
             $_btn = new Button();
-            $_btn->setCustomClass("btn");
             if (!empty($this->size)) $_btn->setSize($this->size);
-            if (!empty($this->colorSet)) $_btn->setColorSet($this->colorSet);
+            if (!empty($this->context)) $_btn->setContext($this->context);
         } else {
             $_btn = new Typography("a", null, array ("href" => "#"));
         }
         
-        $_btn->setCustomClass(array("dropdown-toggle"))
+        $_btn->appendCustomClass(array("dropdown-toggle"))
             ->setId()
-            ->setAttrs(array ( // @todo not actually know what they do.
+            ->appendAttrs(array ( // @todo not actually know what all they do.
                 "data-toggle" => "dropdown",
                 "role" => "button",
                 "aria-haspopup" => json_encode($this->hasPopup),
@@ -126,7 +133,7 @@ class Dropdown extends Typography
         if ($this->isSplit == true) {
             $_btn->innerElements = array($this->defaultIcon);
         } else {
-            $_btn->innerElements = array($this->text, $this->defaultIcon);
+            $_btn->innerElements = array($this->innerText, $this->defaultIcon);
         }
         
         $this->button = $_btn;
@@ -138,7 +145,7 @@ class Dropdown extends Typography
     protected function buildMenu () {
         $_ul = new Typography("ul:dropdown-menu");
         if ($this->align == "right") {
-            $_ul->setCustomClass("dropdown-menu-right");
+            $_ul->appendCustomClass("dropdown-menu-right");
         }
         if ($this->button instanceof Typography && method_exists($this->button, "getId")) {
             $_id = $this->button->getId ();
@@ -146,50 +153,48 @@ class Dropdown extends Typography
             $_id = "";
             self::setErrMsg("No id for dropdown menu labelled.");
         }
-        $_ul->setAttrs(array(
+        $_ul->appendAttrs(array(
             "aria-labelledby" => $_id  
         ));
         
         if (!empty($this->items)) {
             foreach ($this->items as $key => $item) {
-                if ($item->text instanceof HtmlTag && $item->text->getTagName() == "li") {
+                if ($item ['text'] instanceof HtmlTag && $item ['text']->getTagName() == "li") {
                     continue;
-                } else if (!($item instanceof Droplet)) {
-                    self::setErrMsg("[Notice] Set wrong trivial class to Dropdown. Use Droplet in Dropdown.");
-                } else if ($item->seperator == true) { // 分隔線
+                } else if ($item ['seperator'] == true) {
                     $_li = new HtmlTag("li");
-                    $_li->setAttrs(array ("role" => "seperator"));
-                    $_li->setCustomClass("divider")
+                    $_li->appendAttrs(array ("role" => "seperator"));
+                    $_li->appendCustomClass("divider")
                     ->setInnerText("\t");
                 } else {
                     $_li = new HtmlTag("li");
-                    if ($key == $this->activeIndex || $item->active == true) {
-                        $_li->setCustomClass("active");
+                    if ($key == $this->activeIndex || $item ['active'] == true) {
+                        $_li->appendCustomClass("active");
                     }
-                    if ($item->head == true) {
-                        $_li->setCustomClass("dropdown-header");
-                        $item->url = "";
+                    if ($item ['head'] == true) {
+                        $_li->appendCustomClass("dropdown-header");
+                        $item ['url'] = "";
                     }
-                    if ($item->disabled == true) {
-                        $_li->setCustomClass("disabled");
+                    if ($item ['disabled'] == true) {
+                        $_li->appendCustomClass("disabled");
                     }
                     
-                    if (!empty($item->url)) {
+                    if (!empty($item ['url'])) {
                         $_ia = new HtmlTag("a");
-                        $_ia->setAttrs(array ("href" => $item->url));
-                        if (is_string($item->text)) {
-                            $_ia->setInnerText($item->text);
+                        $_ia->appendAttrs(array ("href" => $item ['url']));
+                        if (is_string($item ['text'])) {
+                            $_ia->setInnerText($item ['text']);
                         } else {
-                            $_ia->setInnerElements($item->text);
+                            $_ia->appendInnerElements($item ['text']);
                         }
                         
-                        $_li->setInnerElements($_ia);
+                        $_li->appendInnerElements($_ia);
                     } else {
-                        $_li->setInnerElements($item->text);
+                        $_li->appendInnerElements($item ['text']);
                     }
                 }
                 
-                $_ul->setInnerElements($_li);
+                $_ul->appendInnerElements($_li);
                 unset ($_li);
                 unset ($_ia);
             }
@@ -319,16 +324,16 @@ class Dropdown extends Typography
         $_attrs = $button->getAttrs();
         $_attrKeys = array_keys($_attrs);
         if (!in_array("data-toggle", $_attrKeys)) {
-            $button->setAttrs(array("data-toggle" => "dropdown"));
+            $button->appendAttrs(array("data-toggle" => "dropdown"));
         } 
         if (!in_array("role", $_attrKeys)) {
-            $button->setAttrs(array("role" => "button"));   
+            $button->appendAttrs(array("role" => "button"));   
         }
         if (!in_array("aria-haspopup", $_attrKeys)) {
-            $button->setAttrs(array("aria-haspopup" => json_encode($this->hasPopup)));
+            $button->appendAttrs(array("aria-haspopup" => json_encode($this->hasPopup)));
         }
         if (!in_array("aria-expanded", $_attrKeys)) {
-            $button->setAttrs(array ("aria-expanded" => json_encode($this->expanded)));
+            $button->appendAttrs(array ("aria-expanded" => json_encode($this->expanded)));
         }
         
         $this->button = $button;
@@ -345,51 +350,64 @@ class Dropdown extends Typography
     }
 
     /**
-     * @desc 需要檢查是不是 droplet 的物件.
+     * @desc check if droplet
      * {@inheritDoc}
-     * @see \model\bootstrap\basic\Typography::setItems()
+     * @see \model\bootstrap\basic\Typography::appendItems()
      */
     public function setItems($items) {
         if (!empty($items)) {
             for ($i = 0; $i < count($items); $i ++) {
                 if (is_array ($items[$i])) {
-                    $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
-                    $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "";
-                    $_head = isset($items[$i] ['head']) ? $items[$i] ['head'] : false;
-                    $_seperator = isset($items[$i] ['seperator']) ? $items[$i] ['seperator'] : false;
-                    $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
-                    $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
-                    
-                    $items[$i] = new Droplet($_text, $_url, $_head, $_seperator, $_active, $_disabled);
-                } else if (!($items[$i] instanceof Droplet)) {
-                    // $items[$i] = new Droplet($items[$i]);
-                    unset ($items[$i]);
+                    $items[$i] ['text']         = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['url']          = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                    $items[$i] ['head']         = isset($items[$i] ['head']) ? $items[$i] ['head'] : $this->screw ['head'];
+                    $items[$i] ['seperator']    = isset($items[$i] ['seperator']) ? $items[$i] ['seperator'] : $this->screw ['seperator'];
+                    $items[$i] ['active']       = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                    $items[$i] ['disabled']     = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                } else {
+                    $_item ['text']         = $items[$i];
+                    $_item ['url']          = $this->screw ['url'];
+                    $_item ['head']         = $this->screw ['head'];
+                    $_item ['seperator']    = $this->screw ['seperator'];
+                    $_item ['active']       = $this->screw ['active'];
+                    $_item ['disabled']     = $this->screw ['disabled'];
+                    $items [$i] = $_item;
+                    unset ($_item);
                 }
             }
         }
-        $this->items = $items;
+        parent::setItems($items);
         return $this;
     }
     
     /**
-     * @return the $alignment
+     * @desc check associative array contents.
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::appendItems()
      */
-    public function getAlignment()
-    {
-        return $this->alignment;
-    }
-
-    /**
-     * @param field_type $alignment [right|left]
-     */
-    public function setAlignment($alignment)
-    {
-        if (in_array ($alignment, array ("left", "right"))) {
-            $this->alignment = $alignment;
-        } else {
-            $this->alignment = "left";
+    public function appendItems($items) {
+        if (!empty($items)) {
+            for ($i = 0; $i < count($items); $i ++) {
+                if (is_array ($items[$i])) {
+                    $items[$i] ['text']         = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['url']          = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                    $items[$i] ['head']         = isset($items[$i] ['head']) ? $items[$i] ['head'] : $this->screw ['head'];
+                    $items[$i] ['seperator']    = isset($items[$i] ['seperator']) ? $items[$i] ['seperator'] : $this->screw ['seperator'];
+                    $items[$i] ['active']       = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                    $items[$i] ['disabled']     = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                } else {
+                    $_item ['text']         = $items[$i];
+                    $_item ['url']          = $this->screw ['url'];
+                    $_item ['head']         = $this->screw ['head'];
+                    $_item ['seperator']    = $this->screw ['seperator'];
+                    $_item ['active']       = $this->screw ['active'];
+                    $_item ['disabled']     = $this->screw ['disabled'];
+                    $items [$i] = $_item;
+                    unset ($_item);
+                }
+            }
         }
-        
+        parent::appendItems($items);
         return $this;
     }
     
@@ -429,6 +447,17 @@ class Dropdown extends Typography
         return $this;
     }
     
+    public function setModeButton () {
+        $this->mode = "button";
+        return $this;
+    }
+    
+    public function setModeInline () {
+        $this->mode = "inline";
+        return $this;
+        
+    }
+    
     /**
      * @return the $isSplit
      */
@@ -446,61 +475,6 @@ class Dropdown extends Typography
         return $this;
     }
 
-    /**
-     * @desc three sizes [xs|sm|lg]
-     * @param string $size
-     */
-    public function setSize($size)
-    {
-        switch ($size) {
-            case 1:
-                //                 $this->size = "miner";
-                $this->size = ""; // preserved.
-                break;
-            case 2:
-                $this->size = "xs";
-                break;
-            case 3:
-                $this->size = "sm";
-                break;
-            case 4:
-                $this->size = "";
-                break;
-            case 5:
-                $this->size = "lg";
-                break;
-            default:
-                $this->size = $size;
-                
-        }
-        
-        return $this;
-    }
-    
 }
-
-/**
- * @desc dropdown menu 項目用小物件
- * @author metatronangelo
- *
- */
-class Droplet {
-    var $text; //string 
-    var $url; // string
-    var $head; // boolean
-    var $seperator; // boolean
-    var $active; // boolean
-    var $disabled; // boolean
-    
-    public function __construct($text = "", $url = "", $head = false, $seperator = false, $active = false, $disabled = false) {
-        $this->text = $text;
-        $this->url = $url;
-        $this->head = $head;
-        $this->seperator = $seperator; 
-        $this->active = $active;
-        $this->disabled = $disabled;
-    }
-}
-
 
 

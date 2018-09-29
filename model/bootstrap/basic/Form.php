@@ -26,7 +26,6 @@ class Form extends Typography
     const JQUERY_FORM_VALIDATION_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js';
     
     /**
-     * @desc 建構子
      * @param string $formType
      * @param array $attrs
      * @return \model\bootstrap\basic\Form
@@ -44,7 +43,7 @@ class Form extends Typography
         $this->labelRatio       = isset($vars['labelRatio']) ? $vars ['labelRatio'] : null; // 字寬３欄寬９
         $this->formAction       = isset ($vars['formAction']) ? $vars['formAction'] : array ();
         $this->isDisabled       = isset ($vars ['isDisabled']) ? $vars ['isDisabled'] : false;
-        $this->requireIcon      = isset ($vars ['requireIcon']) && $vars ['requireIcon'] instanceof Icon ? $vars ['requireIcon'] : new Icon("asterisk", array ("textColorSet" => "danger"));
+        $this->requireIcon      = isset ($vars ['requireIcon']) && $vars ['requireIcon'] instanceof Icon ? $vars ['requireIcon'] : new Icon("asterisk", array ("textContext" => "danger"));
     }
     
     /**
@@ -66,59 +65,74 @@ class Form extends Typography
         if ($this->name)    $_attrs ["name"] = $this->name;
         if ($this->id)      $_attrs ["id"] = $this->id;
         if ($this->enctype) $_attrs ["enctype"] = $this->enctype;
-        $this->setCustomClass($_class);
-        $this->setAttrs($_attrs);
+        $this->appendCustomClass($_class);
+        $this->appendAttrs($_attrs);
         
         if (!empty($this->innerElements)) {
             $newElements = array ();
             foreach ($this->innerElements as $ele) {
-                if (empty($ele)) continue; // pass 空物件.
+                if (empty($ele)) continue; // pass
                 if ($ele instanceof Input || $ele instanceof InputGroup || $ele instanceof Button) {
                     $formGroup = new Typography("div:form-group");
+                    if (method_exists($ele, "getValidationState") && !empty($ele->getValidationState())) {
+                        $formGroup->appendCustomClass("has-" . $ele->getValidationState());
+                        if (method_exists($ele, "getHasFeedback") && $ele->getHasFeedback() == true) {
+                            $formGroup->appendCustomClass("has-feedback");
+                        }
+                    }
                     switch ($this->formType) {
                         case "horizontal":
                         case "form-horizontal":
-                            $formGroup->setCustomClass("row");
+                            $formGroup->appendCustomClass("row");
                             if (empty($this->labelRatio)) {
                                 $_labelRatio = !empty($ele->getLabelRatio()) ? $ele->getLabelRatio() : array (3, 9);
                             } else {
                                 $_labelRatio = $this->labelRatio;
                             }
                             if (method_exists($ele, "getCaption") && !empty($ele->getCaption())) {
-                                $_label = new Typography("label");
-                                if ($this->formType == "form-inline") $_label->setCustomClass("sr-only");
-                                $_label->setCustomClass("col-sm-" . $_labelRatio [0]);
+                                $_label = new HtmlTag("label");
+                                if ($this->formType == "form-inline") {
+                                    $_label->setCustomClass("sr-only");
+                                }
+                                if (method_exists($ele, "getValidationState") && !empty($ele->getValidationState())) {
+                                    $_label->appendCustomClass("control-label");
+                                }
+                                $_label->appendCustomClass("col-sm-" . $_labelRatio [0]);
                                 if ($ele instanceof InputGroup && empty($ele->getId())) { // search input when input group id is empty.
-                                    $res = $ele->search("input");
-                                    $_for = isset ($res [0]) ? $res [0]->getId() : "";
+                                    $_for = $ele->getId();
                                 } else {
+                                    if (empty($ele->getId())) {
+                                        $ele->setId();
+                                    }
                                     $_for = $ele->getId();
                                 }
                                 
-                                $_label->setAttrs(array ("for" => $_for));
+                                $_label->appendAttrs(array ("for" => $_for));
 
                                 if (method_exists($ele, "getIsRequired") && $ele->getIsRequired() && !empty($this->requireIcon)) {
-                                    $_label->setInnerElements(array($this->requireIcon, $ele->getCaption()));
+                                    $_label->appendInnerElements(array($this->requireIcon, $ele->getCaption()));
                                 } else {
                                     $_label->setInnerText($ele->getCaption());
                                 }
                                 
-                                $formGroup->setInnerElements($_label);
+                                $formGroup->appendInnerElements($_label);
                             } else {
                                 $_labelRatio [1] = $_labelRatio [0] + $_labelRatio [1];
                             }
                             
                             if (method_exists($ele, "getHelp") && !empty($ele->getHelp())) {
                                 if (is_string($ele->getHelp())) {
-                                    $_help = new HtmlTag("small");
-                                    $_help->setCustomClass(array ("form-text", "text-muted"))
+                                    $_help = new Typography("small");
+                                    $_help->appendCustomClass(array ("help-block"))
                                     ->setText($ele->getHelp());
+                                    $_help->setId();
+                                    $ele->appendAttrs(array ("aria-describedby" => $_help->getId()));
                                 } else {
                                     $_help = $ele->getHelp();
                                 }
                             }
                             
-                            // input 比格子短小的情況
+                            // input body shorter than column.
                             if (!isset($_labelRatio [2]) && $_labelRatio [0] + $_labelRatio [1] < 12) {
                                 $_labelRatio [2] = $_labelRatio [1];
                                 $_labelRatio [1] = 12 - $_labelRatio [0];
@@ -126,20 +140,35 @@ class Form extends Typography
                                 $divPartial1 = new Typography("div:col-sm-" . $_labelRatio [1]);
                                 $divPartial2 = new Typography("div:row");
                                 $divPartial3 = new Typography("div:col-sm-" . $_labelRatio [2]);
-                                $divPartial3->setInnerElements($ele);
-                                $divPartial2->setInnerElements($divPartial3);
+                                $divPartial3->appendInnerElements($ele);
+                                // feedback icon
+                                if (method_exists($ele, "getHasFeedback") && $ele->getHasFeedback() == true) {
+                                    $_icon = $ele->getValidationState() == "success" ? "ok" : ($ele->getValidationState() == "warning" ? "warning-sign" : "remove");
+                                    $feedbackIcon = new Icon($_icon);
+                                    $feedbackIcon->appendCustomClass("form-control-feedback");
+                                    $divPartial3->appendInnerElements($feedbackIcon);
+                                }
+                                
+                                $divPartial2->appendInnerElements($divPartial3);
                                 if (isset($_help)) {
                                     $divPartial4 = new Typography("div:col-sm-" . ($_labelRatio [1] - $_labelRatio [2]));
-                                    $divPartial4->setInnerElements($_help);
-                                    $divPartial2->setInnerElements($divPartial4);
+                                    $divPartial4->appendInnerElements($_help);
+                                    $divPartial2->appendInnerElements($divPartial4);
                                 }
-                                $divPartial1->setInnerElements($divPartial2);
-                                $formGroup->setInnerElements($divPartial1);
+                                $divPartial1->appendInnerElements($divPartial2);
+                                $formGroup->appendInnerElements($divPartial1);
                             } else {
                                 $eleDiv = new Typography("div:col-sm-" . $_labelRatio [1]);
-                                $eleDiv->setInnerElements(array ($ele));
-                                if (isset($_help)) $eleDiv->setInnerElements($_help);
-                                $formGroup->setInnerElements(array ($eleDiv));
+                                $eleDiv->appendInnerElements(array ($ele));
+                                // feedback icon
+                                if (method_exists($ele, "getHasFeedback") && $ele->getHasFeedback() == true) {
+                                    $_icon = $ele->getValidationState() == "success" ? "ok" : ($ele->getValidationState() == "warning" ? "warning-sign" : "remove");
+                                    $feedbackIcon = new Icon($_icon);
+                                    $feedbackIcon->appendCustomClass("form-control-feedback");
+                                    $eleDiv->appendInnerElements($feedbackIcon);
+                                }
+                                if (isset($_help)) $eleDiv->appendInnerElements($_help);
+                                $formGroup->appendInnerElements(array ($eleDiv));
                             }
                             
                             break;
@@ -151,33 +180,49 @@ class Form extends Typography
                         case "form-inline": // enclose by form-group
                             if (method_exists($ele, "getCaption") && !empty($ele->getCaption())) {
                                 $_label = new Typography("label");
-                                if ($this->formType == "form-inline") $_label->setCustomClass("sr-only");
+                                if ($this->formType == "form-inline") {
+                                    $_label->appendCustomClass("sr-only");
+                                }
+                                if (method_exists($ele, "getValidationState") && !empty($ele->getValidationState())) {
+                                    $_label->appendCustomClass("control-label");
+                                }
                                 if ($ele instanceof InputGroup && empty($ele->getId())) { // search input when input group id is empty.
-                                    $res = $ele->search("input");
-                                    $_for = isset ($res [0]) ? $res [0]->getId() : "";
+                                    $_for = $ele->getId();
                                 } else {
+                                    if (empty($ele->getId())) {
+                                        $ele->setId();
+                                    }
                                     $_for = $ele->getId();
                                 }
-                                $_label->setAttrs(array ("for" => $_for));
+                                $_label->appendAttrs(array ("for" => $_for));
                                 if (method_exists($ele, "getIsRequired") && $ele->getIsRequired()) {
-                                    $_requireIcon = new Icon("asterisk", array ("colorSet" => "danger"));
-                                    $_label->setInnerElements($_requireIcon);
+                                    $_requireIcon = new Icon("asterisk", array ("context" => "danger"));
+                                    $_label->appendInnerElements($_requireIcon);
                                 }
                                 $_label->setText($ele->getCaption());
                                 
-                                $formGroup->setInnerElements($_label);
+                                $formGroup->appendInnerElements($_label);
                             }
                             
-                            $formGroup->setInnerElements($ele);
+                            $formGroup->appendInnerElements($ele);
+                            if (method_exists($ele, "getHasFeedback") && $ele->getHasFeedback() == true) {
+                                $_icon = $ele->getValidationState() == "success" ? "ok" : ($ele->getValidationState() == "warning" ? "warning-sign" : "remove");
+                                $feedbackIcon = new Icon($_icon);
+                                $feedbackIcon->appendCustomClass("form-control-feedback");
+                                $formGroup->appendInnerElements($feedbackIcon);
+                            }
+                            
                             if (method_exists($ele, "getHelp") && !empty($ele->getHelp())) {
                                 if (is_string($ele->getHelp())) {
-                                    $_help = new HtmlTag("small");
-                                    $_help->setCustomClass(array ("form-text", "text-muted"))
+                                    $_help = new Typography("small");
+                                    $_help->appendCustomClass(array ("help-block"))
                                     ->setText($ele->getHelp());
+                                    $_help->setId();
+                                    $ele->appendAttrs(array ("aria-describedby" => $_help->getId()));
                                 } else {
                                     $_help = $ele->getHelp();
                                 }
-                                $formGroup->setInnerElements($_help);
+                                $formGroup->appendInnerElements($_help);
                             }
                             break;
                     }
@@ -200,7 +245,7 @@ class Form extends Typography
         if ($this->formAction) {
             switch ($this->formType) {
                 default:
-                    $this->setInnerElements($this->formAction);
+                    $this->appendInnerElements($this->formAction);
                     break;
             }
         }
@@ -208,7 +253,7 @@ class Form extends Typography
         // By default, browsers will treat all native form controls (<input>, <select> and <button> elements) inside a <fieldset disabled> as disabled
         if ($this->isDisabled == true) {
             $disabledField = new HtmlTag("fieldset", array ("disabled" => "disabled"));
-            $disabledField->setInnerElements($this->innerElements);
+            $disabledField->appendInnerElements($this->innerElements);
             $this->innerElements = array ($disabledField);  
         }
 
@@ -303,6 +348,31 @@ class Form extends Typography
         return $this;
     }
     
+    public function setFormTypeInline () {
+        $this->formType = "form-inline";
+        return $this;
+    }
+
+    public function setFormTypeHorizontal () {
+        $this->formType = "form-horizontal";
+        return $this;
+    }
+    
+    public function setFormTypeNavbar () {
+        $this->formType = "navbar-form";
+        return $this;
+    }
+    
+    public function setFormTypeFieldset () {
+        $this->formType = "fieldset";
+        return $this;
+    }
+
+    /**
+     * @desc form action, an url.
+     * @param unknown $action
+     * @return \model\bootstrap\basic\Form
+     */
     public function setAction ($action) {
         $this->action = $action;
         return $this;
@@ -334,27 +404,22 @@ class Form extends Typography
     }
 
     /**
-     * @desc 加入 form 的動作按鈕，
+     * @desc actions, like submit, reset, are all about buttons in bottom of a form.
      * @param \model\bootstrap\basic\Typography $formAction
      */
     public function setFormAction($formAction = null)
     {
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
-            $formAction = func_get_args();
-        }
-        
         if (!empty($formAction)) {
             if (!is_array($formAction)) $formAction = array ($formAction);
             foreach ($formAction as $action) {
                 // if ($action instanceof Typography) {
                 $this->formAction [] = $action;
             }
-        } else {
+        } else { // if you don't assign a button class, we create a default one for the form.
             // set a defalut submit button
             $submit = new Button();
             $submit->setIsSubmit()
-            ->setColorSet("primary")
+            ->setContext("primary")
             ->setText(iCaption::CAP_SUBMIT);
             
             $this->formAction [] = $submit;

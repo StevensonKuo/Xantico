@@ -59,54 +59,54 @@ class Pagination extends Typography
             } else {
                 $pager = new Typography("ul:pagination");
             }
-            if (!empty($this->size)) $pager->setCustomClass("pagination-" . $this->size);
+            if (!empty($this->size)) $pager->appendCustomClass("pagination-" . $this->size);
             if (!empty($this->queryString)) $_queryStr = http_build_query($this->queryString) . "&";
             else $_queryStr = "";
             
             // Previous button
             $_previous = new HtmlTag("li");
-            if ($this->mode == "aligned-pager") $_previous->setCustomClass("previous");
+            if ($this->mode == "aligned-pager") $_previous->appendCustomClass("previous");
             $_movesTo = $this->activeIndex;
             if ($this->activeIndex == 0) {
-                $_previous->setCustomClass("disabled");
+                $_previous->appendCustomClass("disabled");
                 $_movesTo = 1;
             }
             $_prevA = new HtmlTag("a");
-            $_prevA->setAttrs(array("href" => $this->url . "?" . $_queryStr . self::$PAGE_PARAM_NAME . "=" . $_movesTo))
-            ->setAttrs(array("aria-label" => "Previous"));
+            $_prevA->appendAttrs(array("href" => $this->url . "?" . $_queryStr . self::$PAGE_PARAM_NAME . "=" . $_movesTo))
+            ->appendAttrs(array("aria-label" => "Previous"));
             if ($this->mode == "pagination") {
                 $_prevSpan = new HtmlTag("span");
-                $_prevSpan->setAttrs(array ("aria-hidden" => "true"));
+                $_prevSpan->appendAttrs(array ("aria-hidden" => "true"));
                 $_prevSpan->setCdata(self::$PREVIOUS_SIGN);
             } else if ($this->mode == "pager") {
                 $_prevSpan = iCaption::CAP_PREVIOUS;
             } else { // aligned-pager
                 $_prevSpanInner = new HtmlTag("span");
-                $_prevSpanInner->setAttrs(array ("aria-hidden" => "true"));
+                $_prevSpanInner->appendAttrs(array ("aria-hidden" => "true"));
                 $_prevSpanInner->setCdata(self::$PREVIOUS_ALIGNED_SIGN);
                 $_prevSpan = $_prevSpanInner->render () . iCaption::CAP_OLDER;
             }
-            $_previous->setInnerElements($_prevA->setInnerElements($_prevSpan));
+            $_previous->appendInnerElements($_prevA->appendInnerElements($_prevSpan));
             unset ($_prevSpan);
-            $pager->setInnerElements($_previous);
+            $pager->appendInnerElements($_previous);
             
             // pages button
             if ($this->mode == "pagination") {
                 for ($p = 0; $p < $_pages; $p++) {
                     $_li = new HtmlTag("li");
                     if ($p == $this->activeIndex) { // in current page.
-                        $_li->setCustomClass("active");
+                        $_li->appendCustomClass("active");
                         $_a = new HtmlTag("span");
                         $_active = new HtmlTag("span", array ("class" => "sr-only"));
                         $_active->setText("(current)");
-                        $_a->setInnerElements(array($p + 1, $_active));
+                        $_a->appendInnerElements(array($p + 1, $_active));
                         unset ($_active);
                     } else {
                         $_a = new HtmlTag("a");
-                        $_a->setAttrs(array ("href" => $this->url . "?" . $_queryStr . self::$PAGE_PARAM_NAME . "=" . ($p+1)));
+                        $_a->appendAttrs(array ("href" => $this->url . "?" . $_queryStr . self::$PAGE_PARAM_NAME . "=" . ($p+1)));
                         $_a->setText($p + 1);
                     }
-                    $_li->setInnerElements($_a);
+                    $_li->appendInnerElements($_a);
                     $pager->innerElements [] = $_li;
                     unset ($_a);
                     unset ($_li);
@@ -115,30 +115,30 @@ class Pagination extends Typography
             
             // next button
             $_next = new HtmlTag("li");
-            if ($this->mode == "aligned-pager") $_next->setCustomClass("next");
+            if ($this->mode == "aligned-pager") $_next->appendCustomClass("next");
             $_movesTo = $this->activeIndex + 2;
             if ($this->activeIndex >= $_pages - 1) {
-                $_next->setCustomClass("disabled");
+                $_next->appendCustomClass("disabled");
                 $_movesTo = $_pages;
             }
             $_nextA = new HtmlTag("a");
-            $_nextA->setAttrs(array("href" => $this->url . "?" . $_queryStr . self::$PAGE_PARAM_NAME . "=" . $_movesTo))
-            ->setAttrs(array("aria-label" => "Next"));
+            $_nextA->appendAttrs(array("href" => $this->url . "?" . $_queryStr . self::$PAGE_PARAM_NAME . "=" . $_movesTo))
+            ->appendAttrs(array("aria-label" => "Next"));
             if ($this->mode == "pagination") {
                 $_nextSpan = new HtmlTag("span");
-                $_nextSpan->setAttrs(array ("aria-hidden" => "true"));
+                $_nextSpan->appendAttrs(array ("aria-hidden" => "true"));
                 $_nextSpan->setCdata(self::$NEXT_SIGN);
             } else if ($this->mode == "pager") {
                 $_nextSpan = iCaption::CAP_NEXT;
             } else { // aligned-pager
                 $_nextSpanInner = new HtmlTag("span");
-                $_nextSpanInner->setAttrs(array ("aria-hidden" => "true"));
+                $_nextSpanInner->appendAttrs(array ("aria-hidden" => "true"));
                 $_nextSpanInner->setCdata(self::$NEXT_ALIGNED_SIGN);
                 $_nextSpan = iCaption::CAP_NEWER . $_nextSpanInner->render ();
             }
-            $_next->setInnerElements($_nextA->setInnerElements($_nextSpan));
+            $_next->appendInnerElements($_nextA->appendInnerElements($_nextSpan));
             unset ($_nextSpan);
-            $pager->setInnerElements($_next);
+            $pager->appendInnerElements($_next);
             $this->innerElements [] = $pager;
         }
         
@@ -272,36 +272,6 @@ class Pagination extends Typography
     }
 
     /**
-     * @desc three sizes [xs|sm|lg]
-     * @param string $size
-     */
-    public function setSize($size)
-    {
-        switch ($size) {
-            case 1:
-                //                 $this->size = "miner";
-                $this->size = ""; // preserved.
-                break;
-            case 2:
-                $this->size = "xs";
-                break;
-            case 3:
-                $this->size = "sm";
-                break;
-            case 4:
-                $this->size = "";
-                break;
-            case 5:
-                $this->size = "lg";
-                break;
-            default:
-                $this->size = $size;
-                
-        }
-        
-        return $this;
-    }
-    /**
      * @return the $queryString
      */
     public function getQueryString()
@@ -319,8 +289,8 @@ class Pagination extends Typography
     }
 
     /**
-     * @desc mode : [button|inline]
-     * @param field_type $mode [button|inline]
+     * @desc pagination mode
+     * @param field_type $mode [pagination|pager|aligned-pager]
      */
     public function setMode($mode)
     {
@@ -332,6 +302,21 @@ class Pagination extends Typography
             $this->setErrMsg("[Notice] You set a wrong mode of <class>Pagination. Default mode is 'pagination'");
         }
         
+        return $this;
+    }
+    
+    public function setModePagination () {
+        $this->mode = "pagination";
+        return $this;
+    }
+    
+    public function setModePager () {
+        $this->mode = "pager";
+        return $this;
+    }
+    
+    public function setModeAlignedPager () {
+        $this->mode = "aligned-pager";
         return $this;
     }
     

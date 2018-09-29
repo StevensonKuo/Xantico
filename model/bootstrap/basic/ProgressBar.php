@@ -6,13 +6,14 @@ use model\bootstrap\basic\Typography;
 
 class ProgressBar extends Typography
 {
+    public $screw; // array
+    
     protected $min; // int
     protected $max; // int
     protected $now; // int
     protected $isStriped; // boolean
     protected $isAnimated; // boolean
     
-    public $screw; // PgBar;
     
     /**
      * @desc contructor
@@ -29,7 +30,13 @@ class ProgressBar extends Typography
         $this->isStriped    = isset($vars['isStriped']) ? $vars['isStriped'] : false;
         $this->isAnimated   = isset($vars['isAnimated']) ? $vars['isAnimated'] : false;
         
-        $this->screw        = new PgBar();
+        $this->screw        = array (
+            "now"           => 0, 
+            "context"       => "", 
+            "text"          => "", 
+            "isStriped"     => false, 
+            "isAnimated"    => false
+        );
     }
     
     /**
@@ -41,29 +48,29 @@ class ProgressBar extends Typography
         if (!empty($this->items)) {
             foreach ($this->items as $pgbar) {
                 $bar = new Typography("div:progress-bar", null, array("role" => "progressbar"));
-                if ($pgbar->now < 2 && !empty($pgbar->text)) {
-                    $bar->setCustomStyle("min-width: 2em;");
+                if ($pgbar ['now'] < 2 && !empty($pgbar ['text'])) {
+                    $bar->appendCustomStyle("min-width: 2em;");
                 } else {
-                    $bar->setCustomStyle("width: {$pgbar->now}%");
+                    $bar->appendCustomStyle("width: {$pgbar ['now']}%");
                 }
                 
-                if (!empty($pgbar->colorSet)) {
-                    $bar->setCustomClass("progress-bar-" . $pgbar->colorSet);
+                if (!empty($pgbar ['context'])) {
+                    $bar->appendCustomClass("progress-bar-" . $pgbar ['context']);
                 }
-                if ($pgbar->isStriped == true) {
-                    $bar->setCustomClass("progress-bar-striped");
-                    if ($pgbar->isAnimated == true) {
-                        $bar->setCustomClass("active");
+                if ($pgbar ['isStriped'] == true) {
+                    $bar->appendCustomClass("progress-bar-striped");
+                    if ($pgbar ['isAnimated'] == true) {
+                        $bar->appendCustomClass("active");
                     }
                 }
                 
-                if (!empty($pgbar->text)) {
-                    $bar->setInnerElements($pgbar->text);
+                if (!empty($pgbar ['text'])) {
+                    $bar->appendInnerElements($pgbar ['text']);
                 } else {
                     $textSpan = new HtmlTag("span");
-                    $textSpan->setCustomClass("sr-only");
-                    $textSpan->setText($pgbar->now . "% Complete");
-                    $bar->setInnerElements($textSpan);
+                    $textSpan->appendCustomClass("sr-only");
+                    $textSpan->setText($pgbar ['now'] . "% Complete");
+                    $bar->appendInnerElements($textSpan);
                 }
                 
                 $bars [] = $bar;
@@ -71,44 +78,44 @@ class ProgressBar extends Typography
             }
         } else {
             $bar = new Typography("div:progress-bar", null, array("role" => "progressbar"));
-            $bar->setAttrs(
+            $bar->appendAttrs(
                 array (
                     "aria-valuenow" => $this->now,
                     "aria-valuemin" => $this->min,
                     "aria-valuemax" => $this->max
                 ));
-            if ($this->now < 2 && !empty($this->text)) {
-                $bar->setCustomStyle("min-width: 2em;");
+            if ($this->now < 2 && !empty($this->innerText)) {
+                $bar->appendCustomStyle("min-width: 2em;");
             } else {
-                $bar->setCustomStyle("width: {$this->now}%");
+                $bar->appendCustomStyle("width: {$this->now}%");
             }
             
             
-            if (!empty($this->colorSet)) {
-                $bar->setCustomClass("progress-bar-" . $this->colorSet);
-                $this->colorSet = "";
+            if (!empty($this->context)) {
+                $bar->appendCustomClass("progress-bar-" . $this->context);
+                $this->context = "";
             }
             if ($this->isStriped == true) {
-                $bar->setCustomClass("progress-bar-striped");
+                $bar->appendCustomClass("progress-bar-striped");
                 if ($this->isAnimated == true) {
-                    $bar->setCustomClass("active");
+                    $bar->appendCustomClass("active");
                 }
             }
             
-            if (!empty($this->text)) {
-                $bar->setInnerElements($this->text);
+            if (!empty($this->innerText)) {
+                $bar->appendInnerElements($this->innerText);
             } else {
                 $textSpan = new HtmlTag("span");
-                $textSpan->setCustomClass("sr-only");
+                $textSpan->appendCustomClass("sr-only");
                 $textSpan->setText($this->now . "% Complete");
-                $bar->setInnerElements($textSpan);
+                $bar->appendInnerElements($textSpan);
             }
             
             $bars = array ($bar);
         }
         
         $this->innerElements = $bars; 
-        $this->text = "";
+        $this->innerText = "";
         
         parent::render();
         
@@ -185,19 +192,52 @@ class ProgressBar extends Typography
         if (!empty($nowSet)) {
             for ($i = 0; $i < count($nowSet); $i ++) {
                 if (is_array ($nowSet[$i])) {
-                    $_now = isset($nowSet[$i] ['now']) ? $nowSet[$i] ['now'] : 0;
-                    $_colorSet = isset($nowSet[$i] ['colorSet']) ? $nowSet[$i] ['colorSet'] : "";
-                    $_text = isset($nowSet[$i] ['text']) ? $nowSet[$i] ['text'] : "";
-                    $_isStrpied = isset($nowSet[$i] ['isStriped']) ? $nowSet[$i] ['isStrpied'] : false;
-                    $_isAnimated = isset($nowSet [$i] ['isAnimated']) ? $nowSet [$i] ['isAnimated'] : false;
-                    
-                    $nowSet[$i] = new PgBar($_now, $_colorSet, $_text, $_isStrpied, $_isAnimated);
-                } else if (!($nowSet[$i] instanceof PgBar)) {
-                    unset ($nowSet[$i]);
+                    $nowSet[$i] ['now']         = isset($nowSet[$i] ['now']) ? $nowSet[$i] ['now'] : $this->screw ['now'];
+                    $nowSet[$i] ['context']     = isset($nowSet[$i] ['context']) ? $nowSet[$i] ['context'] : $this->screw ['context'];
+                    $nowSet[$i] ['text']        = isset($nowSet[$i] ['text']) ? $nowSet[$i] ['text'] : $this->screw ['text'];
+                    $nowSet[$i] ['isStriped']   = isset($nowSet[$i] ['isStriped']) ? $nowSet[$i] ['isStriped'] : $this->screw ['isStriped'];
+                    $nowSet[$i] ['isAnimated']  = isset($nowSet [$i] ['isAnimated']) ? $nowSet [$i] ['isAnimated'] : $this->screw ['isAnimated'];
+                } else {
+                    $_now ['now']         = $nowSet [$i];
+                    $_now ['context']     = $this->screw ['context'];
+                    $_now ['text']        = $this->screw ['text'];
+                    $_now ['isStriped']   = $this->screw ['isStriped'];
+                    $_now ['isAnimated']  = $this->screw ['isAnimated'];
+                    $nowSet [$i] = $_now;
+                    unset ($_now);
                 }
             }
         }
-        $this->items = $nowSet;
+        
+        parent::setItems($nowSet);
+        return $this;
+    }
+    
+    /**
+     * @param array of PgBar $items
+     */
+    public function appendItems($nowSet)
+    {
+        if (!empty($nowSet)) {
+            for ($i = 0; $i < count($nowSet); $i ++) {
+                if (is_array ($nowSet[$i])) {
+                    $nowSet[$i] ['now']         = isset($nowSet[$i] ['now']) ? $nowSet[$i] ['now'] : $this->screw ['now'];
+                    $nowSet[$i] ['context']     = isset($nowSet[$i] ['context']) ? $nowSet[$i] ['context'] : $this->screw ['context'];
+                    $nowSet[$i] ['text']        = isset($nowSet[$i] ['text']) ? $nowSet[$i] ['text'] : $this->screw ['text'];
+                    $nowSet[$i] ['isStriped']   = isset($nowSet[$i] ['isStriped']) ? $nowSet[$i] ['isStriped'] : $this->screw ['isStriped'];
+                    $nowSet[$i] ['isAnimated']  = isset($nowSet [$i] ['isAnimated']) ? $nowSet [$i] ['isAnimated'] : $this->screw ['isAnimated'];
+                } else {
+                    $_now ['now']         = $nowSet [$i];
+                    $_now ['context']     = $this->screw ['context'];
+                    $_now ['text']        = $this->screw ['text'];
+                    $_now ['isStriped']   = $this->screw ['isStriped'];
+                    $_now ['isAnimated']  = $this->screw ['isAnimated'];
+                    $nowSet [$i] = $_now;
+                    unset ($_now);
+                }
+            }
+        }
+        parent::appendItems($nowSet);
         return $this;
     }
 
@@ -228,25 +268,6 @@ class ProgressBar extends Typography
     }
 
 
-}
-
-/**
- * @desc nowSet 用的物件 
- */
-class PgBar {
-    var $now;
-    var $colorSet;
-    var $text;
-    var $isStriped; 
-    var $isAnimated;
-    
-    public function __construct($now = 0, $colorSet = "", $text = "", $isStriped = false, $isAnimated = false) {
-        $this->now = $now;
-        $this->colorSet = $colorSet;
-        $this->text = $text;
-        $this->isStriped = $isStriped;  
-        $this->isAnimated = $isAnimated;
-    }
 }
 
 

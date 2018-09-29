@@ -1,20 +1,15 @@
 <?php
 namespace model\bootstrap\basic;
 
-use model\bootstrap\basic\Badge;
-use model\bootstrap\basic\Icon;
-use model\bootstrap\HtmlTag;
-
 class Button extends Typography 
 {
-    protected $icon; // Icon
-    protected $badge; // Badge
     protected $isBlock; // boolean
     protected $isSubmit; // boolean
     protected $isReset; // boolean
     protected $isDisabled; // boolean
     protected $isOutline; // boolean
     protected $isLink; // boolean; use a tag
+    protected $isActive; // boolean
     protected $url; // string
     
     public function __construct($vars = array (), $attr = array())
@@ -26,34 +21,31 @@ class Button extends Typography
             parent::__construct("button:btn", $vars, $attr);
         }
         
-        $this->badge        = key_exists('badge', $vars) && $vars ['badge'] instanceof Badge ? $vars ['badge'] : null;
-        $this->icon         = key_exists('icon', $vars) && $vars ['icon'] instanceof Icon ? $vars ['icon'] : null;
         $this->isBlock      = key_exists('isBlock', $vars) ? $vars ['isBlock'] : false;
         $this->isSubmit     = key_exists('isSubmit', $vars) ? $vars ['isSubmit'] : false;
         $this->isReset      = key_exists('isReset', $vars) ? $vars ['isReset'] : false;
         $this->isDisabled   = key_exists('isDisabled', $vars) ? $vars ['isDisabled'] : false;
         $this->isOutline    = key_exists('isOutline', $vars) ? $vars ['isOutline'] : false;
         $this->isLink       = key_exists('isLink', $vars) ? $vars ['isLink'] : false;
-        $this->colorSet     = !empty($this->colorSet) ? $this->colorSet : "default"; // btn default color scene.
+        $this->context     = !empty($this->context) ? $this->context : "default"; // btn default color scene.
         
         return $this;
     }
     
     /**
-     * 
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::render()
      */
     public function render ($display = false) {
 //         $jQuery = "";
-        $_text = "";
         $class = array ();
         if ($this->isLink == true)          $class [] = "btn-link";
-        else if (!empty($this->colorSet))   $class [] = "btn-" . $this->colorSet;
+        else if (!empty($this->context))    $class [] = "btn-" . $this->context;
         if (!empty($this->size))            $class [] = "btn-" . $this->size;
         if (!empty($this->border))          $class [] = "btn-" . $this->border;
         if ($this->isBlock == true)         $class [] = "btn-block";
         if ($this->isOutline == true)       $class [] = "btn-outline";
+        if ($this->isActive == true)        $class [] = "active";
         
         $buttonAttrs = array ();
         if (!empty($this->title))               $buttonAttrs ['title']      = $this->title;
@@ -68,43 +60,14 @@ class Button extends Typography
             if ($this->isDisabled == true)      $buttonAttrs ['disabled']   = "disabled";
         }
         
-        $this->setCustomClass($class);
-        $this->setAttrs($buttonAttrs);
-        
-        if (!empty($this->textClass)) {
-            $textSpan = new HtmlTag("span");
-            $textSpan->setInnerText($this->text)
-                ->setCustomClass($this->textClass);
-            $_text = $textSpan;
-        } else {
-            try {
-                $_text = $this->text;
-            } catch (\Exception $e) {
-                return;
-            }
-        }
-        $this->text = ""; // !!! innerText 和 innerElements 只能擇一
-        
-        if (!empty($this->badge) && $this->badge->getAlign() == "left") { // badge 優先
-            $this->setInnerElements($this->badge);
-        }
-        if (!empty($this->icon) && $this->icon->getAlign() == "left") {
-            $this->setInnerElements($this->icon);
-            
-        }
-        $this->setInnerElements($_text);
-        if (!empty($this->icon) && $this->icon->getAlign() == "right") {
-            $this->setInnerElements($this->icon);
-        }
-        if (!empty($this->badge) && $this->badge->getAlign() == "right") {
-            $this->setInnerElements($this->badge);
-        }
+        $this->appendCustomClass($class);
+        $this->appendAttrs($buttonAttrs);
 
         parent::render();
         
 //         $this->jQuery .= $jQuery;
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -112,7 +75,7 @@ class Button extends Typography
     }
     
     /**
-     * @param string $colorSet
+     * @param string $Context
      * default
      * primary
      * info
@@ -127,49 +90,9 @@ class Button extends Typography
      * light
      * white
      */
-    public function setColorSet($colorSet = "default")
+    public function setContext($Context = "default")
     {
-        $this->colorSet = strtolower($colorSet);
-        return $this;
-    }
-    
-    /**
-     * @desc three sizes [xs|sm|lg]
-     * @param string $size
-     */
-    public function setSize($size)
-    {
-        switch ($size) {
-            case 1:
-//                 $this->size = "miner";
-                $this->size = ""; // preserved.
-                break;
-            case 2:
-                $this->size = "xs";
-                break;
-            case 3:
-                $this->size = "sm";
-                break;
-            case 4:
-                $this->size = "";
-                break;
-            case 5:
-                $this->size = "lg";
-                break;
-            default:
-                $this->size = $size;
-                
-        }
-        
-        return $this;
-    }
-    
-    /**
-     * @param Ambigous <NULL, \Bootstrap\Aceadmin\Typography> $badge
-     */
-    public function setBadge(Badge $badge)
-    {
-        $this->badge = $badge;
+        $this->context = strtolower($Context);
         return $this;
     }
     
@@ -179,14 +102,6 @@ class Button extends Typography
     public function setIsSubmit($isSubmit = true)
     {
         $this->isSubmit = $isSubmit;
-        return $this;
-    }
-    /**
-     * @param Ambigous <NULL, \Bootstrap\Aceadmin\Icon> $icon
-     */
-    public function setIcon(Icon $icon)
-    {
-        $this->icon = $icon;
         return $this;
     }
     
@@ -270,13 +185,31 @@ class Button extends Typography
     }
 
     /**
-     * @param Ambigous <boolean, \model\bootstrap\basic\Icon> $isLink
+     * @param Ambigous $isLink
      */
     public function setIsLink($isLink = true)
     {
         $this->isLink = $isLink;
         return $this;
     }
+    
+    /**
+     * @return the $isActive
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param field_type $isActive
+     */
+    public function setIsActive($isActive = true)
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+
 
     
     

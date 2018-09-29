@@ -33,45 +33,45 @@ class Media extends Typography
     public function render ($display = false) {
         if (!empty($this->mediaObject)) {
             $divMediaLeft = new HtmlTag("div");
-            $divMediaLeft->setCustomClass("media-left");
+            $divMediaLeft->appendCustomClass("media-left");
             $divMediaRight = new HtmlTag("div");
-            $divMediaRight->setCustomClass("media-right");
+            $divMediaRight->appendCustomClass("media-right");
             if (is_array($this->mediaObject)) {
                 
                 foreach ($this->mediaObject as $medium) {
                     if ($medium instanceof HtmlTag && !in_array("media-object", $medium->getCustomClass())) {
-                        $medium->setCustomClass("media-object");
+                        $medium->appendCustomClass("media-object");
                     }
                     $_align = isset($medium) && method_exists($medium, "getAlign") ? $medium->getAlign() : "left";
                     $_valign = isset($medium) && method_exists($medium, "getVerticalAlign") ? "media-" . $medium->getVerticalAlign() : null;
                     if ($_align == "left") {
                         if ($_valign !== null && !in_array($_valign, $divMediaLeft->getCustomClass())) {
-                            $divMediaLeft->setCustomClass($_valign);
+                            $divMediaLeft->appendCustomClass($_valign);
                         }
-                        $divMediaLeft->setInnerElements($medium);
+                        $divMediaLeft->appendInnerElements($medium);
                     } else { // right
                         if ($_valign !== null && !in_array($_valign, $divMediaRight->getCustomClass())) {
-                            $divMediaRight->setCustomClass($_valign);
+                            $divMediaRight->appendCustomClass($_valign);
                         }
-                        $divMediaRight->setInnerElements($medium);
+                        $divMediaRight->appendInnerElements($medium);
                     }
                 }
             } else {
                 $_align = isset($this->mediaObject) && method_exists($this->mediaObject, "getAlign") && !empty($this->mediaObject->getAlign()) ? $this->mediaObject->getAlign() : "left";
                 $_valign = isset($this->mediaObject) && method_exists($this->mediaObject, "getVerticalAlign") ? "media-" . $this->mediaObject->getVerticalAlign() : null;
                 if ($this->mediaObject instanceof HtmlTag && !in_array("media-object", $this->mediaObject->getCustomClass())) {
-                    $this->mediaObject->setCustomClass("media-object");
+                    $this->mediaObject->appendCustomClass("media-object");
                 }
                 if ($_align == "left") {
                     if ($_valign !== null && !in_array($_valign, $divMediaLeft->getCustomClass())) {
-                        $divMediaLeft->setCustomClass($_valign);
+                        $divMediaLeft->appendCustomClass($_valign);
                     }
-                    $divMediaLeft->setInnerElements($this->mediaObject);
+                    $divMediaLeft->appendInnerElements($this->mediaObject);
                 } else { // right
                     if ($_valign !== null && !in_array($_valign, $divMediaRight->getCustomClass())) {
-                        $divMediaRight->setCustomClass($_valign);
+                        $divMediaRight->appendCustomClass($_valign);
                     }
-                    $divMediaRight->setInnerElements($this->mediaObject);
+                    $divMediaRight->appendInnerElements($this->mediaObject);
                 }
             }
             
@@ -83,13 +83,13 @@ class Media extends Typography
             $divBody = new Typography("div:media-body");
             foreach ($this->bodyContents as $content) {
 //                 if ($content instanceof HtmlTag && !in_array("media-object", $content->getCustomClass())) {
-//                     $content->setCustomClass("media-object");
+//                     $content->appendCustomClass("media-object");
 //                 }
                 if ($content instanceof HtmlTag && method_exists($content, "getTagName") 
                     && preg_match("/^h[1-6]{1}$/", $content->getTagName()) && !in_array("media-heading", $content->getCustomClass())) {
-                        $content->setCustomClass("media-heading");
+                        $content->appendCustomClass("media-heading");
                 }
-                $divBody->setInnerElements($content);
+                $divBody->appendInnerElements($content);
             }
             $this->innerElements [] = $divBody;
         }
@@ -149,7 +149,7 @@ class Media extends Typography
     /**
      * @param Ambigous <multitype:, field_type> $bodyContents
      */
-    public function setBodyContents($bodyContents = array ())
+    public function appendBodyContents($bodyContents = array ())
     {
         if (empty($bodyContents)) return $this;
         $numargs = func_num_args();
@@ -162,6 +162,30 @@ class Media extends Typography
         if ($this->bodyContents && is_array($this->bodyContents)) $this->bodyContents = array_merge($this->bodyContents, $bodyContents);
         else $this->bodyContents = $bodyContents;
         
+        return $this;
+    }
+    
+    /**
+     * @desc setter, merge all argvs.
+     * @param array $bodyContents
+     * @return \model\bootstrap\basic\Jumbotron
+     */
+    public function setBodyContents($bodyContents = array ())
+    {
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $bodyContents = func_get_args();
+        } else {
+            if (!is_array($bodyContents)) $bodyContents = array ($bodyContents);
+        }
+        
+        $this->bodyContents = $bodyContents;
+        
+        return $this;
+    }
+    
+    public function setBodyContent ($index, $content) {
+        $this->bodyContents [$index] = $content;
         return $this;
     }
     

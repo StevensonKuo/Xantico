@@ -6,18 +6,15 @@ use model\bootstrap\HtmlTag;
 
 class Carousel extends Typography  
 {
+    public $screw; // array
+    
     protected $activeIndex; // int
     protected $withIndicator; // boolean
     protected $withControl; // boolean
     protected $interval; // int. ms
     
-    public $screw; // Slidle
-    
-    const BOOTSTRAP_CAROUSEL_NEXT = "Next";
-    const BOOTSTRAP_CAROUSEL_PREVIOUS = "Previous";
     
     /**
-     * 建構子
      * @param unknown $type
      * @param array $vars
      * @param array $attrs
@@ -29,68 +26,68 @@ class Carousel extends Typography
         parent::__construct("div:carousel", $vars, $attrs);
         
         $this->type         = "carousel";
-        $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0; // Carousel 一定要有一個 active不然不會動, 和 nav 等不一樣
+        $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0; // There is on element active in need in Carousel, or it will not work.
         $this->withIndicator= isset ($vars ['withIndicator']) ? $vars ['withIndicator'] : true;
         $this->withControl  = isset ($vars ['withControl']) ? $vars ['withControl'] : true;
-        $this->screw        = new Slidle();
+        
+        $this->screw        = array ("source" => "", "text" => "&nbsp;", "active" => false);
     }
     
     /**
-     * 渲染（佔位）
      * @param string $display
      * @return unknown
      */
     public function render($display = false)
     {
         $this->setId();
-        $this->setCustomClass("slide")
-        ->setAttrs(array ("data-ride" => "carousel"));
+        $this->appendCustomClass("slide")
+        ->appendAttrs(array ("data-ride" => "carousel"));
         
         if ($this->withIndicator == true) {
             $_indicator = new HtmlTag("ol");
-            $_indicator->setCustomClass("carousel-indicators");
+            $_indicator->appendCustomClass("carousel-indicators");
         }
         
         $_body = new HtmlTag("div");
-        $_body->setCustomClass("carousel-inner");
-        $_body->setAttrs(array ("role" => "listbox"));
+        $_body->appendCustomClass("carousel-inner");
+        $_body->appendAttrs(array ("role" => "listbox"));
         
         if (!empty($this->items)) {
             foreach ($this->items as $key => $item) {
                 $_div = new HtmlTag("div");
-                $_div->setCustomClass("item");
+                $_div->appendCustomClass("item");
                 
-                if ($item->active == true) { 
-                    $_div->setCustomClass("active");
+                if ($item ['active'] == true) { 
+                    $_div->appendCustomClass("active");
                 }
                 
-                $_img = new HtmlTag("img", array ("data-src" => $item->source, "alt" => $item->text));
-                $_div->setInnerElements($_img);
-                if (!empty($item->text)) {
+                $_img = new HtmlTag("img", array ("data-src" => $item ['source'], "alt" => $item ['text']));
+                $_div->appendInnerElements($_img);
+                if (!empty($item ['text'])) {
                     $_textDiv = new HtmlTag("div");
-                    $_textDiv->setCustomClass(array ("carousel-caption", "d-none", "d-md-block"));
-                    $_textDiv->setInnerElements($item->text);
+                    $_textDiv->appendCustomClass(array ("carousel-caption", "d-none", "d-md-block"));
+                    $_textDiv->appendInnerElements($item ['text']);
                     
-                    $_div->setInnerElements($_textDiv);
+                    $_div->appendInnerElements($_textDiv);
                 }
                 
-                $_body->setInnerElements($_div);
+                $_body->appendInnerElements($_div);
                 
                 if ($this->withIndicator == true) {
                     // @todo I can't click indicator the shit... don't know why...  
                     $_li = new HtmlTag("li");
-                    $_li->setAttrs(array ("data-target" => $this->id, "data-slide-to" => $key))
+                    $_li->appendAttrs(array ("data-target" => $this->id, "data-slide-to" => $key))
                     ->setText("\t");
                     
-                    if ($item->active == true) {
-                        $_div->setCustomClass("active");
-                        $_li->setCustomClass("active");
+                    if ($item ['active'] == true) {
+                        $_div->appendCustomClass("active");
+                        $_li->appendCustomClass("active");
                     }
                     
-                    $_indicator->setInnerElements($_li);
+                    $_indicator->appendInnerElements($_li);
                 }
             }
-            unset ($this->items); //已經都整理好交給 innerElements 了, 不用再 pass 給 Typograph 的 render 處理
+            $this->items = null;
         }
         
         if ($this->withIndicator == true) {
@@ -101,26 +98,26 @@ class Carousel extends Typography
         
         if ($this->withControl == true) {
             $_previous = new HtmlTag("a");
-            $_previous->setAttrs(array ("href" => "#" . $this->getId(), "role" => "button", "data-slide" => "prev"))
-            ->setCustomClass(array("left", "carousel-control"));
+            $_previous->appendAttrs(array ("href" => "#" . $this->getId(), "role" => "button", "data-slide" => "prev"))
+            ->appendCustomClass(array("left", "carousel-control"));
             $_icon = new Icon("chevron-left");
-            $_icon->setAttrs(array ("aria-hidden" => "true"));
-            $_comment = new Typography("span:sr-only", array ("text" => self::BOOTSTRAP_CAROUSEL_PREVIOUS));
-            $_previous->setInnerElements(array ($_icon, $_comment));
+            $_icon->appendAttrs(array ("aria-hidden" => "true"));
+            $_comment = new Typography("span:sr-only", array ("innerText" => self::CAP_PREVIOUS));
+            $_previous->appendInnerElements(array ($_icon, $_comment));
             
             $_next = clone $_previous;
-            $_next->setAttrs(array ("data-slide" => "next")) // will overwrite old attr.
-            ->truncateClass()
-            ->setCustomClass(array ("right", "carousel-control"));
+            $_next->appendAttrs(array ("data-slide" => "next")) // will overwrite old attr.
+            ->setCustomClass(null)
+            ->appendCustomClass(array ("right", "carousel-control"));
             $_next->getElement(0)->setIcon ("chevron-right");
-            $_next->getElement(1)->setText (self::BOOTSTRAP_CAROUSEL_NEXT);
+            $_next->getElement(1)->setText (self::CAP_NEXT);
             
-            $this->setInnerElements($_previous, $_next);
+            $this->appendInnerElements($_previous, $_next);
         }
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -128,25 +125,53 @@ class Carousel extends Typography
     }
  
     /**
-     * @desc 需要檢查是不是 listle 的物件. 
+     * @desc check if slidle. 
      * {@inheritDoc}
-     * @see \model\bootstrap\basic\Typography::setItems()
+     * @see \model\bootstrap\basic\Typography::appendItems()
      */
     public function setItems($items) {
         if (!empty($items)) {
             for ($i = 0; $i < count($items); $i ++) {
                 if (is_array ($items[$i])) {
-                    $_source = isset($items[$i] ['source']) ? $items[$i] ['source'] : "";
-                    $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
-                    $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : "";
-                    
-                    $items[$i] = new Slidle($_source, $_text, $_active);
-                } else if (!($items[$i] instanceof Slidle)) {
-                    unset ($items[$i]); // 一定要 image 所以無法成為內部元素.
+                    $items[$i] ['source']   = isset($items[$i] ['source']) ? $items[$i] ['source'] : $this->screw ['source'];
+                    $items[$i] ['text']     = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                } else {
+                    $_item ['source']   = $items [$i];
+                    $_item ['text']     = $this->screw ['text'];
+                    $_item ['active']   = $this->screw ['active'];
+                    $items [$i] = $_item;
+                    unset ($_item);
                 }
             }
         }
-        $this->items = $items;
+        parent::setItems($items);
+        return $this;
+    }
+    
+    /**
+     * @desc check if slidle. 
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::appendItems()
+     */
+    public function appendItems($items) {
+        if (!empty($items)) {
+            for ($i = 0; $i < count($items); $i ++) {
+                if (is_array ($items[$i])) {
+                    $items[$i] ['source']   = isset($items[$i] ['source']) ? $items[$i] ['source'] : $this->screw ['source'];
+                    $items[$i] ['text']     = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                } else {
+                    $_item ['source']   = $items [$i];
+                    $_item ['text']     = $this->screw ['text'];
+                    $_item ['active']   = $this->screw ['active'];
+                    $items [$i] = $_item;
+                    unset ($_item);
+                }
+            }
+        }
+        
+        parent::appendItems($items);
         return $this;
     }
     
@@ -202,21 +227,4 @@ class Carousel extends Typography
     }
 
 
-}
-
-/**
- * @desc carousel 項目用小物件
- * @author metatronangelo
- *
- */
-class Slidle { 
-    var $source;
-    var $text;
-    var $active;
-    
-    public function __construct($source = "", $text = "", $active = false) {
-        $this->source = $source;
-        $this->text = $text;
-        $this->active = $active;
-    }
 }

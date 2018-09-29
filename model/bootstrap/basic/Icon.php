@@ -18,7 +18,7 @@ class Icon extends Typography
         $this->type     = "icon";
         $this->icon     = isset($icon) ? $icon : "arrow-right";
         $this->iconSet  = isset ($vars ['iconSet']) ? $vars ['iconSet'] : "glyphicon";
-        $this->align    = "left"; // Icon default alignment is in left.
+        // $this->align    = "left"; // Icon default alignment is in left.
         
     }
     
@@ -28,7 +28,7 @@ class Icon extends Typography
      * @return string
      */
     public function render ($display = false) {
-        $this->setAttrs(array ("aria-hidden" => "true"));
+        $this->appendAttrs(array ("aria-hidden" => "true"));
         if (!empty($this->iconSet)) {
             $class [] = $this->iconSet . " " . $this->iconSet . "-" . $this->icon;
         } else {
@@ -36,13 +36,13 @@ class Icon extends Typography
         }
         
         if (!empty($this->align))       $class [] = "icon-on-" . $this->align;
-        if (!empty($this->textColorSet))    $class [] = "text-" . $this->textColorSet;
+        if (!empty($this->textContext)) $class [] = "text-" . $this->textContext;
         
-        $this->setCustomClass($class);
+        $this->appendCustomClass($class);
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;

@@ -7,6 +7,7 @@ use model\bootstrap\HtmlTag;
 class Breadcrumb extends Typography 
 {
     public $screw; // crumb
+    
     protected $activeIndex; // int
     protected $hideAfter; // boolean; hide levels after actived index.
     
@@ -23,7 +24,7 @@ class Breadcrumb extends Typography
 //          $this->type         = "breadcrumb"; // will be set in parent class.
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
         $this->hideAfter    = isset ($vars ['hideAfter']) ? $vars ['hideAfter'] : true;
-        $this->screw        = new Crumb();
+        $this->screw        = array ("text" => "&nbsp;", "url" => "#", "active" => false, "disabled" => false);
     }
     
     /**
@@ -34,34 +35,34 @@ class Breadcrumb extends Typography
     {
         if (!empty($this->items)) {
             foreach ($this->items as $key => $item) {
-                if ($item->text instanceof HtmlTag && $item->text->getTagName() == "li") {
+                if ($item ['text'] instanceof HtmlTag && $item ['text']->getTagName() == "li") {
                     continue;
                 } else {
                     $_li = new HtmlTag("li");
-//                      $_li->setAttrs(array ("role" => "presentation"));
+//                      $_li->appendAttrs(array ("role" => "presentation"));
 //                     if ($item->disabled == true) {
-//                         $_li->setCustomClass("disabled");
+//                         $_li->appendCustomClass("disabled");
 //                     }
-                    if ($key == $this->activeIndex || $item->active == true) { 
-                        $_li->setCustomClass("active");
+                    if ($key == $this->activeIndex || $item ['active'] == true) { 
+                        $_li->appendCustomClass("active");
                         
-                        $_li->setInnerElements($item->text);
+                        $_li->appendInnerElements($item ['text']);
                         if ($this->hideAfter == true) {
                             $this->innerElements [] = $_li;
                             break;
                         }
-                    } else if (!empty ($item->url)) { // breadcrumb 裡有 active 就沒 a
+                    } else if (!empty ($item ['url'])) { // breadcrumb 裡有 active 就沒 a
                         $_a = new HtmlTag("a");
-                        $_a->setAttrs(array ("href" => $item->url));
-                        if (is_string($item->text)) {
-                            $_a->setInnerText($item->text);
+                        $_a->appendAttrs(array ("href" => $item ['url']));
+                        if (is_string($item ['text'])) {
+                            $_a->setInnerText($item ['text']);
                         } else {
-                            $_a->setInnerElements($item->text);
+                            $_a->appendInnerElements($item ['text']);
                         }
                         
-                        $_li->setInnerElements($_a);
+                        $_li->appendInnerElements($_a);
                     } else {
-                        $_li->setInnerElements($item->text);
+                        $_li->appendInnerElements($item ['text']);
                     }
                 }
                 
@@ -72,7 +73,7 @@ class Breadcrumb extends Typography
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -99,24 +100,56 @@ class Breadcrumb extends Typography
     /**
      * @desc check if items are instance of <class>Crumb
      * {@inheritDoc}
-     * @see \model\bootstrap\basic\Typography::setItems()
+     * @see \model\bootstrap\basic\Typography::appendItems()
      */
     public function setItems($items) {
         if (!empty($items)) {
             for ($i = 0; $i < count($items); $i ++) {
                 if (is_array ($items[$i])) {
-                    $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
-                    $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "#";
-                    $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
-                    $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
+                    $items[$i] ['text']     = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['url']      = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                    $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                    $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                } else {
+                    $_item ['text']     = $items[$i];
+                    $_item ['url']      = $this->screw ['url'];
+                    $_item ['active']   = $this->screw ['active'];
+                    $_item ['disabled'] = $this->screw ['disabled'];
                     
-                    $items[$i] = new Crumb($_text, $_url, $_active, $_disabled);
-                } else if (!($items[$i] instanceof Crumb)) {
-                    $items[$i] = new Crumb($items[$i]);
+                    $items[$i] = $_item;
+                    unset ($_item);
                 }
             }
         }
-        $this->items = $items;
+        parent::setItems($items);
+        return $this;
+    }
+    
+    /**
+     * @desc check if items are instance of <class>Crumb
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::appendItems()
+     */
+    public function appendItems($items) {
+        if (!empty($items)) {
+            for ($i = 0; $i < count($items); $i ++) {
+                if (is_array ($items[$i])) {
+                    $items[$i] ['text']     = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['url']      = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                    $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                    $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                } else {
+                    $_item ['text']     = $items[$i];
+                    $_item ['url']      = $this->screw ['url'];
+                    $_item ['active']   = $this->screw ['active'];
+                    $_item ['disabled'] = $this->screw ['disabled'];
+                    
+                    $items[$i] = $_item;
+                    unset ($_item);
+                }
+            }
+        }
+        parent::appendItems($items);
         return $this;
     }
 
@@ -155,23 +188,4 @@ class Breadcrumb extends Typography
         return $this;
     }
 
-}
-
-/**
- * @desc breadcrumb 項目用小物件
- * @author metatronangelo
- *
- */
-class Crumb {
-    var $text;
-    var $url;
-    var $active;
-    var $disabled;
-    
-    public function __construct($text = "", $url = "#", $active = false, $disabled = false) {
-        $this->text = $text;
-        $this->url = $url;
-        $this->active = $active;
-        $this->disabled = $disabled; 
-    }
 }

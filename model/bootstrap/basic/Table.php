@@ -3,19 +3,18 @@ namespace model\bootstrap\basic;
 
 use model\bootstrap\basic\Typography;
 use model\bootstrap\HtmlTag;
-use think\debug\Html;
 
 class Table extends Typography 
 {
     protected $headers = array ();
     protected $cells = array ();
-    protected $isStriped; // boolean 是否有條紋
-    protected $isBordered; // boolean 是否有框
-    protected $isCondensed; // boolean 是否為窄間距
-    protected $withHoverEffect; // boolean
+    protected $isStriped; // boolean 
+    protected $isBordered; // boolean
+    protected $isCondensed; // boolean
+    protected $withHoverState; // boolean
+    protected $isResponsive; // boolean
     
     /**
-     * 建構子
      * @param array $vars
      * @return \model\Bootstrap\Basic\Table
      */
@@ -23,36 +22,40 @@ class Table extends Typography
     {
         parent::__construct("table:table", $vars, $attr);
         
-        $this->type     = "single";
-        $this->headers  = array_key_exists("headers", $vars) ? $vars ['headers'] : array();
-        $this->cells    = array_key_exists("cells", $vars) ? $vars ['cells'] : array();
-        $this->isBordered = array_key_exists("isBordered", $vars) ? $vars ['isBordered'] : false;
-        $this->isStriped = array_key_exists("isStriped", $vars) ? $vars ['isStriped'] : false;
-        $this->isCondensed = array_key_exists("isCondensed", $vars) ? $vars ['isCondensed'] : false;
-        $this->withHoverEffect = array_key_exists("withHoverEffect", $vars) ? $vars ['withHoverEffect'] : false;
+        $this->headers          = isset($vars ["headers"]) ? $vars ['headers'] : array();
+        $this->cells            = isset($vars ["cells"]) ? $vars ['cells'] : array();
+        $this->isBordered       = isset($vars ["isBordered"]) ? $vars ['isBordered'] : false;
+        $this->isStriped        = isset($vars ["isStriped"]) ? $vars ['isStriped'] : false;
+        $this->isCondensed      = isset($vars ["isCondensed"]) ? $vars ['isCondensed'] : false;
+        $this->withHoverState   = isset($vars ["withHoverEffect"]) ? $vars ['withHoverEffect'] : false;
     }
 
     /**
-     * @desc 渲染
      * @param string $display
      * @return unknown
      */
     public function render ($display = false) {
-        $jQuery = "";
         if ($this->isStriped == true) {
-            $this->setCustomClass("table-striped");
+            $this->customClass [] = "table-striped";
         }
         if ($this->isBordered == true) {
-            $this->setCustomClass("table-bordered");
+            $this->customClass [] = "table-bordered";
         }
         if ($this->isCondensed == true) {
-            $this->setCustomClass("table-condensed");
+            $this->customClass [] = "table-condensed";
         }
-        if ($this->withHoverEffect == true) {
-            $this->setCustomClass("table-hover");
+        if ($this->withHoverState == true) {
+            $this->customClass [] = "table-hover";
         }
         
-        if ($this->headers) {
+        $_innerElements = array ();
+        if (!empty($this->caption)) {
+            $_caption = new HtmlTag("caption");
+            $_caption->setInnerElements($this->caption);
+            $_innerElements [] = $_caption;
+        }
+        
+        if (!empty($this->headers)) {
             $tableHead = new HtmlTag("thead");
             $tr = new HtmlTag("tr");
 
@@ -69,29 +72,31 @@ class Table extends Typography
                 
                 if ($colspanToken <= 0) {
                     $th = new HtmlTag("th");
-                    $th->setCustomClass($hClass);
+                    $th->appendCustomClass($hClass);
                     if (isset($hd ['nowrap']) && $hd ['nowrap'] == true) {
-                        $th->setAttrs(array ("nowrap" => "nowrap"));
+                        $th->appendAttrs(array ("nowrap" => "nowrap"));
                     }
                     if (isset($hd ['colspan']) && $hd ['colspan'] > 0) {
-                        $th->setAttrs(array ("colspan" => $hd ['colspan']));
+                        $th->appendAttrs(array ("colspan" => $hd ['colspan']));
                         $colspanToken = $hd ['colspan'];
                     }
                         
                     if ($text instanceof HtmlTag && method_exists($text, "render")) {
-                        $th->setInnerElements($text);
+                        $th->appendInnerElements($text);
                     } else {
                         $th->setInnerText($text);
                     }
                 }
                 
-                $tr->setInnerElements($th);
+                $tr->appendInnerElements($th);
                 unset ($th);
                 $colspanToken--;
             }
             
-            $tableHead->setInnerElements($tr);
+            $tableHead->appendInnerElements($tr);
             unset ($tr);
+            
+            $_innerElements [] = $tableHead;
         }
         
         if (!empty($this->cells)) {
@@ -102,55 +107,67 @@ class Table extends Typography
             foreach ($this->cells as $trkey => $cell) {
                 $tr = new HtmlTag("tr");
                 $colspanToken = 0;
-                foreach ($cell as $tdkey => $cl) {
-                    $cClass = array ();
-                    if (is_array($cl)) {
-                        if (isset($cl ['center']) && $cl ['center'] == true) $cClass [] = "center";
-                        $text = isset ($cl ['text']) ? $cl ['text'] . "" : "";
-                    } else {
-                        $text = $cl . "";
+                if (isset ($cell ['context']) && in_array($cell ['context'], self::$contextArr)) {
+                    $tr->setCustomClass($cell ['context']);
+                }
+                if (isset($cell ['isActive']) && $cell ['isActive'] == true) {
+                    $tr->appendCustomClass("active");
+                }
+                if (isset($cell ['td'])) {
+                    $cell = $cell ['td'];
+                }
+                if (!empty($cell)) {
+                    foreach ($cell as $tdkey => $cl) {
+                        $cClass = array ();
+                        if (is_array($cl)) {
+                            if (isset($cl ['center']) && $cl ['center'] == true) $cClass [] = "center";
+                            $text = isset ($cl ['text']) ? $cl ['text'] . "" : "";
+                        } else {
+                            $text = $cl . "";
+                        }
+                        
+                        $td = new HtmlTag("td");
+                        $td->appendCustomClass($cClass);
+                        
+                        if (isset($cl ['width'])) {
+                            $td->appendAttrs(array ("width" => $cl ['width']));
+                        }
+                        if (isset($cl ['nowrap']) && $cl ['nowrap'] == true) {
+                            $td->appendAttrs(array ("nowrap" => "nowrap"));
+                        }
+                        if (isset($cl ['colspan']) && $cl ['colspan'] > 0) {
+                            $td->appendAttrs(array ("colspan" => $cl ['colspan']));
+                        }
+                        if (isset($cl ['rowspan']) && $cl ['rowspan'] > 0) {
+                            $td->appendAttrs(array ("rowspan" => $cl ['rowspan']));
+                        }
+                        
+                        if ($text instanceof HtmlTag && method_exists($text, "render")) {
+                            $td->appendInnerElements($text);
+                            $jQuery .= $text->getJQuery() . "\n";
+                        } else {
+                            $td->setInnerText($text);
+                        }
+                        $tr->appendInnerElements($td);
+                        unset ($td);
                     }
-                    
-                    $td = new HtmlTag("td");
-                    $td->setCustomClass($cClass);
-                    
-                    if (isset($cl ['width'])) {
-                        $td->setAttrs(array ("width" => $cl ['width']));
-                    }
-                    if (isset($cl ['nowrap']) && $cl ['nowrap'] == true) {
-                        $td->setAttrs(array ("nowrap" => "nowrap"));
-                    }
-                    if (isset($cl ['colspan']) && $cl ['colspan'] > 0) {
-                        $td->setAttrs(array ("colspan" => $cl ['colspan']));
-                    }
-                    if (isset($cl ['rowspan']) && $cl ['rowspan'] > 0) {
-                        $td->setAttrs(array ("rowspan" => $cl ['rowspan']));
-                    }
-                    
-                    if ($text instanceof HtmlTag && method_exists($text, "render")) {
-                        $td->setInnerElements($text);
-                        $jQuery .= $text->getJQuery() . "\n";
-                    } else {
-                        $td->setInnerText($text);
-                    }
-                    $tr->setInnerElements($td);
-                    unset ($td);
                 }
                 
                 $rowspanToken--;
-                $tableBody->setInnerElements($tr);
+                $tableBody->appendInnerElements($tr);
                 unset ($tr);
             } // end of each cell.
             
+            $_innerElements [] = $tableBody;
+            
         }
         
-        $this->setInnerElements(array($tableHead, $tableBody));
+        $this->innerElements = $_innerElements;
+        // no other inner elements. 
         
         parent::render();
         
-        $this->jQuery = $jQuery;
-        
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -167,7 +184,14 @@ class Table extends Typography
         return $this;
     }
         
+    public function setHeader($headers)
+    {
+        $this->headers = $headers;
+        return $this;
+    }
+    
     /**
+     * @todo Check TableRow and TableCells
      * @param field_type $cells
      */
     public function setCells($cells)
@@ -239,44 +263,64 @@ class Table extends Typography
     /**
      * @return the $withHoverEffect
      */
-    public function getWithHoverEffect()
+    public function getWithHoverState()
     {
-        return $this->withHoverEffect;
+        return $this->withHoverState;
     }
 
     /**
      * @param Ambigous <boolean, array> $withHoverEffect
      */
-    public function setWithHoverEffect($withHoverEffect = true)
+    public function setWithHoverState($withHoverEffect = true)
     {
-        $this->withHoverEffect = $withHoverEffect;
+        $this->withHoverState = $withHoverEffect;
         return $this;
     }
-
     
-}
-
-/**
- * @desc table 用的 cell 項目物件
- * @author Stevenson Kuo
- *
- */
-class Cellet {
-    var $text; // string
-    var $center; // boolean
-    var $width; // int/string
-    var $nowrap; // boolean
-    var $colspan; // int
-    var $rowspan; // int
-    
-    public function __construct($text = "", $center = false, $width = "", $nowrap = false, $colspan = 0, $rowspan = 0) {
-        $this->text = $text;
-        $this->center = $center;
-        $this->width = $width;
-        $this->nowrap = $nowrap;
-        $this->colspan = $colspan;
-        $this->rowspan = $rowspan;
-        
+    /**
+     * @return the $isResponsive
+     */
+    public function getIsResponsive()
+    {
+        return $this->isResponsive;
     }
+
+    /**
+     * @param field_type $isResponsive
+     */
+    public function setIsResponsive($isResponsive = true)
+    {
+        $this->isResponsive = $isResponsive;
+        return $this;
+    }
+    
+    /**
+     * @return the $headers
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @desc alias of getHeaders
+     * @return array|unknown
+     */
+    public function getHeader()
+    {
+        return $this->headers;
+    }
+    
+    /**
+     * @return the $cells
+     */
+    public function getCells()
+    {
+        return $this->cells;
+    }
+
+    
+
+    
 }
 

@@ -6,9 +6,13 @@ use model\bootstrap\HtmlTag;
 
 class Well extends Typography
 {
+    protected $isCenterBlock; // boolean
+    
     public function __construct($vars = array (), $attr = array ())
     {
         parent::__construct("div:well", $vars, $attr);
+        
+        $this->isCenterBlock = isset ($vars ['center-block']) ? $vars ['center-block'] : false;
     }
     
     /**
@@ -17,8 +21,8 @@ class Well extends Typography
      * @see \model\bootstrap\basic\Typography::render()
      */
     public function render($display = false) {
-        if (!empty($this->text)) {
-            $_text = preg_split("/[\n\r]/", $this->text);
+        if (!empty($this->innerText)) {
+            $_text = preg_split("/[\n\r]/", $this->innerText);
             if (!empty($_text)) {
                 foreach ($_text as $t) {
                     $p = new HtmlTag("p");
@@ -28,11 +32,15 @@ class Well extends Typography
                     unset ($p);
                 }
             }
-            unset ($this->text);
+            $this->innerText = null;
         }
         
         if (!empty($this->size)) {
             $this->customClass [] = "well-" . $this->size;
+        }
+        
+        if ($this->isCenterBlock == true) {
+            $this->customClass [] = "center-block";
         }
         
         
@@ -45,6 +53,24 @@ class Well extends Typography
         }
         
     }
+    
+    /**
+     * @return the $isCenterBlock
+     */
+    public function getIsCenterBlock()
+    {
+        return $this->isCenterBlock;
+    }
+
+    /**
+     * @param Ambigous <boolean, array> $isCenterBlock
+     */
+    public function setIsCenterBlock($isCenterBlock = true)
+    {
+        $this->isCenterBlock = $isCenterBlock;
+        return $this;
+    }
+
 
 }
 

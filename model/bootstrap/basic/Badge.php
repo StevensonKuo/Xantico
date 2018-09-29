@@ -9,16 +9,15 @@ class Badge extends Typography
     /**
      * @desc contructor
      * @param string $text
-     * @param string $colorSet [defualt|success|info|warning|danger...]
      * @param string $align [right|left]
      */
     public function __construct($text = "", $vars = array (), $attr = array ())
     {
         parent::__construct("span", $vars, $attr);
         
-        $this->type     = "badge";
-        $this->text     = !empty($text) ? $text : "badge";
-        $this->align    = "right"; // default alignment is in right.
+        $this->type         = "badge";
+        $this->innerText    = !empty($text) ? $text : "badge";
+        $this->align        = !empty($this->align) ? $this->align : "right"; // default alignment is in right.
     }
     
     /**
@@ -28,17 +27,16 @@ class Badge extends Typography
      */
     function render ($display = false) {
         $class [] = $this->type;
-        if (!empty($this->colorSet)) $class [] = $this->type . '-' . $this->colorSet;
+        if (!empty($this->context)) $class [] = $this->type . '-' . $this->context;
         if (!empty($this->align)) $class [] = $this->type . '-' . $this->align;
         
         $this->customClass = $class; // 本來用 set 的結果就一直產生 class 的累積
-        $this->setInnerText($this->text);
                 
         $html = parent::render();
         
         $this->html = $html;
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;

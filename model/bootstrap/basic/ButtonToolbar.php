@@ -4,33 +4,19 @@ namespace model\bootstrap\basic;
 class ButtonToolbar extends Typography 
 {
     
-    public function __construct($vars = array (), $attr = array())
+    public function __construct($innerElements = array (), $vars = array (), $attr = array())
     {
         parent::__construct("div:btn-toolbar", $vars, $attr);
+        
+        $this->innerElements = $innerElements;
     }
     
     /**
-     * 
+     * @desc add filter of buttons.
      * {@inheritDoc}
-     * @see \model\bootstrap\basic\Typography::render()
+     * @see \model\bootstrap\HtmlTag::appendInnerElements()
      */
-    public function render ($display = false) {
-        
-        parent::render();
-        
-        if ($display) {
-            echo $this->html;
-        } else {
-            return $this->html;
-        }
-    }
-    
-    /**
-     * @desc 多做了過濾是不是 btn-group 的動作
-     * {@inheritDoc}
-     * @see \model\bootstrap\HtmlTag::setInnerElements()
-     */
-    public function setInnerElements($innerElements = array ())
+    public function appendInnerElements($innerElements = array ())
     {
         if (empty($innerElements)) return $this;
         $numargs = func_num_args();
@@ -40,14 +26,14 @@ class ButtonToolbar extends Typography
             if (!is_array($innerElements)) $innerElements = array ($innerElements);
         }
         
-        foreach ($innerElements as $k => $ele) { // 把不是 button group 的過瀘掉
+        foreach ($innerElements as $k => $ele) { // fliter buttons.
             if (!($ele instanceof ButtonGroup)) {
                 unset($innerElements[$k]);
                 parent::setErrMsg("button toolbar has one element which is not button-group instance." . $ele->getType());
             }
         }
         
-        return parent::setInnerElements($innerElements);
+        return parent::appendInnerElements($innerElements);
     }
     
 }

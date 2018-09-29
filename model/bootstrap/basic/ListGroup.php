@@ -6,9 +6,12 @@ use model\bootstrap\HtmlTag;
 
 class ListGroup extends Typography 
 {
+    public $screw;
+    
+    public static $ITEM_HEADING_SIZE = 4;
+    
     private static $modeArr = array ("button", "anchar", "");
     
-    public $screw; // listle
     
     /**
      * @param unknown $type
@@ -21,13 +24,17 @@ class ListGroup extends Typography
         
         parent::__construct("ul:list-group", $vars, $attrs);
         
-        $this->type         = "list-group";
-        $this->screw        = new Listle();
-        
+        $this->screw    = array (
+            "text"      => "&nbsp;",
+            "url"       => "",
+            "active"    => false,
+            "disabled"  => false,
+            "heading"   => "",
+            "context"   => ""
+        );
     }
     
     /**
-     * 渲染（佔位）
      * @param string $display
      * @return unknown
      */
@@ -46,41 +53,41 @@ class ListGroup extends Typography
         
         if (!empty($this->items)) {
             foreach ($this->items as $key => $item) {
-                if (empty($item->url) && $itemTag == "a") {
-                    $item->url = "#";
-                } else if (!empty($item->url)) { // if thera have been set url, force set the tag to <a/>.
+                if (empty($item ['url']) && $itemTag == "a") {
+                    $item ['url'] = "#";
+                } else if (!empty($item ['url'])) { // if thera have been set url, force set the tag to <a/>.
                     $this->setTagName("div");
                     $itemTag = "a";
                 }
                 
                 $_li = new HtmlTag($itemTag);
-                $_li->setCustomClass("list-group-item");
-                if ($item->active == true) { 
-                    $_li->setCustomClass("active");
+                $_li->appendCustomClass("list-group-item");
+                if ($item ['active'] == true) { 
+                    $_li->appendCustomClass("active");
                 }
-                if ($item->disabled == true) { 
-                    $_li->setCustomClass("disabled");
+                if ($item ['disabled'] == true) { 
+                    $_li->appendCustomClass("disabled");
                 }
-                if ($itemTag == "a" && !empty($item->url)) {
-                    $_li->setAttrs(array ("href" => $item->url));
+                if ($itemTag == "a" && !empty($item ['url'])) {
+                    $_li->appendAttrs(array ("href" => $item ['url']));
                 }
-                if (!empty($item->context) && in_array($item->context, self::$contextualColorArr)) {
-                    $_li->setCustomClass("list-group-item-" . $item->context);
+                if (!empty($item ['context']) && in_array($item ['context'], self::$contextArr)) {
+                    $_li->appendCustomClass("list-group-item-" . $item ['context']);
                 }
-                if (!empty($item->heading)) {
-                    $_heading = new HtmlTag("h" . Listle::$HEADING_SIZE);
-                    $_heading->setCustomClass("list-group-item-heading")
-                    ->setInnerText($item->heading);
+                if (!empty($item ['heading'])) {
+                    $_heading = new HtmlTag("h" . self::$ITEM_HEADING_SIZE);
+                    $_heading->appendCustomClass("list-group-item-heading")
+                    ->setInnerText($item ['heading']);
                     $_paragraph = new HtmlTag("p");
-                    $_paragraph->setInnerText($item->text)
-                    ->setCustomClass("list-group-item-text");
-                    $item->text = array ($_heading, $_paragraph);
+                    $_paragraph->setInnerText($item ['text'])
+                    ->appendCustomClass("list-group-item-text");
+                    $item ['text'] = array ($_heading, $_paragraph);
                 }
                 
-                if (is_string($item->text)) {
-                    $_li->setInnerText($item->text);
+                if (is_string($item ['text'])) {
+                    $_li->setInnerText($item ['text']);
                 } else {
-                    $_li->setInnerElements($item->text);
+                    $_li->appendInnerElements($item ['text']);
                 } 
                 
                 $this->innerElements [] = $_li;
@@ -100,26 +107,64 @@ class ListGroup extends Typography
     /**
      * @desc check if items are instances of Listle.
      * {@inheritDoc}
-     * @see \model\bootstrap\basic\Typography::setItems()
+     * @see \model\bootstrap\basic\Typography::appendItems()
      */
     public function setItems($items = array ()) {
         if (!is_array($items)) $items = array ($items);
         for ($i = 0; $i < count($items); $i ++) {
             if (is_array ($items[$i])) {
-                $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
-                $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "";
-                $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
-                $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
-                $_heading = isset($items[$i] ['heading']) ? $items[$i] ['heading'] : "";
-                $_context = isset($items[$i] ['context']) ? strtolower($items[$i] ['context']) : "";
+                $items[$i] ['text']     = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                $items[$i] ['url']      = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                $items[$i] ['heading']  = isset($items[$i] ['heading']) ? $items[$i] ['heading'] : $this->screw ['heading'];
+                $items[$i] ['context']  = isset($items[$i] ['context']) ? strtolower($items[$i] ['context']) : $this->screw ['context'];
+            } else {
+                $_item ['text']     = $items[$i];
+                $_item ['url']      = $this->screw ['url'];
+                $_item ['active']   = $this->screw ['active'];
+                $_item ['disabled'] = $this->screw ['disabled'];
+                $_item ['heading']  = $this->screw ['heading'];
+                $_item ['context']  = $this->screw ['context'];
                 
-                $items[$i] = new Listle($_text, $_url, $_active, $_disabled, $_heading, $_context);
-            } else if (!($items[$i] instanceof Listle)) {
-                $items[$i] = new Listle($items[$i]); 
+                $items[$i] = $_item;
+                unset ($_item);
             }
         }
         
-        $this->items = $items;
+        parent::setItems($items);
+        return $this;
+    }
+    
+    /**
+     * @desc check if items are instances of Listle.
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::appendItems()
+     */
+    public function appendItems($items = array ()) {
+        if (!is_array($items)) $items = array ($items);
+        for ($i = 0; $i < count($items); $i ++) {
+            if (is_array ($items[$i])) {
+                $items[$i] ['text'] = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                $items[$i] ['url'] = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                $items[$i] ['active'] = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                $items[$i] ['heading'] = isset($items[$i] ['heading']) ? $items[$i] ['heading'] : $this->screw ['heading'];
+                $items[$i] ['context'] = isset($items[$i] ['context']) ? strtolower($items[$i] ['context']) : $this->screw ['context'];
+            } else {
+                $_item ['text']     = $items[$i];
+                $_item ['url']      = $this->screw ['url'];
+                $_item ['active']   = $this->screw ['active'];
+                $_item ['disabled'] = $this->screw ['disabled'];
+                $_item ['heading']  = $this->screw ['heading'];
+                $_item ['context']  = $this->screw ['context'];
+                
+                $items[$i] = $_item;
+                unset ($_item);
+            }
+        }
+        
+        parent::appendItems($items);
         return $this;
     }
     
@@ -156,27 +201,3 @@ class ListGroup extends Typography
 
 }
 
-/**
- * @desc list group 項目用小物件
- * @author metatronangelo
- *
- */
-class Listle { 
-    var $text;
-    var $url;
-    var $active;
-    var $disabled;
-    var $heading;
-    var $context;
-    
-    static $HEADING_SIZE = 4; // h1 ~ h6
-    
-    public function __construct($text = "", $url = "", $active = false, $disabled = false, $heading = "", $context = "") {
-        $this->text = $text;
-        $this->url = $url;
-        $this->active = $active;
-        $this->disabled = $disabled; 
-        $this->heading = $heading;
-        $this->context = strtolower($context);
-    }
-}

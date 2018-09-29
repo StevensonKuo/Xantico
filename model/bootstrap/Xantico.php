@@ -33,8 +33,6 @@ class Xantico
     
     const BOOTSTRAP_CDN_URL                 = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
     const BOOTSTRAP_CDN_INTEGRITY           = 'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u';
-    const BOOTSTRAP_OPTIONAL_CDN_URL        = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css';
-    const BOOTSTRAP_OPTIONAL_CDN_INTEGRITY  = 'sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp';
     const BOOTSTRAP_JS_CDN_URL              = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js';
     const BOOTSTRAP_JS_CDN_INTEGRITY        = 'sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa';
     const JQUERY_CDN_URL                    = 'https://code.jquery.com/jquery-2.2.4.min.js';
@@ -74,6 +72,25 @@ class Xantico
         
     }
     
+    
+    /**
+     * @desc build whole html string.
+     * @param unknown $head
+     * @param unknown $body
+     * @return string
+     */
+    private function buildHtml ($head, $body) {
+        $htmlTag = new HtmlTag("html", array ("lang" => $this->lang));
+        $htmlTag->setInnerElements(array ($head, $body));
+        
+        $html = "<!doctype html>\n" . $htmlTag->render();
+        return $html;
+    }
+    
+    /**
+     * @desc build the header part of html.
+     * @return \model\bootstrap\HtmlTag
+     */
     private function buildHead () {
         if (!empty(self::$defaultCSSFiles)) {
             $_cfiles = array ();
@@ -88,24 +105,10 @@ class Xantico
         }
         
         if ($this->isLoadBootstrapFromCDN == true) {
-            // @todo take out this optional css.
-            array_unshift(self::$defaultCSSFiles, array (
-                "rel" => "stylesheet",
-                "href" => self::BOOTSTRAP_OPTIONAL_CDN_URL,
-                "integrity" => self::BOOTSTRAP_OPTIONAL_CDN_INTEGRITY,
-                "crossorigin" => "anonymous"
-            ));
-            
             array_unshift(self::$defaultCSSFiles, array (
                 "rel" => "stylesheet",
                 "href" => self::BOOTSTRAP_CDN_URL,
                 "integrity" => self::BOOTSTRAP_CDN_INTEGRITY,
-                "crossorigin" => "anonymous"
-            ));
-            
-            array_unshift(self::$defaultScriptsFiles, array (
-                "src" => self::BOOTSTRAP_JS_CDN_URL,
-                "integrity" => self::BOOTSTRAP_JS_CDN_INTEGRITY,
                 "crossorigin" => "anonymous"
             ));
         } else {
@@ -119,24 +122,23 @@ class Xantico
         $head = new HtmlTag("head");
         $head->setInnerElements(new HtmlTag("meta", array ("charset" => $this->encoding)));
         if ($this->isResponsive) {
-            $head->setInnerElements(new HtmlTag("meta", 
-                array ( "name" => "viewport",
-                        "content" => "width=device-width, initial-scale=1, shrink-to-fit=no"
+            $head->setInnerElements(new HtmlTag("meta",
+                array ( 
+                    "name" => "viewport",
+                    "content" => "width=device-width, initial-scale=1, shrink-to-fit=no"
                 )));
         }
         if (!empty(self::$defaultCSSFiles)) {
             foreach (self::$defaultCSSFiles as $css) {
                 $_cssTag = new HtmlTag("link", $css);
-                $head->setInnerElements($_cssTag);
-                
+                $head->appendInnerElements($_cssTag);
                 unset ($_cssTag);
             }
         }
         if (!empty($this->customCSSFiles)) {
             foreach ($this->customCSSFiles as $css) {
                 $_cssTag = new HtmlTag("link", array ( "rel" => "stylesheet", "href" => $css));
-                $head->setInnerElements($_cssTag);
-                
+                $head->appendInnerElements($_cssTag);
                 unset ($_cssTag);
             }
         }
@@ -145,28 +147,14 @@ class Xantico
             $styleTag = new HtmlTag("style");
             $styleTag->setAttrs(array ("type" => "text/css"));
             $styleTag->setCdata($this->CSSContents);
-            $head->setInnerElements($styleTag);
+            $head->appendInnerElements($styleTag);
         }
         
         return $head;
     }
     
     /**
-     * @desc 建立整個 html string
-     * @param unknown $head
-     * @param unknown $body
-     * @return string
-     */
-    private function buildHtml ($head, $body) {
-        $htmlTag = new HtmlTag("html", array ("lang" => $this->lang));
-        $htmlTag->setInnerElements(array ($head, $body));
-        
-        $html = "<!doctype html>\n" . $htmlTag->render();
-        return $html;
-    }
-    
-    /**
-     * @desc 建立 html 的 body 部份
+     * @desc build html <body> tag.
      * @return \model\bootstrap\HtmlTag
      */
     private function buildBody () {
@@ -189,7 +177,7 @@ class Xantico
             // there are just two tabs under body tag.
             $_html = implode("\n\t\t", $htmlLines);
             $bodyTag->setInnerHtml($_html);
-            $bodyTag->truncateElements();
+            $bodyTag->setInnerElements(null);
             $this->scriptsContents = (!empty($this->scriptsContents) ? $this->scriptsContents . "\n" : "") . $_jQuery;
         }
         
@@ -206,6 +194,13 @@ class Xantico
             self::$defaultScriptsFiles = $_jfiles;
         }
         
+        if ($this->isLoadBootstrapFromCDN == true) {
+            array_unshift(self::$defaultScriptsFiles, array (
+                "src" => self::BOOTSTRAP_JS_CDN_URL,
+                "integrity" => self::BOOTSTRAP_JS_CDN_INTEGRITY,
+                "crossorigin" => "anonymous"
+            ));
+        }
         if ($this->isLoadJQueryFromCDN) {
             array_unshift(self::$defaultScriptsFiles, array (
                 "src" => self::JQUERY_CDN_URL,
@@ -217,7 +212,7 @@ class Xantico
         if (!empty(self::$defaultScriptsFiles)) {
             foreach (self::$defaultScriptsFiles as $script) {
                 $_scriptTag = new HtmlTag("script", $script);
-                $bodyTag->setInnerElements($_scriptTag);
+                $bodyTag->appendInnerElements($_scriptTag);
                 
                 unset($_scriptTag);
             }
@@ -225,7 +220,7 @@ class Xantico
         if (!empty($this->customScriptsFiles)) {
             foreach ($this->customScriptsFiles as $script) {
                 $_scriptTag = new HtmlTag("script", array ("src" => $script));
-                $bodyTag->setInnerElements($_scriptTag);
+                $bodyTag->appendInnerElements($_scriptTag);
                 
                 unset($_scriptTag);
             }
@@ -234,7 +229,7 @@ class Xantico
         if (!empty ($this->scriptsContents)) {
             $scriptTag = new HtmlTag("script");
             $scriptTag->setCdata($this->scriptsContents);
-            $bodyTag->setInnerElements($scriptTag);
+            $bodyTag->appendInnerElements($scriptTag);
         }
         
         return $bodyTag;
@@ -262,6 +257,14 @@ class Xantico
     public function getBodyContents()
     {
         return $this->bodyContents;
+    }
+    
+    public function getBody ($index) {
+        if (isset($this->bodyContents [$index])) {
+            return $this->bodyContents [$index];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -483,12 +486,34 @@ class Xantico
             if (!is_array($bodyContents)) $bodyContents = array ($bodyContents);
         }
         
+        $this->bodyContents = $bodyContents;
+        
+        return $this;
+    }
+    
+    /**
+     * @param Ambigous <multitype:, field_type> $bodyContents
+     */
+    public function appendBodyContents($bodyContents = array ())
+    {
+        if (empty($bodyContents)) return $this;
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $bodyContents = func_get_args();
+        } else {
+            if (!is_array($bodyContents)) $bodyContents = array ($bodyContents);
+        }
+        
         if ($this->bodyContents && is_array($this->bodyContents)) $this->bodyContents = array_merge($this->bodyContents, $bodyContents);
         else $this->bodyContents = $bodyContents;
         
         return $this;
     }
 
+    public function setBody ($index, $body) {
+        $this->bodyContents [$index] = $body;
+        return $this;
+    }
 
 
 

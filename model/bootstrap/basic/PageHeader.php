@@ -24,13 +24,17 @@ class PageHeader extends Typography
      */
     public function render($display = false) {
         $h1 = new HtmlTag("h1");
-        $h1->setInnerElements($this->header);
+        if (empty($this->header) && !empty($this->innerText)) {
+            $this->header = $this->innerText;
+            $this->innerText = "";
+        }
+        $h1->appendInnerElements($this->header);
         if (!empty($this->subText)) {
             $_small = new HtmlTag("small");
             $_small->setText($this->subText);
-            $h1->setInnerElements($_small);
+            $h1->appendInnerElements($_small);
         }
-        $this->text = "";
+        
         
         $this->innerElements [] = $h1;
         

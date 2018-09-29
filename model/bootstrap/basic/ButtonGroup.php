@@ -27,7 +27,7 @@ class ButtonGroup extends Typography
      */
     public function render ($display = false) {
         
-        $this->setAttrs(array ("role" => "group"));
+        $this->appendAttrs(array ("role" => "group"));
         
         if ($this->isVertical == true) {
             $_class = array ();
@@ -39,19 +39,17 @@ class ButtonGroup extends Typography
         }
         
         if (!empty($this->size)) {
-            $this->setCustomClass("btn-group-" . $this->size);
+            $this->appendCustomClass("btn-group-" . $this->size);
         }
         
         if ($this->justified == true) {
-            $this->setCustomClass("btn-group-justified");
+            $this->appendCustomClass("btn-group-justified");
         }
         
-        // 如果 btn-group 有設顏色, 底下的 btn 都要加顏色
-        // @todo 試一下是 btn-group 有顏色就好還是底下都有
-        if (!empty($this->colorSet) && $this->colorSet != "default") {
+        if (!empty($this->context) && $this->context != "default") {
             foreach ($this->innerElements as &$ele) {
-                if ($ele instanceof Typography && $this->colorSet != $ele->getColorSet()) {
-                    $ele->setColorSet($this->colorSet);
+                if ($ele instanceof Typography && $this->context != $ele->getContext()) {
+                    $ele->setContext($this->context);
                 }
             }
         }
@@ -63,38 +61,6 @@ class ButtonGroup extends Typography
         } else {
             return $this->html;
         }
-    }
-    
-    /**
-     * @desc 按鈕大小, 可輸入 1~5, 數字愈大按鈕愈大 [xs|sm|lg]
-     * {@inheritDoc}
-     * @see \model\bootstrap\basic\Typography::setSize()
-     */
-    public function setSize($size)
-    {
-        switch ($size) {
-            case 1:
-                //                 $this->size = "miner";
-                $this->size = ""; // preserved.
-                break;
-            case 2:
-                $this->size = "xs";
-                break;
-            case 3:
-                $this->size = "sm";
-                break;
-            case 4:
-                $this->size = "";
-                break;
-            case 5:
-                $this->size = "lg";
-                break;
-            default:
-                $this->size = $size;
-                
-        }
-        
-        return $this;
     }
     
     /**

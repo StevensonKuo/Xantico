@@ -6,7 +6,7 @@ class Textarea extends Input
     protected $rows; // int
     protected $cols; // int
     
-    public function __construct($vars = array (), $attrs = array ())
+    public function __construct($innerText = "", $vars = array (), $attrs = array ())
     {
         $this->rows = isset ($vars ['rows']) ? $vars ['rows'] : "3";
         $this->cols = isset ($vars ['cols']) ? $vars ['cols'] : null;
@@ -14,6 +14,8 @@ class Textarea extends Input
         if ($this->cols === null) $attrs ['cols'] = $this->cols; 
         
         parent::__construct("textarea", $vars, $attrs);
+
+        $this->innerText = $innerText;
     }
     
     /**

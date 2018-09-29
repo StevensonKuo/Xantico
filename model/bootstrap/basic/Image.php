@@ -4,35 +4,41 @@ namespace model\bootstrap\basic;
 use model\bootstrap\basic\Typography;
 use model\bootstrap\HtmlTag;
 
-class Thumbnail extends Typography
+class Image extends Typography
 {
+    protected $shape; // string
     protected $width; // int, or %
     protected $height; // int, or %
     protected $alt; // string
     protected $source; // string
     protected $url; // string
+    protected $isResponsive; // boolean
     //     protected $theme;
     
-    const BOOTSTRAP_THUMBNAIL_DEFAULT_WIDTH = 200;
-    const BOOTSTRAP_THUMBNAIL_DEFAULT_HEIGHT = 200;
+    public static $BOOTSTRAP_IMAGE_DEFAULT_WIDTH = 200;
+    public static $BOOTSTRAP_IMAGE_DEFAULT_HEIGHT = 200;
+    
+    private static $shapeArr = array ("rounded", "circle", "thumbnail", "");
     
     /**
-     * 建構子
      * @param unknown $type
      * @param array $vars
      * @param array $attrs
      * @return \model\bootstrap\basic\Typography
      */
-    public function __construct($vars = array (), $attrs = array ())
+    public function __construct($shape = "", $vars = array (), $attrs = array ())
     {
-        parent::__construct("img", $vars, $attrs);
+        $shape = strtolower($shape);
+        if (!in_array($shape, self::$shapeArr)) $shape = "";
+        parent::__construct("img" . (!empty($shape) ? ":img-".$shape : ""), $vars, $attrs);
         
-        $this->type     = "thumbnail";
-        $this->width    = isset ($vars ['width']) ? $vars ['width'] : null;
-        $this->height   = isset ($vars ['height']) ? $vars ['height'] : null;
-        $this->alt      = isset ($vars ['alt']) ? $vars ['alt'] : "";
-        $this->source   = isset ($vars ['src']) ? $vars ['src'] : "";
-        $this->source   = isset ($vars ['source']) ? $vars ['source'] : $this->source;
+        $this->shape        = $shape;
+        $this->width        = isset ($vars ['width']) ? $vars ['width'] : null;
+        $this->height       = isset ($vars ['height']) ? $vars ['height'] : null;
+        $this->alt          = isset ($vars ['alt']) ? $vars ['alt'] : "";
+        $this->source       = isset ($vars ['src']) ? $vars ['src'] : "";
+        $this->source       = isset ($vars ['source']) ? $vars ['source'] : $this->source;
+        $this->isResponsive = isset ($vars ['isResponsive']) ? $vars ['isResponsive'] : false;
         //         $this->theme    = isset ($vars ['theme']) ? $vars ['theme'] : "";
         
     }
@@ -44,44 +50,41 @@ class Thumbnail extends Typography
     public function render($display = false)
     {
         if (!empty($this->width)) {
-            $this->setAttrs(array("width" => $this->width));
+            $this->appendAttrs(array("width" => $this->width));
         }
         if (!empty($this->height)) {
-            $this->setAttrs(array("height" => $this->height));
+            $this->appendAttrs(array("height" => $this->height));
         }
         if (!empty($this->alt)) {
-            $this->setAttrs(array("alt" => $this->alt));
+            $this->appendAttrs(array("alt" => $this->alt));
         }
         
-        if (empty($this->width)) $this->width = self::BOOTSTRAP_THUMBNAIL_DEFAULT_WIDTH;
-        if (empty($this->height)) $this->height = self::BOOTSTRAP_THUMBNAIL_DEFAULT_HEIGHT;
-        if (empty($this->url) && empty($this->caption)) {
-            $this->setCustomClass("img-thumbnail");
-        }
+        if (empty($this->width)) $this->width = self::$BOOTSTRAP_IMAGE_DEFAULT_WIDTH;
+        if (empty($this->height)) $this->height = self::$BOOTSTRAP_IMAGE_DEFAULT_HEIGHT;
         $this->source = $this->source . "/" . $this->width. "x" . $this->height . (!empty($this->theme) ? "/" . $this->theme : "");
-        $this->setAttrs(array("src" => $this->source));
+        $this->appendAttrs(array("src" => $this->source));
         
         parent::render();
         
         if (!empty($this->url)) {
             $a = new HtmlTag("a");
-            $a->setAttrs(array("href" => $this->url))->setCustomClass("thumbnail");
+            $a->appendAttrs(array("href" => $this->url))->appendCustomClass("thumbnail");
             $a->setInnerHtml($this->html);
             $this->html = $a->render();
         } 
         
         if (!empty($this->caption)) {
             $div = new HtmlTag("div");
-            $div->setCustomClass("thumbnail");
+            $div->appendCustomClass("thumbnail");
             $divCaption = new Typography("div:caption");
             if (is_string($this->caption)) {
                 $captionP = new HtmlTag("p");
                 $captionP->setText($this->caption);
-                $divCaption->setInnerElements($captionP);
+                $divCaption->appendInnerElements($captionP);
             } else {// instance or array. 
-                $divCaption->setInnerElements($this->caption);
+                $divCaption->appendInnerElements($this->caption);
             }
-            $div->setInnerElements($this->html, $divCaption);
+            $div->appendInnerElements($this->html, $divCaption);
             $this->html = $div->render();
         }
         
@@ -193,6 +196,59 @@ class Thumbnail extends Typography
         $this->url = $url;
         return $this;
     }
+    
+    /**
+     * @return the $shape
+     */
+    public function getShape()
+    {
+        return $this->shape;
+    }
+
+    /**
+     * @return the $isResponsive
+     */
+    public function getIsResponsive()
+    {
+        return $this->isResponsive;
+    }
+
+    /**
+     * @param field_type $shape
+     */
+    public function setShape($shape)
+    {
+        $shape = strtolower($shape);
+        if (in_array($shape, self::$shapeArr)) {
+            $this->shape = $shape;
+        }
+        return $this;
+    }
+    
+    public function setShapeRounded () {
+        $this->shape = "rounded";
+        return $this;
+    }
+
+    public function setShapeCircle () {
+        $this->shape = "circle";
+        return $this;
+    }
+    
+    public function setShapeThumbnail () {
+        $this->shape = "thumbnail";
+        return $this;
+    }
+
+    /**
+     * @param field_type $isResponsive
+     */
+    public function setIsResponsive($isResponsive = true)
+    {
+        $this->isResponsive = $isResponsive;
+        return $this;
+    }
+
 
     
 }

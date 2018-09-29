@@ -15,7 +15,6 @@ class Nav extends Typography
     private static $styleArr = array ("tabs", "pills", "stacked", "navbar");
     
     /**
-     * 建構子
      * @param unknown $type
      * @param array $vars
      * @param array $attrs
@@ -30,11 +29,17 @@ class Nav extends Typography
         $this->activeIndex  = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : -1;
         $this->style        = isset ($vars ['style']) ? $vars ['style'] : "tabs";
         $this->isJustified  = isset ($vars ['isJustified']) ? $vars ['isJustified'] : false;
-        $this->screw       = new Navlet();
+        
+        $this->screw       = array (
+            "text"      => "&nbsp;", 
+            "url"       => "", 
+            "active"    => false, 
+            "disabled"  => false,
+            "align"     => ""
+        );
     }
     
     /**
-     * 渲染（佔位）
      * @param string $display
      * @return unknown
      */
@@ -49,35 +54,35 @@ class Nav extends Typography
         }
         
         if ($this->isJustified == true) $_class [] = "nav-justified";
-        $this->setCustomClass($_class);
-//         $this->setAttrs(array ("role" => "tablist"));
+        $this->appendCustomClass($_class);
+//         $this->appendAttrs(array ("role" => "tablist"));
         
         if (!empty($this->items)) {
             foreach ($this->items as $key => $item) {
-                if ($item->text instanceof HtmlTag && $item->text->getTagName() == "li") {
+                if ($item ['text'] instanceof HtmlTag && $item ['text']->getTagName() == "li") {
                     continue;
                 } else {
                     $_li = new HtmlTag("li");
-//                      $_li->setAttrs(array ("role" => "presentation"));
-                    if ($key == $this->activeIndex || $item->active == true) { 
-                        $_li->setCustomClass("active");
+//                      $_li->appendAttrs(array ("role" => "presentation"));
+                    if ($key == $this->activeIndex || $item ['active'] == true) { 
+                        $_li->appendCustomClass("active");
                     }
-                    if ($item->disabled == true) { 
-                        $_li->setCustomClass("disabled");
+                    if ($item ['disabled'] == true) { 
+                        $_li->appendCustomClass("disabled");
                     }
                     
-                    if (!empty ($item->url)) {
+                    if (!empty ($item ['url'])) {
                         $_a = new HtmlTag("a");
-                        $_a->setAttrs(array ("href" => $item->url));
-                        if (is_string($item->text)) {
-                            $_a->setInnerText($item->text);
+                        $_a->appendAttrs(array ("href" => $item ['url']));
+                        if (is_string($item ['text'])) {
+                            $_a->setInnerText($item ['text']);
                         } else {
-                            $_a->setInnerElements($item->text);
+                            $_a->appendInnerElements($item ['text']);
                         }
                         
-                        $_li->setInnerElements($_a);
+                        $_li->appendInnerElements($_a);
                     } else {
-                        $_li->setInnerElements($item->text);
+                        $_li->appendInnerElements($item ['text']);
                     }
                 }
                 
@@ -116,26 +121,61 @@ class Nav extends Typography
     /**
      * @desc check if item is instance of Navlet
      * {@inheritDoc}
-     * @see \model\bootstrap\basic\Typography::setItems()
+     * @see \model\bootstrap\basic\Typography::appendItems()
      */
     public function setItems($items) {
         if (!empty($items)) {
             for ($i = 0; $i < count($items); $i ++) {
                 if (is_array ($items[$i])) {
-                    $_text = isset($items[$i] ['text']) ? $items[$i] ['text'] : 0;
-                    $_url = isset($items[$i] ['url']) ? $items[$i] ['url'] : "";
-                    $_active = isset($items[$i] ['active']) ? $items[$i] ['active'] : false;
-                    $_disabled = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : false;
+                    $items[$i] ['text']     = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['url']      = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                    $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                    $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                    $items[$i] ['align']    = isset($items[$i] ['align']) ? $items[$i] ['align'] : $this->screw ['align'];
                     
-                    $items[$i] = new Navlet($_text, $_url, $_active, $_disabled);
-                } else if (!($items[$i] instanceof Navlet)) {
-                    $items[$i] = new Navlet($items[$i]);
+                } else {
+                    $_item ['text']     = $items[$i];
+                    $_item ['url']      = $this->screw ['url'];
+                    $_item ['active']   = $this->screw ['active'];
+                    $_item ['disabled'] = $this->screw ['disabled'];
+                    $_item ['align']    = $this->screw ['align'];
+                    $items [$i] = $_item;
+                    unset ($_item);
                 }
             }
         }
-        $this->items = $items;
+        parent::setItems($items);
         return $this;
     }
+    
+    /**
+     * @desc check if item is instance of Navlet
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::appendItems()
+     */
+    public function appendItems($items) {
+        if (!empty($items)) {
+            for ($i = 0; $i < count($items); $i ++) {
+                if (is_array ($items[$i])) {
+                    $items[$i] ['text']     = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
+                    $items[$i] ['url']      = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
+                    $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
+                    $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                    
+                } else {
+                    $_item ['text']     = $items[$i];
+                    $_item ['url']      = $this->screw ['url'];
+                    $_item ['active']   = $this->screw ['active'];
+                    $_item ['disabled'] = $this->screw ['disabled'];
+                    $items [$i] = $_item;
+                    unset ($_item);
+                }
+            }
+        }
+        parent::appendItems($items);
+        return $this;
+    }
+    
     /**
      * @return the $style
      */
@@ -158,6 +198,26 @@ class Nav extends Typography
         return $this;
     }
     
+    public function setStyleTabs () {
+        $this->style = "tabs";
+        return $this;
+    }
+    
+    public function setStylePills () {
+        $this->style = "pills";
+        return $this;
+    }
+    
+    public function setStyleStacked () {
+        $this->style = "stacked";
+        return $this;
+    }
+    
+    public function setStyleNavbar () {
+        $this->style = "navbar";
+        return $this;
+    }
+    
     /**
      * @return the $isJustified
      */
@@ -173,27 +233,5 @@ class Nav extends Typography
     {
         $this->isJustified = $isJustified;
         return $this;
-    }
-
-
-
-}
-
-/**
- * @desc trivial class for Nav
- * @author metatronangelo
- *
- */
-class Navlet {
-    var $text;
-    var $url;
-    var $active;
-    var $disabled;
-    
-    public function __construct($text = "", $url = "", $active = false, $disabled = false, $align = "") {
-        $this->text = $text;
-        $this->url = $url;
-        $this->active = $active;
-        $this->disabled = $disabled; 
     }
 }

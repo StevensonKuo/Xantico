@@ -21,7 +21,6 @@ class Jumbotron extends Typography
         $this->header       = isset ($vars ['header']) ? $vars ['header'] : "";
         $this->bodyContents = isset ($vars ['bodyContents']) ? $vars ['bodyContents'] : array();
         $this->isFullWidth  = isset ($vars ['isFullWidth']) ? $vars ['isFullWidth'] : array();
-        // text 在 parent 裡會設
     }
     
     /**
@@ -30,28 +29,38 @@ class Jumbotron extends Typography
      * @return string
      */
     function render ($display = false) {
-        $header = New Typography("h1", array ("text" => $this->header));
+        $header = New Typography("h1", array ("innerText" => $this->header));
         if ($this->isFullWidth == true) {
-            $cntnr = new Typography("div:container");
-            $cntnr->setInnerElements($header);
+            $cntnr = new Container();
+            $cntnr->appendInnerElements($header);
         } else {
             $this->innerElements [] = $header;
         }
         
         if (!empty($this->bodyContents)) {
             foreach ($this->bodyContents as $body) {
-                $_text = New Typography("p");
                 if (is_string($body)) {
-                    $_text->setText($body);
+                    $paragraph = explode ("\n", $body);
+                    foreach ($paragraph as $p) {
+                        $_text = New Typography("p");
+                        $_text->setText($p);
+                        if ($this->isFullWidth == true && isset($cntnr)) {
+                            $cntnr->appendInnerElements($_text);
+                        } else {
+                            $this->innerElements [] = $_text;
+                        }
+                        unset ($_text);
+                    }
                 } else {
-                    $_text->setInnerElements($body);
-                }
-                if ($this->isFullWidth == true && isset($cntnr)) {
-                    $cntnr->setInnerElements($_text);
-                } else {
-                    $this->innerElements [] = $_text;
+                    if ($this->isFullWidth == true && isset($cntnr)) {
+                        $cntnr->appendInnerElements($body);
+                    } else {
+                        $this->innerElements [] = $body;
+                    }
                 }
             }
+            
+            $this->bodyContents = null;
         }
         
         if ($this->isFullWidth == true && isset($cntnr)) {
@@ -60,7 +69,7 @@ class Jumbotron extends Typography
         
         parent::render();
         
-        if ($display) {
+        if ($display == true) {
             echo $this->html;
         } else {
             return $this->html;
@@ -91,11 +100,11 @@ class Jumbotron extends Typography
     {
         return $this->bodyContents;
     }
-
+    
     /**
      * @param Ambigous <multitype:, field_type> $bodyContents
      */
-    public function setBodyContents($bodyContents = array ())
+    public function appendBodyContents($bodyContents = array ())
     {
         if (empty($bodyContents)) return $this;
         $numargs = func_num_args();
@@ -108,6 +117,38 @@ class Jumbotron extends Typography
         if ($this->bodyContents && is_array($this->bodyContents)) $this->bodyContents = array_merge($this->bodyContents, $bodyContents);
         else $this->bodyContents = $bodyContents;
         
+        return $this;
+    }
+    
+    /**
+     * @desc setter, merge all argvs.
+     * @param array $bodyContents
+     * @return \model\bootstrap\basic\Jumbotron
+     */
+    public function setBodyContents($bodyContents = array ())
+    {
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $bodyContents = func_get_args();
+        } else {
+            if (!is_array($bodyContents)) $bodyContents = array ($bodyContents);
+        }
+        
+        $this->bodyContents = $bodyContents;
+        
+        return $this;
+    }
+    
+    public function getBody ($index) {
+        if (isset($this->bodyContents [$index])) {
+            return $this->bodyContents [$index];
+        } else {
+            return null;
+        }
+    }
+    
+    public function setBody ($index, $content) {
+        $this->bodyContents [$index] = $content;
         return $this;
     }
     

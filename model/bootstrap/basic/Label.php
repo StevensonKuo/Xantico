@@ -18,7 +18,7 @@ class Label extends Badge
     {
         parent::__construct($text, $vars, $attr);
         $this->type     = "label";
-        $this->colorSet = isset ($vars ['colorSet']) ? $vars ['colorSet'] : "default";
+        $this->context = isset ($vars ['Context']) ? $vars ['Context'] : "default";
     }
 }
 

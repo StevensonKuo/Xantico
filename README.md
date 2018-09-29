@@ -2,7 +2,7 @@
 A PHP helper to build Bootstrap compatible html code automatically using OOP syntax.
 
 ## Demo
-Please check the demo pages:
+Please check demo pages here:
 
 [Basic CSS](http://xantico.yhvh.tw/xantico-bt/). 
 

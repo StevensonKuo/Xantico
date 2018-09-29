@@ -26,7 +26,7 @@ This name is owned by a Mayan fire god. Btw it looks cool so I decide use it to 
 * My development environ. is under XAMPP v3.2.2. Using Boostrap 3.3.7 standards.
 
 ## Start a Bootstrap palette
-Once your can access my model, you can start your drawing! The first thing you need to do is initialize a palette.
+Once your can access my model, you can start your painting! The first thing you need to do is initialize a palette.
 
 ```php
 $btPalette = new Xantico();

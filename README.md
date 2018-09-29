@@ -82,7 +82,7 @@ $btPalette->setBodyContents($container);
 $btPalette->render(true); // the argument is for printing out result directly.
 ```
 
-Now switch to browser and key in the URL where you access your web page to see what does happen. There are bunch of beautiful, disciplined and well-formatted html code generated on page, and they are Bootstrap!.
+To switch to browser and key in the URL where you access your web page to see what does happen. There are bunch of beautiful, disciplined and well-formatted html code generated, and they are Bootstrap!.
 
 My sample code mimics almost all of Bootstrap official guide web-page. This project would wish to keep this rhythm to create more useful Bootstrap model classes, even a full set of Bootstrap theme. You can use them on works directly. 
 

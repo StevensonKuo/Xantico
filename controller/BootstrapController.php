@@ -14,7 +14,7 @@ class BootstrapController {
         if (method_exists($view, $page."View")) {
             $view->{$page."View"}();
         } else {
-            throw \Exception("View not found.");
+            throw new \Exception("View not found: [" . $page . "].");
         }
     }
 }

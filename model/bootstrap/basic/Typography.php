@@ -71,7 +71,8 @@ class Typography extends \model\bootstrap\HtmlTag
         
         $this->type         = strtolower($type);
         // HtmlTag attrs.
-        $this->innerText        = isset($vars['innerText']) ? $vars['innerText'] : "";
+        $this->innerText        = isset($vars['text']) ? $vars['text'] : "";
+        $this->innerText        = isset($vars['innerText']) ? $vars['innerText'] : $this->innerText;
         $this->innerHtml        = isset($vars['innerHtml']) ? $vars['innerHtml'] : "";
         $this->cdata            = isset($vars['cdata']) ? $vars['cdata'] : "";
         $this->innerElements    = isset($vars['innerElements']) ? $vars['innerElements'] : array();
@@ -349,7 +350,7 @@ class Typography extends \model\bootstrap\HtmlTag
      * @param array $items
      * @return \model\bootstrap\hplus\Typography
      */
-    public function appendItems ($items = array ()) {
+    public function appendItems ($items) {
         $numargs = func_num_args();
         if ($numargs >= 2) {
             $items = func_get_args();

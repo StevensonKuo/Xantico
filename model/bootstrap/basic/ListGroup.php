@@ -109,7 +109,7 @@ class ListGroup extends Typography
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::appendItems()
      */
-    public function setItems($items = array ()) {
+    public function setItems($items) {
         if (!is_array($items)) $items = array ($items);
         for ($i = 0; $i < count($items); $i ++) {
             if (is_array ($items[$i])) {
@@ -141,7 +141,7 @@ class ListGroup extends Typography
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::appendItems()
      */
-    public function appendItems($items = array ()) {
+    public function appendItems($items) {
         if (!is_array($items)) $items = array ($items);
         for ($i = 0; $i < count($items); $i ++) {
             if (is_array ($items[$i])) {

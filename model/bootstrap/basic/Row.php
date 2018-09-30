@@ -1,7 +1,6 @@
 <?php
 namespace model\bootstrap\basic;
 
-use model\bootstrap\HtmlTag;
 use model\bootstrap\basic\Typography;
 use model\bootstrap\basic\Input;
 
@@ -64,7 +63,7 @@ class Row extends Typography
                         }
                     }
                     
-                    $formGrp = new HtmlTag("div");
+                    $formGrp = new Typography("div");
                     $formGrp->setCustomClass("form-group");
                     if (method_exists($item, "getValidationState") && !empty($item->getValidationState())) {
                         $formGrp->appendCustomClass("has-" . $item->getValidationState());

@@ -167,7 +167,7 @@ class BootstrapView
         $ph3 = new Typography("div:page-header");
         $ph3->appendInnerElements(new Typography("h1", array ("innerText" => "Thumbnails")));
         
-        $thumbnail = new Image("thumnnail");
+        $thumbnail = new Image("thumbnail");
         $thumbnail->setSource("holder.js")
         ->setAlt("A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera");
                 
@@ -1023,7 +1023,7 @@ class BootstrapView
         
         $pageHeader6 = new PageHeader("Validation");
         Input::$AUTO_NAMING = true;
-        Input::$FORM_VALIDATION_METHOD = "browser";
+//         Input::$FORM_VALIDATION_METHOD = "browser";
         $form21 = new Form();
         $inputFirstName = new Input();
         $inputFirstName->setCaption("First name")
@@ -1043,7 +1043,6 @@ class BootstrapView
         ->setIsRequired()
         ->setLeftAddon(array ("@"))
         ->setCaption("Username");
-        
         $formRow5 = new Row();
         $formRow5->setForForm()
         ->appendItems(array ($inputFirstName, $inputLastName, $inputGrp2));
@@ -1065,49 +1064,6 @@ class BootstrapView
         $form21->appendInnerElements(array ($formRow5, $formRow6, $check6))
         ->setRequireIcon(null)
         ->setFormAction($btn2);
-        
-        $form21 = new Form();
-        $inputFirstName = new Input();
-        $inputFirstName->setCaption("First name")
-        ->setPlaceholder("First name")
-        ->setDefaultValue("Mark")
-        ->setIsRequired()
-        ->setId("validationCustom01");
-        $inputLastName = new Input();
-        $inputLastName->setCaption("Last name")
-        ->setPlaceholder("Last name")
-        ->setDefaultValue("Otto")
-        ->setIsRequired()
-        ->setId("validationCustom02");
-        $inputGrp2 = new InputGroup;
-        $inputGrp2->setPlaceholder("Username")
-        ->setId("validationCustomUsername")
-        ->setIsRequired()
-        ->setLeftAddon(array ("@"))
-        ->setCaption("Username");
-        
-        $formRow5 = new Row();
-        $formRow5->setForForm()
-        ->appendItems(array ($inputFirstName, $inputLastName, $inputGrp2));
-        $formRow6 = clone $formRow3;
-        $rowGrids = $formRow6->getItems();
-        $rowGrids[0]['text']->setCaption("City")->setIsRequired()->setPlaceHolder("City");
-        $rowGrids[1]['text'] = new Input();
-        $rowGrids[1]['text']->setPlaceHolder("State")->setCaption("State")->setIsRequired()->setId("inputState");
-        $rowGrids[1]['width'] = 3;
-        $rowGrids[2]['text']->setIsRequired()->setPlaceHolder("Zip");
-        $rowGrids[2]['width'] = 3;
-        $check6 = new Input("checkbox");
-        $check6->setOptions(array("Agree to terms and conditions "))
-        ->setIsRequired();
-        $btn2 = new Button();
-        $btn2->setIsSubmit()
-        ->setContext("primary")
-        ->setText("Submit form");
-        $form21->appendInnerElements(array ($formRow5, $formRow6, $check6))
-        ->setRequireIcon(null)
-        ->setFormAction($btn2);
-        
         // server-side validation @todo bs 4.0.0
         /*
         $form22 = new Form();

@@ -57,16 +57,12 @@ class Form extends Typography
             $this->name = $this->id;
         }
         
-        $_class = $this->customClass;
-        if (!empty($this->formType)) $_class [] = $this->formType;
-        $_attrs = array ();
-        if ($this->action)  $_attrs ["action"] = $this->action;
-        if ($this->method)  $_attrs ["method"] = $this->method;
-        if ($this->name)    $_attrs ["name"] = $this->name;
-        if ($this->id)      $_attrs ["id"] = $this->id;
-        if ($this->enctype) $_attrs ["enctype"] = $this->enctype;
-        $this->appendCustomClass($_class);
-        $this->appendAttrs($_attrs);
+        if (!empty($this->formType))    $this->customClass [] = $this->formType;
+        if (!empty($this->action))      $this->attrs ["action"] = $this->action;
+        if (!empty($this->method))      $this->attrs ["method"] = $this->method;
+        if (!empty($this->name))        $this->attrs ["name"] = $this->name;
+        if (!empty($this->enctype))     $this->attrs ["enctype"] = $this->enctype;
+        
         
         if (!empty($this->innerElements)) {
             $newElements = array ();
@@ -264,7 +260,7 @@ class Form extends Typography
             $inputs = $this->search("input");
             $selects = $this->search("select");
             $textareas = $this->search("textarea");
-            $inputs = array_merge(array_merge($inputs, $selects), $textareas);
+            $inputs = array_merge($inputs, $selects, $textareas);
             if (!empty($inputs)) {
                 $_validation = array ();
                 foreach ($inputs as $inpt) {
@@ -500,9 +496,9 @@ class Form extends Typography
             }
             
             if (!empty($this->id)) {
-                $this->jQuery .= "\$(\"#{$this->id}\").validate(" . json_encode($validationRules) . ")";
+                $this->jQuery .= "\$(\"#{$this->id}\").validate(" . json_encode($validationRules) . ");";
             } else if (!empty($this->name)) {
-                $this->jQuery .= "\$(\"form[name={$this->name}]\").validate(" . json_encode($validationRules) . ")";
+                $this->jQuery .= "\$(\"form[name={$this->name}]\").validate(" . json_encode($validationRules) . ");";
             } else { // too late to set name automatic.
                 self::setErrMsg("[Warninng] You need a name for your fom to validate (setName() it).");
             }

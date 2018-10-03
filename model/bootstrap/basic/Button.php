@@ -12,7 +12,7 @@ class Button extends Typography
     protected $isActive; // boolean
     protected $url; // string
     
-    public function __construct($vars = array (), $attr = array())
+    public function __construct($text = "", $vars = array (), $attr = array())
     {
         $this->url          = key_exists('url', $vars) ? $vars ['url'] : "";
         if (!empty($this->url)) {
@@ -21,12 +21,13 @@ class Button extends Typography
             parent::__construct("button:btn", $vars, $attr);
         }
         
-        $this->isBlock      = key_exists('isBlock', $vars) ? $vars ['isBlock'] : false;
-        $this->isSubmit     = key_exists('isSubmit', $vars) ? $vars ['isSubmit'] : false;
-        $this->isReset      = key_exists('isReset', $vars) ? $vars ['isReset'] : false;
-        $this->isDisabled   = key_exists('isDisabled', $vars) ? $vars ['isDisabled'] : false;
-        $this->isOutline    = key_exists('isOutline', $vars) ? $vars ['isOutline'] : false;
-        $this->isLink       = key_exists('isLink', $vars) ? $vars ['isLink'] : false;
+        $this->innerText    = $text;
+        $this->isBlock      = isset($vars['isBlock']) ? $vars ['isBlock'] : false;
+        $this->isSubmit     = isset($vars['isSubmit']) ? $vars ['isSubmit'] : false;
+        $this->isReset      = isset($vars['isReset']) ? $vars ['isReset'] : false;
+        $this->isDisabled   = isset($vars['isDisabled']) ? $vars ['isDisabled'] : false;
+        // $this->isOutline    = isset($vars['isOutline']) ? $vars ['isOutline'] : false;
+        $this->isLink       = isset($vars['isLink']) ? $vars ['isLink'] : false;
         $this->context     = !empty($this->context) ? $this->context : "default"; // btn default color scene.
         
         return $this;

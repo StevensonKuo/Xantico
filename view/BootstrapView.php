@@ -267,7 +267,7 @@ class BootstrapView
         $ddItems [] = array ("text" => "One more separated link", "url" => "#");
         $innerDropdown = new Dropdown();
         $innerDropdown->setMode("inline")
-        ->setText(array ("Dropdown", new Typography("span:caret")))
+        ->setText("Dropdown")
         ->setItems($ddItems);
         
         $nvbItems = array (
@@ -1443,14 +1443,14 @@ class BootstrapView
         $btnGrp1 = new ButtonGroup();
         $btnGrp1->appendInnerElements(array ($btnLeft, $btnMid, $btnRight));
         
-        $btn1 = new Button(array ("innerText" => 1));
-        $btn2 = new Button(array ("innerText" => 2));
-        $btn3 = new Button(array ("innerText" => 3));
-        $btn4 = new Button(array ("innerText" => 4));
-        $btn5 = new Button(array ("innerText" => 5));
-        $btn6 = new Button(array ("innerText" => 6));
-        $btn7 = new Button(array ("innerText" => 7));
-        $btn8 = new Button(array ("innerText" => 8));
+        $btn1 = new Button(1);
+        $btn2 = new Button(2);
+        $btn3 = new Button(3);
+        $btn4 = new Button(4);
+        $btn5 = new Button(5);
+        $btn6 = new Button(6);
+        $btn7 = new Button(7);
+        $btn8 = new Button(8);
         $btnGrp2 = new ButtonGroup();
         $btnGrp3 = new ButtonGroup();
         $btnGrp4 = new ButtonGroup();

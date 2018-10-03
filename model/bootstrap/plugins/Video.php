@@ -156,7 +156,6 @@ class Video extends Typography
                 
                 $jQuery = "
 const player = new Plyr('#".$video->getId()."');
-// second line.
                 ";
                 
                 

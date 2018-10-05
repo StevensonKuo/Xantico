@@ -8,13 +8,15 @@ class Xantico
     protected $customCSSFiles; // string
     protected $customScriptsFiles; // string
     protected $bodyContents; // array 
-    protected $headContents; // array
+    protected $metaContents; // array
     protected $CSSContents; // string
     protected $scriptsContents; // string
     
     protected $lang; // string
     protected $encoding; // string
     protected $isResponsive; // boolean
+    protected $keywords; // array
+    protected $description; // string
     protected $isLoadBootstrapFromCDN; // boolean
     protected $isLoadJQueryFromCDN; // boolean
     
@@ -49,7 +51,7 @@ class Xantico
         // default bootstrap
         $this->customCSSFiles           = array ();
         $this->customScriptsFiles       = array ();
-        $this->headContents             = array ();
+        $this->metaContents             = array ();
         $this->bodyContents             = array ();
         
         $this->isResponsive             = true;
@@ -121,13 +123,51 @@ class Xantico
         
         $head = new HtmlTag("head");
         $head->setInnerElements(new HtmlTag("meta", array ("charset" => $this->encoding)));
-        if ($this->isResponsive) {
+        if ($this->isResponsive == true) {
             $head->setInnerElements(new HtmlTag("meta",
                 array ( 
                     "name" => "viewport",
                     "content" => "width=device-width, initial-scale=1, shrink-to-fit=no"
                 )));
         }
+        
+        if (!empty($this->keywords)) {
+            array_walk($this->keywords, "htmlspecialchars");
+            $head->sppendInnerElements(new HtmlTag("meta",
+                array (
+                    "name" => "keywords",
+                    "content" => join(",", $this->keywords)
+                )));
+            
+        }
+        
+        if (!empty($this->description)) {
+            $head->sppendInnerElements(new HtmlTag("meta",
+                array (
+                    "name" => "description",
+                    "content" => htmlspecialchars($this->description) 
+                )));
+        }
+        
+        if (!empty($this->metaContents)) { // will override keywords/description if set.
+            foreach ($this->metaContents as $key => $meta) {
+                if (isset ($meta ['name'])) {
+                    $head->appendInnerElements(new HtmlTag("meta",
+                        array (
+                            "name" => htmlspecialchars($meta ['name']),
+                            "content" => htmlspecialchars($meta ['content']) 
+                        )));
+                } else {
+                    $head->appendInnerElements(new HtmlTag("meta",
+                        array (
+                            "name" => $key,
+                            "content" => htmlspecialchars($meta) 
+                        )));
+                }
+                
+            }
+        }
+        
         if (!empty(self::$defaultCSSFiles)) {
             foreach (self::$defaultCSSFiles as $css) {
                 $_cssTag = new HtmlTag("link", $css);
@@ -135,6 +175,7 @@ class Xantico
                 unset ($_cssTag);
             }
         }
+        
         if (!empty($this->customCSSFiles)) {
             foreach ($this->customCSSFiles as $css) {
                 $_cssTag = new HtmlTag("link", array ( "rel" => "stylesheet", "href" => $css));
@@ -268,11 +309,11 @@ class Xantico
     }
 
     /**
-     * @return the $headContents
+     * @return the $metaContents
      */
-    public function getHeadContents()
+    public function getMetaContents()
     {
-        return $this->headContents;
+        return $this->metaContents;
     }
 
     /**
@@ -362,20 +403,20 @@ class Xantico
     }
 
     /**
-     * @param field_type $headContents
+     * @param field_type $metaContents
      */
-    public function setHeadContents($headContents = array ())
+    public function setMetaContents($metaContents = array ())
     {
-        if (empty($headContents)) return $this;
+        if (empty($metaContents)) return $this;
         $numargs = func_num_args();
         if ($numargs >= 2) {
-            $headContents = func_get_args();
+            $metaContents = func_get_args();
         } else {
-            if (!is_array($headContents)) $headContents = array ($headContents);
+            if (!is_array($metaContents)) $metaContents = array ($metaContents);
         }
         
-        if ($this->headContents && is_array($this->headContents)) $this->headContents = array_merge($this->headContents, $headContents);
-        else $this->headContents = $headContents;
+        if ($this->metaContents && is_array($this->metaContents)) $this->metaContents = array_merge($this->metaContents, $metaContents);
+        else $this->metaContents = $metaContents;
         
         return $this;
     }
@@ -449,6 +490,7 @@ class Xantico
         $this->isLoadBootstrapFromCDN = $isLoadBootstrapFromCDN;
         return $this;
     }
+    
     /**
      * @return the $isLoadJQueryFromCDN
      */
@@ -514,6 +556,41 @@ class Xantico
         $this->bodyContents [$index] = $body;
         return $this;
     }
+    
+    /**
+     * @return the $keywords
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
+    }
+
+    /**
+     * @return the $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param field_type $keywords
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+        return $this;
+    }
+
+    /**
+     * @param field_type $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
 
 
 

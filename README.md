@@ -4,11 +4,11 @@ A PHP helper to build Bootstrap compatible html code automatically using OOP syn
 ## Demo
 Please check demo pages here:
 
-[Basic CSS](http://xantico.yhvh.tw/xantico-bt/). 
+[Basic CSS](http://xantico.yhvh.tw/). 
 
-[Components](http://xantico.yhvh.tw/xantico-bt/index.php?page=components). 
+[Components](http://xantico.yhvh.tw/index.php?page=components). 
 
-[Bootstrap theme](http://xantico.yhvh.tw/xantico-bt/index.php?page=theme). 
+[Bootstrap theme](http://xantico.yhvh.tw/index.php?page=theme). 
 
 This page is all the same with a demo page on Bootstrap official website. I write my php code below to show you how to achieve it. Also the worth part is to have a chance looking at html source code.
 

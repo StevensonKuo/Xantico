@@ -14,8 +14,9 @@ class HtmlTag implements iCaption
     protected $attrs; // array 
     protected $html; // string
 
-    private static $errMsg;
     private $tagName;    // string
+    
+    private static $errMsg;
     private static $unclosedTagsArr = array (
         "area",
         "base",
@@ -513,21 +514,31 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc instead syntax of cloning instance.
+     * @desc instead syntax of cloning instance. return the clone one.
      * @return \model\bootstrap\basic\Typography
      */
-    public function cloneInstance() {
-        return clone $this;
+    public function cloneInstance(&$clone = null) {
+        if (isset ($clone)) {
+            $clone = clone $this;
+            return $this;
+        } else {
+            return clone $this;
+        }
     }
     
     /**
-     * @desc remember this will return the outer.
+     * @desc remember this will return the outer in default.
      * @param HtmlTag $outer
      * @return \model\bootstrap\HtmlTag
      */
-    public function enclose (HtmlTag $outer) {
+    public function enclose (HtmlTag $outer, $returnThis = false) {
         $outer->appendInnerElements($this);
-        return $outer;
+        if ($returnThis == true) {
+            return $this;
+        } else {
+            return $outer;
+        }
+        
     }
     
     

@@ -29,6 +29,10 @@ class Jumbotron extends Typography
      * @return string
      */
     function render ($display = false) {
+        if (!empty($this->innerText)) {
+            array_unshift($this->bodyContents, $this->innerText);
+            $this->innerText = null;
+        }
         $header = New Typography("h1", array ("innerText" => $this->header));
         if ($this->isFullWidth == true) {
             $cntnr = new Container();

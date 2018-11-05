@@ -171,7 +171,7 @@ class Input extends Typography implements iRequiredInput {
                         $_option->appendAttrs(array ("value" => $opt->value))
                         ->setText($opt->text);
                         if ($opt->active == true || (is_array($this->defaultOption) && in_array ($opt->value, $this->defaultOption))) {
-                            $_option->appendAttrs(array("checked" => "checked"));
+                            $_option->appendAttrs(array("selected" => "selected"));
                         }
                         if ($opt->disabled == true || (is_array($this->disabledOption) && in_array ($opt->value, $this->disabledOption))) {
                             $_option->appendAttrs(array ("disabled" => "disabled"));
@@ -234,7 +234,7 @@ class Input extends Typography implements iRequiredInput {
                                     $_check->appendAttrs (array('required' => "required"));
                                 }
                                 $_checkLabel = new HtmlTag("label");
-                                $_checkLabel->setInnerElements(array($_check, $opt->text));
+                                $_checkLabel->setInnerElements(array($_check, "&nbsp;" . $opt->text));
                                 if ($this->isStacked == false) $_checkLabel->appendCustomClass(array ($this->inputType."-inline"));
                                 
                                 if ($this->isStacked == true && isset ($_checkDiv)) {

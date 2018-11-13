@@ -5,6 +5,7 @@ use model\bootstrap\HtmlTag;
 
 class Xantico
 {
+    protected $title;
     protected $customCSSFiles; // string
     protected $customScriptsFiles; // string
     protected $bodyContents; // array 
@@ -123,8 +124,15 @@ class Xantico
         
         $head = new HtmlTag("head");
         $head->setInnerElements(new HtmlTag("meta", array ("charset" => $this->encoding)));
+        
+        if (!empty($this->title)) {
+            $title = new HtmlTag("title");
+            $title->setText ($this->title);
+            $head->appendInnerElements($title);
+        }
+        
         if ($this->isResponsive == true) {
-            $head->setInnerElements(new HtmlTag("meta",
+            $head->appendInnerElements(new HtmlTag("meta",
                 array ( 
                     "name" => "viewport",
                     "content" => "width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -590,6 +598,24 @@ class Xantico
         $this->description = $description;
         return $this;
     }
+    
+    /**
+     * @return the $title
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param field_type $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
 
 
 

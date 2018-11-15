@@ -35,7 +35,9 @@ class Nav extends Typography
             "url"       => "", 
             "active"    => false, 
             "disabled"  => false,
-            "align"     => ""
+            "align"     => "",
+            "attr"      => array (),
+            "css"       => array ()  
         );
     }
     
@@ -63,6 +65,9 @@ class Nav extends Typography
                     continue;
                 } else {
                     $_li = new HtmlTag("li");
+                    if (!empty($item ['css'])) {
+                        $_li->setCustomClass($item ['css']);
+                    }
 //                      $_li->appendAttrs(array ("role" => "presentation"));
                     if ($key == $this->activeIndex || $item ['active'] == true) { 
                         $_li->appendCustomClass("active");
@@ -132,18 +137,22 @@ class Nav extends Typography
                     $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
                     $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
                     $items[$i] ['align']    = isset($items[$i] ['align']) ? $items[$i] ['align'] : $this->screw ['align'];
-                    
+                    $items[$i] ['attr']     = isset($items[$i] ['attr']) ? $items[$i] ['attr'] : $this->screw ['attr'];
+                    $items[$i] ['css']      = isset($items[$i] ['css']) ? $items[$i] ['css'] : $this->screw ['css'];
                 } else {
                     $_item ['text']     = $items[$i];
                     $_item ['url']      = $this->screw ['url'];
                     $_item ['active']   = $this->screw ['active'];
                     $_item ['disabled'] = $this->screw ['disabled'];
                     $_item ['align']    = $this->screw ['align'];
+                    $_item ['attr']     = $this->screw ['attr'];
+                    $_item ['css']      = $this->screw ['css'];
                     $items [$i] = $_item;
                     unset ($_item);
                 }
             }
         }
+        
         parent::setItems($items);
         return $this;
     }
@@ -161,12 +170,18 @@ class Nav extends Typography
                     $items[$i] ['url']      = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
                     $items[$i] ['active']   = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
                     $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
+                    $items[$i] ['align']    = isset($items[$i] ['align']) ? $items[$i] ['align'] : $this->screw ['align'];
+                    $items[$i] ['attr']     = isset($items[$i] ['attr']) ? $items[$i] ['attr'] : $this->screw ['attr'];
+                    $items[$i] ['css']      = isset($items[$i] ['css']) ? $items[$i] ['css'] : $this->screw ['css'];
                     
                 } else {
                     $_item ['text']     = $items[$i];
                     $_item ['url']      = $this->screw ['url'];
                     $_item ['active']   = $this->screw ['active'];
                     $_item ['disabled'] = $this->screw ['disabled'];
+                    $_item ['align']    = $this->screw ['align'];
+                    $_item ['attr']     = $this->screw ['attr'];
+                    $_item ['css']      = $this->screw ['css'];
                     $items [$i] = $_item;
                     unset ($_item);
                 }

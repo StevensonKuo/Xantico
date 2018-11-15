@@ -238,7 +238,7 @@ class BootstrapView
             array ("seperator" => true),
             array ("text" => "Seperated link", "url" => "#")
         );
-        $dropdown->setMode("inline")->getButton()->setCustomClass("sr-only");
+        $dropdown->setMode("inline")->getButton()->appendCustomClass("sr-only");
         $dropdown->appendItems($ddItems)
             ->setText ("Dropdown")
             ->setMode("dropdown")
@@ -1205,11 +1205,11 @@ class BootstrapView
 
         $pageHeader_6 = new PageHeader("Images");
         $img = new Image("rounded");
-        $img->setSource("holder.js")->setWidth(140)->setHeight(140);
+        $img->setSource("holder.js/140x140");
         $img2 = new Image("circle");
-        $img2->setSource("holder.js")->setWidth(140)->setHeight(140);
+        $img2->setSource("holder.js/140x140");
         $img3 = new Image("thumbnail");
-        $img3->setSource("holder.js")->setWidth(140)->setHeight(140);
+        $img3->setSource("holder.js/140x140");
         $bsExample13 = $bsExample->cloneInstance()->setInnerElements(array(
             $img, $img2, $img3
         ));
@@ -1860,7 +1860,7 @@ class BootstrapView
         $pageHeader16 = new PageHeader("Thumbnails");
         $rowThumbnails = new Row();
         $tn1 = new Image();
-        $tn1->setSource("holder.js")->setWidth("100%")->setHeight("180")->setUrl("#")
+        $tn1->setSource("holder.js/100%x180")->setUrl("#")
         ->setAttrs(array ("data-holder-rendered" => "true"))->setAlt("100%x180");
         $rowThumbnails->appendItems(array(
             array("text" => $tn1, "width" => array ("col-xs-6", "col-md-3")),
@@ -1871,7 +1871,7 @@ class BootstrapView
 
         $rowThumbnails2 = new Row();
         $tn2 = new Image();
-        $tn2->setSource("holder.js")->setWidth("100%")->setHeight("200")
+        $tn2->setSource("holder.js/100%x200")->setWidth("100%")->setHeight("200")
         ->setAttrs(array ("data-holder-rendered" => "true"))->setAlt("100%x200");
         $captionH3 = new HtmlTag("h3");
         $captionH3->setText("Thumbnail label");
@@ -1987,7 +1987,7 @@ class BootstrapView
         $pageHeader19 = new PageHeader("Media object");
         $media = new Media();
         $mediaObject = new Image("thumbnail");
-        $mediaObject->setSource("holder.js")->setWidth(64)->setHeight(64);
+        $mediaObject->setSource("holder.js/64x64");
         $media->setMediaObject($mediaObject);
         $media->appendBodyContents(array(
             new Typography("h4", array("innerText" => "Media heading")),
@@ -2176,7 +2176,7 @@ class BootstrapView
         $pageHeader23 = new PageHeader("Responsive embed");
         $embedRspDiv = new Typography("div");
         $embedRspDiv->setEmbedResponsive("4:3");
-        $embedRspDiv->appendInnerElements(new Typography("iframe", null, array ("src" => "http://localhost/Xantico/index.php", "allowfullscreen" => "true")));
+        $embedRspDiv->appendInnerElements(new Typography("iframe", null, array ("src" => "index.php", "allowfullscreen" => "true")));
 
         $pageHeader24 = new PageHeader("Video (Plyr, a demo of plugins)");
         $video = new Video();

@@ -20,13 +20,15 @@ class Xantico
     protected $description; // string
     protected $isLoadBootstrapFromCDN; // boolean
     protected $isLoadJQueryFromCDN; // boolean
+    protected $isLoadJQueryUIFromCDN; // boolean
     
     public static $elements = array (); // all Typography classes will be gathered into here.
     public static $defaultCSSFiles = array (); // array
     public static $defaultScriptsFiles = array (); // array
     
     const BOOTSTRAP_VERSION                 = '3.3.7'; // string
-    const JQUERY_VERSION                    = '2.2.2'; // string
+    const JQUERY_VERSION                    = '2.2.4'; // string
+    const JQUERY_UI_VERSION                 = '1.10.4'; 
     
     const BOOTSTRAP_HREF                    = '/static/admin/css/bootstrap.min.css'; // local bootstrap css path.
     const BOOTSTRAP_JS_HREF                 = '/static/admin/js/bootstrap.min.js'; // local bootstrap css path.
@@ -40,6 +42,9 @@ class Xantico
     const BOOTSTRAP_JS_CDN_INTEGRITY        = 'sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa';
     const JQUERY_CDN_URL                    = 'https://code.jquery.com/jquery-2.2.4.min.js';
     const JQUERY_CDN_INTEGRITY              = 'sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=';
+    const JQUERY_UI_CDN_URL                 = 'https://code.jquery.com/ui/1.10.4/jquery-ui.min.js';
+    const JQUERY_UI_CDN_INTEGRITY           = 'sha256-oTyWrNiP6Qftu4vs2g0RPCKr3g1a6QTlITNgoebxRc4=';
+    const JQUERY_UI_CSS_CDN_URL             = 'https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css';
     // localization 
     // https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_zh_TW.min.js
     
@@ -58,6 +63,7 @@ class Xantico
         $this->isResponsive             = true;
         $this->isLoadBootstrapFromCDN   = false;
         $this->isLoadJQueryFromCDN      = false;
+        $this->isLoadJQueryUIFromCDN    = false;
         // bootstrap config end.
     }
     
@@ -119,6 +125,13 @@ class Xantico
             array_unshift(self::$defaultCSSFiles, array (
                 "href" => self::BOOTSTRAP_HREF,
                 "rel" => "stylesheet"
+            ));
+        }
+        
+        if ($this->isLoadJQueryUIFromCDN == true) {
+            array_unshift(self::$defaultCSSFiles, array (
+                "href" => self::JQUERY_UI_CSS_CDN_URL,
+                "rel" => "stylesheet" 
             ));
         }
         
@@ -250,10 +263,18 @@ class Xantico
                 "crossorigin" => "anonymous"
             ));
         }
-        if ($this->isLoadJQueryFromCDN) {
+        if ($this->isLoadJQueryFromCDN == true) {
             array_unshift(self::$defaultScriptsFiles, array (
                 "src" => self::JQUERY_CDN_URL,
                 "integrity" => self::JQUERY_CDN_INTEGRITY,
+                "crossorigin" => "anonymous"
+            ));
+        }
+        
+        if ($this->isLoadJQueryUIFromCDN == true) {
+            array_unshift(self::$defaultScriptsFiles, array (
+                "src" => self::JQUERY_UI_CDN_URL,
+                "integrity" => self::JQUERY_UI_CDN_INTEGRITY,
                 "crossorigin" => "anonymous"
             ));
         }
@@ -615,6 +636,24 @@ class Xantico
         $this->title = $title;
         return $this;
     }
+    
+    /**
+     * @return the $isLoadJQueryUIFromCDN
+     */
+    public function getIsLoadJQueryUIFromCDN()
+    {
+        return $this->isLoadJQueryUIFromCDN;
+    }
+
+    /**
+     * @param field_type $isLoadJQueryUIFromCDN
+     */
+    public function setIsLoadJQueryUIFromCDN($isLoadJQueryUIFromCDN = true)
+    {
+        $this->isLoadJQueryUIFromCDN = $isLoadJQueryUIFromCDN;
+        return $this;
+    }
+
 
 
 

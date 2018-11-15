@@ -61,7 +61,7 @@ class Image extends Typography
         
         if (empty($this->width)) $this->width = self::$BOOTSTRAP_IMAGE_DEFAULT_WIDTH;
         if (empty($this->height)) $this->height = self::$BOOTSTRAP_IMAGE_DEFAULT_HEIGHT;
-        $this->source = $this->source . "/" . $this->width. "x" . $this->height . (!empty($this->theme) ? "/" . $this->theme : "");
+//         $this->source = $this->source . "/" . $this->width. "x" . $this->height . (!empty($this->theme) ? "/" . $this->theme : "");
         $this->appendAttrs(array("src" => $this->source));
         
         parent::render();

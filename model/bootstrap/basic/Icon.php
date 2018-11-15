@@ -50,9 +50,8 @@ class Icon extends Typography
     }
     
     /**
-     * 如果是陣列的話第一個是字集
      * @param string $icon
-     * @return \Bootstrap\Aceadmin\Icon
+     * @return \bootstrap\basic\Icon
      */
     public function setIcon ($icon = "") {
         $this->icon = $icon;

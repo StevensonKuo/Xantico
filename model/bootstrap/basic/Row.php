@@ -23,7 +23,13 @@ class Row extends Typography
         $this->defaultScreenSize
                             = isset ($vars ['defaultScreenSize']) ? $vars ['defaultScreenSize'] : "md";
     
-        $this->screw        =  array ("text" => "&nbsp;", "width" => null, "offset" => null);
+        $this->screw        =  array (
+            "text" => "&nbsp;", 
+            "width" => null, 
+            "offset" => null, 
+            "attr" => array (),
+            "css" => array () 
+        );
     }
     
     /**
@@ -61,6 +67,13 @@ class Row extends Typography
                         } else if (is_array($input ['offset'])) {
                             $col->appendCustomClass($input ['offset']); // @todo for now..
                         }
+                    }
+                    
+                    if (!empty($input ['css']) && is_array($input ['css'])) {
+                        $col->appendCustomClass($input ['css']);
+                    }
+                    if(!empty($input ['attr']) && is_array ($input ['attr'])) {
+                        $col->setAttrs($input ['attr']);
                     }
                     
                     $formGrp = new Typography("div");
@@ -147,6 +160,9 @@ class Row extends Typography
                         }
                     }
                     
+                    if(!empty($input ['attr']) && is_array ($input ['attr'])) {
+                        $col->setAttrs($input ['attr']);
+                    }
                     
                     $col->appendInnerElements($item);
                     $this->innerElements [] = $col;
@@ -194,10 +210,14 @@ class Row extends Typography
                 $columns[$i] ['text']   = isset($columns[$i] ['text']) ? $columns[$i] ['text'] : $this->screw ['text'];
                 $columns[$i] ['width']  = isset($columns[$i] ['width']) ? $columns[$i] ['width'] : $this->screw ['width'];
                 $columns[$i] ['offset'] = isset($columns[$i] ['offset']) ? $columns[$i] ['offset'] : $this->screw ['offset'];
+                $columns[$i] ['attr']   = isset($columns[$i] ['attr']) ? $columns[$i] ['attr'] : $this->screw ['attr'];
+                $columns[$i] ['css']    = isset($columns[$i] ['css']) ? $columns[$i] ['css'] : $this->screw ['css'];
             } else {
                 $_column ['text']   = $columns[$i];
                 $_column ['width']  = $this->screw ['width'];
                 $_column ['offset'] = $this->screw ['offset'];
+                $_column ['attr']   = $this->screw ['attr'];
+                $_column ['css']    = $this->screw ['css'];
                 
                 $columns[$i] = $_column;
                 unset ($_column);
@@ -220,10 +240,14 @@ class Row extends Typography
                 $columns[$i] ['text']   = isset($columns[$i] ['text']) ? $columns[$i] ['text'] : $this->screw ['text'];
                 $columns[$i] ['width']  = isset($columns[$i] ['width']) ? $columns[$i] ['width'] : $this->screw ['width'];
                 $columns[$i] ['offset'] = isset($columns[$i] ['offset']) ? $columns[$i] ['offset'] : $this->screw ['offset'];
+                $columns[$i] ['attr']   = isset($columns[$i] ['attr']) ? $columns[$i] ['attr'] : $this->screw ['attr'];
+                $columns[$i] ['css']    = isset($columns[$i] ['css']) ? $columns[$i] ['css'] : $this->screw ['css'];
             } else {
                 $_column ['text']   = $columns[$i];
                 $_column ['width']  = $this->screw ['width'];
                 $_column ['offset'] = $this->screw ['offset'];
+                $_column ['attr']   = $this->screw ['attr'];
+                $_column ['css']    = $this->screw ['css'];
                 
                 $columns[$i] = $_column;
                 unset ($_column);

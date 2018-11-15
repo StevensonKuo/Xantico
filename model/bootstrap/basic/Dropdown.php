@@ -18,10 +18,10 @@ class Dropdown extends Typography
     protected $expanded; // boolean
     protected $isDropup; // boolean
     protected $isSplit; // boolean; for btn-group mode only
+    protected $dropdownIcon; // an arrow point down for dropdown btn.
     
     private $button; // instance of a 
     private $menu; // instance of ul
-    private $defaultIcon; // an arrow point down for dropdown btn.
     private static $modeArr = array ("button", "inline"); // inline mode will not enlose by any tag. 
     
     /**
@@ -46,7 +46,7 @@ class Dropdown extends Typography
         
         $this->button       = null;
         $this->menu         = null;
-        $this->defaultIcon  = new Icon("caret", array ("iconSet" => ""));
+        $this->dropdownIcon = new Icon("caret", array ("iconSet" => ""));
         $this->screw        = array (
             "text"      => "&nbsp;",
             "url"       => "",
@@ -120,6 +120,7 @@ class Dropdown extends Typography
             $_btn = new Typography("a", null, array ("href" => "#"));
         }
         
+        $_btn->appendCustomClass($this->customClass);
         $_btn->appendCustomClass(array("dropdown-toggle"))
             ->setId()
             ->appendAttrs(array ( // @todo not actually know what all they do.
@@ -131,9 +132,11 @@ class Dropdown extends Typography
             
         // only a single icon. icon style control by parent class dropdown/dropup.
         if ($this->isSplit == true) {
-            $_btn->innerElements = array($this->defaultIcon);
+            $_btn->innerElements = array($this->dropdownIcon);
         } else {
-            $_btn->innerElements = array($this->innerText, $this->defaultIcon);
+            if (!empty($this->innerText)) $_btn->innerElements [] = $this->innerText;
+            if (!empty($this->innerHtml)) $_btn->innerElements [] = $this->innerHtml;
+            $_btn->innerElements [] = $this->dropdownIcon;
         }
         
         $this->button = $_btn;
@@ -474,6 +477,24 @@ class Dropdown extends Typography
         $this->isSplit = $isSplit;
         return $this;
     }
+    
+    /**
+     * @return the $dropdownIcon
+     */
+    public function getDropdownIcon()
+    {
+        return $this->dropdownIcon;
+    }
+
+    /**
+     * @param \model\bootstrap\basic\Icon $dropdownIcon
+     */
+    public function setDropdownIcon($dropdownIcon)
+    {
+        $this->dropdownIcon = $dropdownIcon;
+        return $this;
+    }
+
 
 }
 

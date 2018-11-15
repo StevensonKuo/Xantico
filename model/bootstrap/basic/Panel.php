@@ -20,6 +20,7 @@ class Panel extends Typography
         parent::__construct("div:panel", $vars, $attrs);
         $this->type         = "panel";
         $this->heading      = isset ($vars ['heading']) ? $vars ['heading'] : "";
+        $this->bodyContents = isset ($vars ['bodyContents']) ? $vars ['bodyContents'] : "";
         $this->footer       = isset ($vars ['footer']) ? $vars ['footer'] : "";
         $this->context     = empty($this->context) ? "default" : $this->context;
 //         $this->subTitle     = key_exists('subTitle', $vars) ? $vars ['subTitle'] : "";
@@ -29,7 +30,6 @@ class Panel extends Typography
     }
     
     /**
-     * 渲染（佔位）
      * @param string $display
      * @return unknown
      */

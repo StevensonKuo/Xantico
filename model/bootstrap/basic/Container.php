@@ -9,19 +9,42 @@ class Container extends Typography
     
     public function __construct($innerElements = array (), $vars = array (), $attr = array ())
     {
+        parent::__construct("div:container", $vars, $attr);
+        
         $this->isFluid = isset ($vars ['isFluid']) ? $vars ['isFluid'] : false;
-        
-        
-        if ($this->isFluid == true) {
-            parent::__construct("div:container", $vars, $attr);
-        } else {
-            parent::__construct("div:container-fluid", $vars, $attr);
-        }
         
         if (is_array($innerElements)) {
             $this->innerElements = $innerElements;
         } else {
             $this->innerElements [] = $innerElements;
+        }
+    }
+    
+    public function render($display = false) {
+        if ($this->isFluid == true) {
+            if (!in_array("container-fluid", $this->customClass)) {
+                if (in_array ("container", $this->customClass)) {
+                    $_key = array_search("container", $this->customClass);
+                    $this->customClass [$_key] = "container-fluid";
+                } else {
+                    $this->customClass [] = "container-fluid";
+                }
+            }
+        } else {
+            if (in_array ("container-fluid", $this->customClass)) {
+                $_key = array_search("container-fluid", $this->customClass);
+                $this->customClass [$_key] = "container";
+            } else {
+                $this->customClass [] = "container";
+            }
+        }
+        
+        parent::render();
+        
+        if ($display == true) {
+            echo $this->html;
+        } else {
+            return $display;
         }
     }
     

@@ -20,6 +20,11 @@ class Container extends Typography
         }
     }
     
+    /**
+     * @desc render 
+     * {@inheritDoc}
+     * @see \model\bootstrap\basic\Typography::render()
+     */
     public function render($display = false) {
         if ($this->isFluid == true) {
             if (!in_array("container-fluid", $this->customClass)) {
@@ -31,11 +36,13 @@ class Container extends Typography
                 }
             }
         } else {
-            if (in_array ("container-fluid", $this->customClass)) {
-                $_key = array_search("container-fluid", $this->customClass);
-                $this->customClass [$_key] = "container";
-            } else {
-                $this->customClass [] = "container";
+            if (!in_array("container", $this->customClass)) {
+                if (in_array ("container-fluid", $this->customClass)) {
+                    $_key = array_search("container-fluid", $this->customClass);
+                    $this->customClass [$_key] = "container";
+                } else {
+                    $this->customClass [] = "container";
+                }
             }
         }
         
@@ -44,7 +51,7 @@ class Container extends Typography
         if ($display == true) {
             echo $this->html;
         } else {
-            return $display;
+            return $this->html;
         }
     }
     

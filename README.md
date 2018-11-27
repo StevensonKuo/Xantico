@@ -10,6 +10,8 @@ Please check demo pages here:
 
 [Bootstrap theme](http://xantico.yhvh.tw/index.php?page=theme). 
 
+[Tutorial Video](https://www.youtube.com/watch?v=6psvQBJ8EZg&feature=youtu.be)
+
 This page is all the same with a demo page on Bootstrap official website. I write my php code below to show you how to achieve it. Also the worth part is to have a chance looking at html source code.
 
 ## What is Xantico

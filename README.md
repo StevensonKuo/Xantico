@@ -17,9 +17,9 @@ This page is all the same with a demo page on Bootstrap official website. I writ
 ## What is Xantico
 This name is owned by a Mayan fire god. Btw it looks cool so I decide use it to name my code, a project of auto. generating bootstrap html code by PHP object oriental programming. It's very helpful if you are working a lot on building contents management system with PHP. 
 
-## How to use Xantico
+## How to use Xantico (Installation)
 1. Put all files under model/ folder into where your models live.
-2. Things under controller/ and view/ folders are not necessary.
+2. Things under controller/ and view/ folders are not necessary. 
 3. Include models how you usually do.
 4. Enjoy it!
 

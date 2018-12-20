@@ -73,7 +73,6 @@ class Navbar extends Typography
             ->appendAttrs(array (
                 "data-toggle" => "collapse",
                 "data-target" => '#' . $_navBody->getId(),
-                "data-toggle" => "collapse", 
                 "aria-expanded" => "false",
                 "aria-controls" => "navbar" 
             ));

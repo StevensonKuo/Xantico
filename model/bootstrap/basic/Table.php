@@ -103,10 +103,9 @@ class Table extends Typography
             $tableBody = new HtmlTag("tbody");
             $rowspanToken = 0;
             $rowspanKey = null;
-            $html = "";
+            $jQuery = "";
             foreach ($this->cells as $trkey => $cell) {
                 $tr = new HtmlTag("tr");
-                $colspanToken = 0;
                 if (isset ($cell ['context']) && in_array($cell ['context'], self::$contextArr)) {
                     $tr->setCustomClass($cell ['context']);
                 }

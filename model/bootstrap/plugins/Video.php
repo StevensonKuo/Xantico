@@ -47,7 +47,7 @@ class Video extends Typography
      */
     public function render ($display = false) {
         
-        $jQuery = "";
+//        $jQuery = "";
 //         $this->embedResponsive = "16:9";
         switch ($this->moduleType) {
             default:
@@ -109,7 +109,7 @@ class Video extends Typography
                         break;
                     case "audio":
                         $audio = new HtmlTag("audio", array ("crossorigin" => "crossorigin"));
-                        if ($this->withControls == true) $video->setAttrs(array ("controls" => "controls"));
+                        if ($this->withControls == true) $audio->setAttrs(array ("controls" => "controls"));
                         
                         $innerAudio = array ();
                         if (is_array ($this->source)) {

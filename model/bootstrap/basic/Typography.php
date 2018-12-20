@@ -3,7 +3,7 @@ namespace model\bootstrap\basic;
 
 use model\bootstrap\HtmlTag;
 
-class Typography extends \model\bootstrap\HtmlTag 
+class Typography extends HtmlTag
 {
     protected $type;    // string
     protected $mode; // for one more type/mode to switch what you want.

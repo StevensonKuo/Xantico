@@ -289,8 +289,8 @@ class Pagination extends Typography
     }
 
     /**
-     * @desc pagination mode
-     * @param field_type $mode [pagination|pager|aligned-pager]
+     * pagination mode
+     * @param string $mode [pagination|pager|aligned-pager]
      */
     public function setMode($mode)
     {

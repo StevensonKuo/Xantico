@@ -1,66 +1,65 @@
 <?php
-namespace model\bootstrap\basic;
 
-use model\bootstrap\basic\Typography;
-use model\bootstrap\basic\Input;
+namespace model\bootstrap\basic;
 
 class Row extends Typography
 {
     public $screw; // Column
-    
+
     protected $forForm; // boolean
     protected $requireIcon; // Icon
     protected $defaultScreenSize; // string 
-    
-    
-    public function __construct($vars = array (), $attr = array ())
+
+
+    public function __construct($vars = array(), $attr = array())
     {
         parent::__construct("div:row", $vars, $attr);
         // @todo bs 4.0 if (forForm != "") div:form-row
-        
-        $this->forForm      = isset ($vars ['forForm']) ? $vars ['forForm'] : "";
-        $this->requireIcon  = isset ($vars ['requireIcon']) && $vars ['requireIcon'] instanceof Icon ? $vars ['requireIcon'] : new Icon("asterisk", array ("textContext" => "danger"));
+
+        $this->forForm = isset ($vars ['forForm']) ? $vars ['forForm'] : "";
+        $this->requireIcon = isset ($vars ['requireIcon']) && $vars ['requireIcon'] instanceof Icon ? $vars ['requireIcon'] : new Icon("asterisk", array("textContext" => "danger"));
         $this->defaultScreenSize
-                            = isset ($vars ['defaultScreenSize']) ? $vars ['defaultScreenSize'] : "md";
-    
-        $this->screw        =  array (
-            "text" => "&nbsp;", 
-            "width" => null, 
-            "offset" => null, 
-            "attr" => array (),
-            "css" => array () 
+            = isset ($vars ['defaultScreenSize']) ? $vars ['defaultScreenSize'] : "md";
+
+        $this->screw = array(
+            "text" => "&nbsp;",
+            "width" => null,
+            "offset" => null,
+            "attr" => array(),
+            "css" => array()
         );
     }
-    
+
     /**
      * @desc use items as col, then add as inner elements.
      * {@inheritDoc}
      * @see \model\bootstrap\basic\Typography::render()
      */
-    public function render($display = false) {
+    public function render($display = false)
+    {
         if (!empty($this->items)) {
             foreach ($this->items as $input) {
                 $item = $input ['text'];
-
-                if ($item instanceof Input || $item instanceof InputGroup 
-                    || $item instanceof Select || $item instanceof Textarea  
+                if ($item instanceof Input || $item instanceof InputGroup
+                    || $item instanceof Select || $item instanceof Textarea
                     || $item instanceof Button || $item instanceof ButtonGroup || $item instanceof ButtonToolbar) {
                     // for form is different from for usual.
                     if (!empty($input ['width'])) {
                         if (is_numeric($input ['width'])) {
+                            /** @var Typography $col */
                             $col = new Typography("div:col-{$this->defaultScreenSize}-" . $input ['width']);
                         } else if (is_array($input ['width'])) {
                             $col = new Typography("div:" . $this->width [0]);
                             array_shift($input ['width']);
                             $col->appendCustomClass($input ['width']); // @todo for now.. 
                         }
-                        
+
                     } else {
-                        $input ['width'] = round(12 / count($this->items)); 
+                        $input ['width'] = round(12 / count($this->items));
                         $col = new Typography("div:col-{$this->defaultScreenSize}-" . $input ['width']);
                         // $col = new Typography("div:col"); // @todo bs 4.0
                     }
-                    
+
                     if (!empty($input ['offset']) && isset ($col)) {
                         if (is_numeric($input ['offset'])) {
                             $col->appendCustomClass("col-{$this->defaultScreenSize}-offset-" . $input ['offset']);
@@ -68,14 +67,14 @@ class Row extends Typography
                             $col->appendCustomClass($input ['offset']); // @todo for now..
                         }
                     }
-                    
+
                     if (!empty($input ['css']) && is_array($input ['css'])) {
                         $col->appendCustomClass($input ['css']);
                     }
-                    if(!empty($input ['attr']) && is_array ($input ['attr'])) {
+                    if (!empty($input ['attr']) && is_array($input ['attr'])) {
                         $col->setAttrs($input ['attr']);
                     }
-                    
+
                     $formGrp = new Typography("div");
                     $formGrp->setCustomClass("form-group");
                     if (method_exists($item, "getValidationState") && !empty($item->getValidationState())) {
@@ -100,19 +99,19 @@ class Row extends Typography
                             }
                             $_for = $item->getId();
                         }
-                        
-                        $_label->appendAttrs(array ("for" => $_for));
-                        
+
+                        $_label->appendAttrs(array("for" => $_for));
+
                         if (method_exists($item, "getIsRequired") && $item->getIsRequired() && !empty($this->requireIcon)) {
                             $_label->appendInnerElements(array($this->requireIcon, $item->getCaption()));
                         } else {
                             $_label->setInnerText($item->getCaption());
                         }
-                        
+
                         $formGrp->setInnerElements($_label);
-                        
+
                     }
-                    
+
                     $formGrp->appendInnerElements($item);
                     if (method_exists($item, "getHasFeedback") && $item->getHasFeedback() == true) {
                         $_icon = $item->getValidationState() == "success" ? "ok" : ($item->getValidationState() == "warning" ? "warning-sign" : "remove");
@@ -120,14 +119,14 @@ class Row extends Typography
                         $feedbackIcon->appendCustomClass("form-control-feedback");
                         $formGrp->appendInnerElements($feedbackIcon);
                     }
-                    
+
                     if (method_exists($item, "getHelp") && !empty($item->getHelp())) {
                         if (is_string($item->getHelp())) {
                             $_help = new Typography("small");
-                            $_help->appendCustomClass(array ("help-block"))
-                            ->setText($item->getHelp());
+                            $_help->appendCustomClass(array("help-block"))
+                                ->setText($item->getHelp());
                             $_help->setId();
-                            $item->appendAttrs(array ("aria-describedby" => $_help->getId()));
+                            $item->appendAttrs(array("aria-describedby" => $_help->getId()));
                         } else {
                             $_help = $item->getHelp();
                         }
@@ -135,7 +134,7 @@ class Row extends Typography
                     }
                     $col->setInnerElements($formGrp);
                     $this->innerElements [] = $col;
-                    
+
                 } else {
                     if (!empty($input ['width'])) {
                         if (is_numeric($input ['width'])) {
@@ -145,13 +144,13 @@ class Row extends Typography
                             array_shift($input ['width']);
                             $col->appendCustomClass($input ['width']); // @todo for now..
                         }
-                        
+
                     } else {
                         $input ['width'] = round(12 / count($this->items));
                         $col = new Typography("div:col-{$this->defaultScreenSize}-" . $input ['width']);
                         // $col = new Typography("div:col"); // @todo bs 4.0
                     }
-                    
+
                     if (!empty($input ['offset']) && isset ($col)) {
                         if (is_numeric($input ['offset'])) {
                             $col->appendCustomClass("col-{$this->defaultScreenSize}-offset-" . $input ['offset']);
@@ -159,20 +158,20 @@ class Row extends Typography
                             $col->appendCustomClass($input ['offset']); // @todo for now..
                         }
                     }
-                    
-                    if(!empty($input ['attr']) && is_array ($input ['attr'])) {
+
+                    if (!empty($input ['attr']) && is_array($input ['attr'])) {
                         $col->setAttrs($input ['attr']);
                     }
-                    
+
                     $col->appendInnerElements($item);
                     $this->innerElements [] = $col;
                 }
-            } 
+            }
         }
         $this->items = null;
-        
+
         parent::render();
-        
+
         if ($display == false) {
             return $this->html;
         } else {
@@ -181,7 +180,7 @@ class Row extends Typography
     }
 
     /**
-     * @return the $forForm
+     * @return boolean $forForm
      */
     public function getForForm()
     {
@@ -189,102 +188,109 @@ class Row extends Typography
     }
 
     /**
-     * @param field_type $forForm
+     * @param bool $forForm
+     * @return $this
      */
     public function setForForm($forForm = true)
     {
         $this->forForm = $forForm;
         return $this;
     }
-    
+
     /**
-     * @desc standardize associative array.
-     * @param Ambigous <unknown, multitype:, array, NULL> $grids
+     * @param array $columns
+     * @return $this|Typography
+     */
+    public function appendItems($columns)
+    {
+        if (!is_array($columns)) {
+            $columns = array($columns);
+        }
+        for ($i = 0; $i < count($columns); $i++) {
+            if (is_array($columns[$i])) {
+                $columns[$i] ['text'] = isset($columns[$i] ['text']) ? $columns[$i] ['text'] : $this->screw ['text'];
+                $columns[$i] ['width'] = isset($columns[$i] ['width']) ? $columns[$i] ['width'] : $this->screw ['width'];
+                $columns[$i] ['offset'] = isset($columns[$i] ['offset']) ? $columns[$i] ['offset'] : $this->screw ['offset'];
+                $columns[$i] ['attr'] = isset($columns[$i] ['attr']) ? $columns[$i] ['attr'] : $this->screw ['attr'];
+                $columns[$i] ['css'] = isset($columns[$i] ['css']) ? $columns[$i] ['css'] : $this->screw ['css'];
+            } else {
+                $_column ['text'] = $columns[$i];
+                $_column ['width'] = $this->screw ['width'];
+                $_column ['offset'] = $this->screw ['offset'];
+                $_column ['attr'] = $this->screw ['attr'];
+                $_column ['css'] = $this->screw ['css'];
+
+                $columns[$i] = $_column;
+                unset ($_column);
+            }
+        }
+
+        parent::appendItems($columns);
+        return $this;
+    }
+
+    /**
+     * @desc alias of setItems
+     * @param array $cols
+     * @return \model\bootstrap\basic\Row
+     */
+    public function setColumns($cols)
+    {
+        return $this->setItems($cols);
+    }
+
+    /**
+     * @param array $columns
+     * @return $this|\model\bootstrap\basic\Typography
      */
     public function setItems($columns)
     {
         // text [string], width [int|array], offset [int|array]
-        if (!is_array($columns)) $columns = array ($columns);
-        for ($i = 0; $i < count($columns); $i ++) {
-            if (is_array ($columns[$i])) {
-                $columns[$i] ['text']   = isset($columns[$i] ['text']) ? $columns[$i] ['text'] : $this->screw ['text'];
-                $columns[$i] ['width']  = isset($columns[$i] ['width']) ? $columns[$i] ['width'] : $this->screw ['width'];
+        if (!is_array($columns)) $columns = array($columns);
+        for ($i = 0; $i < count($columns); $i++) {
+            if (is_array($columns[$i])) {
+                $columns[$i] ['text'] = isset($columns[$i] ['text']) ? $columns[$i] ['text'] : $this->screw ['text'];
+                $columns[$i] ['width'] = isset($columns[$i] ['width']) ? $columns[$i] ['width'] : $this->screw ['width'];
                 $columns[$i] ['offset'] = isset($columns[$i] ['offset']) ? $columns[$i] ['offset'] : $this->screw ['offset'];
-                $columns[$i] ['attr']   = isset($columns[$i] ['attr']) ? $columns[$i] ['attr'] : $this->screw ['attr'];
-                $columns[$i] ['css']    = isset($columns[$i] ['css']) ? $columns[$i] ['css'] : $this->screw ['css'];
+                $columns[$i] ['attr'] = isset($columns[$i] ['attr']) ? $columns[$i] ['attr'] : $this->screw ['attr'];
+                $columns[$i] ['css'] = isset($columns[$i] ['css']) ? $columns[$i] ['css'] : $this->screw ['css'];
             } else {
-                $_column ['text']   = $columns[$i];
-                $_column ['width']  = $this->screw ['width'];
+                $_column ['text'] = $columns[$i];
+                $_column ['width'] = $this->screw ['width'];
                 $_column ['offset'] = $this->screw ['offset'];
-                $_column ['attr']   = $this->screw ['attr'];
-                $_column ['css']    = $this->screw ['css'];
-                
+                $_column ['attr'] = $this->screw ['attr'];
+                $_column ['css'] = $this->screw ['css'];
+
                 $columns[$i] = $_column;
                 unset ($_column);
             }
         }
-        
+
         parent::setItems($columns);
         return $this;
     }
-    
-    /**
-     * @desc standardize associative array. append version
-     * @param Ambigous <unknown, multitype:, array, NULL> $grids
-     */
-    public function appendItems($columns)
+
+    public function getColumns()
     {
-        if (!is_array($columns)) $columns = array ($columns);
-        for ($i = 0; $i < count($columns); $i ++) {
-            if (is_array ($columns[$i])) {
-                $columns[$i] ['text']   = isset($columns[$i] ['text']) ? $columns[$i] ['text'] : $this->screw ['text'];
-                $columns[$i] ['width']  = isset($columns[$i] ['width']) ? $columns[$i] ['width'] : $this->screw ['width'];
-                $columns[$i] ['offset'] = isset($columns[$i] ['offset']) ? $columns[$i] ['offset'] : $this->screw ['offset'];
-                $columns[$i] ['attr']   = isset($columns[$i] ['attr']) ? $columns[$i] ['attr'] : $this->screw ['attr'];
-                $columns[$i] ['css']    = isset($columns[$i] ['css']) ? $columns[$i] ['css'] : $this->screw ['css'];
-            } else {
-                $_column ['text']   = $columns[$i];
-                $_column ['width']  = $this->screw ['width'];
-                $_column ['offset'] = $this->screw ['offset'];
-                $_column ['attr']   = $this->screw ['attr'];
-                $_column ['css']    = $this->screw ['css'];
-                
-                $columns[$i] = $_column;
-                unset ($_column);
-            }
-        }
-        
-        parent::appendItems($columns);
-        return $this;
-    }
-    
-    /**
-     * @desc alias of setItems
-     * @param unknown $cols
-     * @return \model\bootstrap\basic\Row
-     */
-    public function setColumns ($cols) {
-        return $this->setItems($cols);
-    }
-    
-    public function getColumns () {
         return $this->items;
     }
-    
-    public function setColumn ($index, $column) {
+
+    public function setColumn($index, $column)
+    {
         $this->items [$index] = $column;
     }
-    
-    public function getColumn ($index) {
+
+    public function getColumn($index)
+    {
         if (isset ($this->items [$index])) {
             return $this->items [$index];
         } else {
             return null;
         }
     }
-    
+
     /**
-     * @return the $requireIcon
+     * @return Icon $requireIcon
      */
     public function getRequireIcon()
     {
@@ -292,7 +298,8 @@ class Row extends Typography
     }
 
     /**
-     * @param \model\bootstrap\basic\Icon $requireIcon
+     * @param $requireIcon
+     * @return $this
      */
     public function setRequireIcon($requireIcon)
     {
@@ -301,10 +308,10 @@ class Row extends Typography
         } else {
             $this->requireIcon = null;
         }
-        
+
         return $this;
     }
-    
+
     /**
      * @return the $defaultScreenSize
      */

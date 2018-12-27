@@ -36,7 +36,7 @@ class HtmlTag implements iCaption
         "wbr"
     );
     
-    private static $indentlevel = 0; // ing, for text indent.
+    private static $indentLevel = 0; // ing, for text indent.
     
 
     /**
@@ -107,7 +107,7 @@ class HtmlTag implements iCaption
                 $html .= ">\n";
                 $htmlLines = explode("\t", $this->innerHtml);
                 foreach ($htmlLines as $ln) {
-                    $html .= str_repeat("\t", self::$indentlevel+1) . trim($ln);
+                    $html .= str_repeat("\t", self::$indentLevel+1) . trim($ln);
                 }
                 $html .= "</{$this->tagName}>";
             } catch (\Exception $e) {
@@ -116,23 +116,23 @@ class HtmlTag implements iCaption
         } else if (!empty($this->cdata)) { 
             $html .= ">\n";
             $_cdataLines = explode("\n", $this->cdata);
-            $html .= str_repeat("\t", self::$indentlevel+1) . join("\n" . str_repeat("\t", self::$indentlevel+1), $_cdataLines) . "\n"; 
-            $html .= str_repeat("\t", self::$indentlevel) . "</{$this->tagName}>";
+            $html .= str_repeat("\t", self::$indentLevel+1) . join("\n" . str_repeat("\t", self::$indentLevel+1), $_cdataLines) . "\n";
+            $html .= str_repeat("\t", self::$indentLevel) . "</{$this->tagName}>";
         } else if (!empty($this->innerElements)) {
             $html .= ">\n";
-            self::$indentlevel++; 
+            self::$indentLevel++;
             foreach ($this->innerElements as $ele) {
                 if(empty($ele)) continue;
-                if ($ele instanceof HtmlTag && method_exists($ele, "render")) {
-                    $html .= str_repeat("\t", self::$indentlevel) . $ele->render() . "\n";
+                if ($ele instanceof HtmlTag) {
+                    $html .= str_repeat("\t", self::$indentLevel) . $ele->render() . "\n";
                 } else if (is_array($ele)) {
                     self::$errMsg = "[Error] Inner element is an array." . json_encode($ele);
                     continue;
                 } else {
-                    $html .= str_repeat("\t", self::$indentlevel) . $ele . "\n";
+                    $html .= str_repeat("\t", self::$indentLevel) . $ele . "\n";
                 }
             }
-            $html .= str_repeat("\t", --self::$indentlevel) . "</{$this->tagName}>";
+            $html .= str_repeat("\t", --self::$indentLevel) . "</{$this->tagName}>";
         } else {
             if (!in_array ($this->tagName, self::$unclosedTagsArr)) {
                 $html .= "></{$this->tagName}>";
@@ -152,7 +152,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc magic function to string.
+     * magic function to string.
      * @return string
      */
     function __toString()
@@ -170,7 +170,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc clone all items from innerElements, body contents and items.
+     * Clone all items from innerElements, body contents and items.
      */
     public function __clone() {
         if (!empty($this->innerElements)) {
@@ -190,8 +190,8 @@ class HtmlTag implements iCaption
     }
         
     /**
-     * @desc innerText getter.
-     * @return the $text
+     * innerText getter.
+     * @return string
      */
     public function getInnerText()
     {
@@ -200,25 +200,26 @@ class HtmlTag implements iCaption
     
     /**
      * @desc alternative innerText getter.
-     * @return unknown
+     * @return string
      */
     public function getText()
     {
         return $this->innerText;
     }
-    
+
     /**
-     * @desc customClass getter.
-     * @return the $customClass
+     * customClass getter.
+     * @return array
      */
     public function getCustomClass()
     {
         return $this->customClass;
     }
-    
+
     /**
-     * @desc customClass setter
-     * @param multitype: $customClass
+     * customClass setter
+     * @param array $customClass
+     * @return $this
      */
     public function appendCustomClass($customClass = array ())
     {
@@ -236,10 +237,11 @@ class HtmlTag implements iCaption
             
         return $this;
     }
-    
+
     /**
-     * @desc setter, merge all argvs.
-     * @param multitype: $customClass
+     * setter, merge all argvs.
+     * @param array $customClass
+     * @return $this
      */
     public function setCustomClass($customClass = array ())
     {
@@ -285,7 +287,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc setter
+     * html style setter
      * @param array $customStyles
      * @return \model\bootstrap\basic\Button
      */
@@ -304,7 +306,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc innerElements setter.
+     * innerElements setter.
      * @param array <multitype:, unknown> $innerElements
      */
     public function appendInnerElements($innerElements = array ())
@@ -324,7 +326,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @desc do assign, not merge.
+     * do assign, not merge.
      * @param array <multitype:, unknown> $innerElements
      */
     public function setInnerElements($innerElements = array ())
@@ -339,11 +341,11 @@ class HtmlTag implements iCaption
         $this->innerElements = $innerElements;
         return $this;
     }
-    
+
     /**
-     * innerText alternative setter.
+     * Alias of setInnerText.
      * @param string $text
-     * @return \Bootstrap\Aceadmin\Typography
+     * @return $this
      */
     public function setText ($text) {
         $this->innerText = $text;
@@ -353,7 +355,7 @@ class HtmlTag implements iCaption
     /**
      * innerText setter.
      * @param string $text
-     * @return \Bootstrap\Aceadmin\Typography
+     * @return Typography
      */
     public function setInnerText ($text) {
         $this->innerText = $text;
@@ -361,7 +363,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @return the $attrs
+     * @return array $attrs
      */
     public function getAttrs()
     {
@@ -390,8 +392,9 @@ class HtmlTag implements iCaption
     }
 
     /**
-     * @desc do assign, not merge. And you can truncate it by assign an empty array.
-     * @param Ambigous <multitype:, array> $attrs
+     * do assign, not merge. And you can truncate it by assign an empty array.
+     * @param array $attrs
+     * @return $this
      */
     public function setAttrs($attrs =  array ())
     {
@@ -408,7 +411,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @return the $cdata
+     * @return string $cdata
      */
     public function getCdata()
     {
@@ -416,7 +419,8 @@ class HtmlTag implements iCaption
     }
 
     /**
-     * @param field_type $cdata
+     * @param string $cdata
+     * @return $this
      */
     public function setCdata($cdata = "")
     {
@@ -424,7 +428,7 @@ class HtmlTag implements iCaption
         return $this;
     }
     /**
-     * @return the $innerElements
+     * @return array $innerElements
      */
     public function getInnerElements()
     {
@@ -432,7 +436,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @return the $errMsg
+     * @return string $errMsg
      */
     public static function getErrMsg($display = false)
     {
@@ -447,7 +451,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @return the $tagName
+     * @return string $tagName
      */
     public function getTagName()
     {
@@ -473,9 +477,8 @@ class HtmlTag implements iCaption
     }
 
     /**
-     * @desc get inner element by index. 
-     * @param unknown $index
-     * @return unknown|NULL
+     * @param $index
+     * @return mixed|null
      */
     public function getElement($index) {
         if (isset ($this->innerElements [$index])) {
@@ -497,7 +500,7 @@ class HtmlTag implements iCaption
     }
     
     /**
-     * @return the $innerHtml
+     * @return string
      */
     public function getInnerHtml()
     {
@@ -505,31 +508,33 @@ class HtmlTag implements iCaption
     }
 
     /**
-     * @param field_type $innerHtml
+     * @param string $innerHtml
      */
     public function setInnerHtml($innerHtml)
     {
         $this->innerHtml = $innerHtml;
         return $this;
     }
-    
+
     /**
-     * @desc instead syntax of cloning instance. return the clone one.
-     * @return \model\bootstrap\basic\Typography
+     * instead syntax of cloning instance. return the clone one.
+     * @param null $clone
+     * @return $this|HtmlTag
      */
     public function cloneInstance(&$clone = null) {
-        if (isset ($clone)) {
+        if (isset ($clone) && $clone instanceof self) {
             $clone = clone $this;
             return $this;
         } else {
             return clone $this;
         }
     }
-    
+
     /**
-     * @desc remember this will return the outer in default.
+     * Like a reverse method of setInnerElements, remember this will return the outer in default.
      * @param HtmlTag $outer
-     * @return \model\bootstrap\HtmlTag
+     * @param bool $returnThis
+     * @return $this|HtmlTag
      */
     public function enclose (HtmlTag $outer, $returnThis = false) {
         $outer->appendInnerElements($this);

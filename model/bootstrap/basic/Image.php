@@ -181,7 +181,7 @@ class Image extends Typography
     }
     
     /**
-     * @return the $url
+     * @return string
      */
     public function getUrl()
     {
@@ -189,7 +189,7 @@ class Image extends Typography
     }
 
     /**
-     * @param field_type $url
+     * @param string $url
      */
     public function setUrl($url)
     {
@@ -198,7 +198,7 @@ class Image extends Typography
     }
     
     /**
-     * @return the $shape
+     * @return string
      */
     public function getShape()
     {
@@ -206,7 +206,7 @@ class Image extends Typography
     }
 
     /**
-     * @return the $isResponsive
+     * @return bool
      */
     public function getIsResponsive()
     {
@@ -214,7 +214,8 @@ class Image extends Typography
     }
 
     /**
-     * @param field_type $shape
+     * @param $shape
+     * @return $this
      */
     public function setShape($shape)
     {

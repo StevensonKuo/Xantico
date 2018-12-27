@@ -107,7 +107,7 @@ class Media extends Typography
     }
 
     /**
-     * @return the $mediaObject
+     * @return HtmlTag
      */
     public function getMediaObject()
     {
@@ -115,7 +115,7 @@ class Media extends Typography
     }
 
     /**
-     * @param field_type $mediaObject
+     * @param mixed $mediaObject
      */
     public function setMediaObject($mediaObject)
     {
@@ -124,7 +124,7 @@ class Media extends Typography
     }
 
     /**
-     * @return the $bodyContents
+     * @return array
      */
     public function getBodyContents()
     {

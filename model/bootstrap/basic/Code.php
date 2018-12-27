@@ -1,24 +1,25 @@
 <?php
+
 namespace model\bootstrap\basic;
 
-use model\bootstrap\basic\Typography;
 use model\bootstrap\HtmlTag;
 
-class Code extends Typography 
+class Code extends Typography
 {
     protected $lang; //string
-    
-    public function __construct($code = "", $vars = array (), $attr = array ())
+
+    public function __construct($code = "", $vars = array(), $attr = array())
     {
         parent::__construct("figure:highlight", $vars, $attr);
-        
-        $this->type         = "code";
-        $this->lang         = isset($vars['lang']) ? $vars['lang'] : "php";
-        $this->innerText    = $code;
-        
+
+        $this->type = "code";
+        $this->lang = isset($vars['lang']) ? $vars['lang'] : "php";
+        $this->innerText = $code;
+
     }
-    
-    public function render($display = false) {
+
+    public function render($display = false)
+    {
         $pre = new HtmlTag("pre");
         if ($this->lang == "php") {
             if (!preg_match("/^[<][?](php)?/i", trim($this->innerText))) {
@@ -28,27 +29,26 @@ class Code extends Typography
             $pre->setInnerElements(highlight_string($this->innerText, true));
         } else {
             // @todo don't know how to deal other language at this moment.
-            $codeTag = new HtmlTag("code", array ("data-lang" => $this->lang));
+            $codeTag = new HtmlTag("code", array("data-lang" => $this->lang));
             $codeTag->setCustomClass("language-" . $this->lang);
             $codeTag->setInnerElements(trim($this->innerText));
             $pre->appendInnerElements($codeTag);
         }
-        
+
         $this->innerElements [] = $pre;
         $this->innerText = null;
-        
+
         parent::render();
-        
+
         if ($display == true) {
             echo $this->html;
-            
         } else {
             return $this->html;
         }
     }
-    
+
     /**
-     * @return the $lang
+     * @return string
      */
     public function getLang()
     {
@@ -56,7 +56,7 @@ class Code extends Typography
     }
 
     /**
-     * @param field_type $lang
+     * @param string $lang
      */
     public function setLang($lang)
     {

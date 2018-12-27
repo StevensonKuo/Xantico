@@ -190,11 +190,11 @@ class Table extends Typography
     }
     
     /**
-     * @todo Check TableRow and TableCells
-     * @param field_type $cells
+     * @param array $cells
      */
     public function setCells($cells)
     {
+        // @todo Check TableRow and TableCells
         $this->cells = $cells;
         return $this;
     }

@@ -434,8 +434,8 @@ class Dropdown extends Typography
     }
 
     /**
-     * @desc mode : [button|inline]
-     * @param field_type $mode [button|inline]
+     * Mode : [button|inline]
+     * @param string $mode [button|inline]
      */
     public function setMode($mode)
     {

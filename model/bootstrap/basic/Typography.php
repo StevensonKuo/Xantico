@@ -1,66 +1,66 @@
 <?php
+
 namespace model\bootstrap\basic;
 
 use model\bootstrap\HtmlTag;
 
 class Typography extends HtmlTag
 {
-    protected $type;    // string
-    protected $mode; // for one more type/mode to switch what you want.
-    protected $id;      // string
-    protected $context;// string
-    protected $textContext; // string
-    protected $caption; // string; !important different from text/innerText
-    protected $title;// string
-    protected $align;   // string
-    protected $verticalAlign; // string
-    protected $size; // int
-    protected $border; // int
-    protected $items; // array 
-    protected $textClass; // array 
-    protected $textAlign; // for text-align classes.
+    public static $AUTO_ID = false;    // string
+
+    protected static $alignArr = array("right", "left", "center", ""); // for one more type/mode to switch what you want.
+    protected static $vAlignArr = array("top", "middle", "bottom", "");      // string
+    protected static $textAlignArr = array("left", "center", "right", "justify", "nowrap", "");// string
+    protected static $textTransformArr = array("uppercase", "lowercase", "capitalize", ""); // string
+    protected static $contextArr = array("success", "default", "primary", "danger", "warning", "info", ""); // string; !important different from text/innerText
+    protected static $textContextArr = array("success", "muted", "primary", "danger", "warning", "info", "");// string
+    protected static $embedTagsArr = array("iframe", "embed", "video", "object");   // string
+
+    private static $instanceCounter = 0; // string
+
+    protected $type; // int
+    protected $mode; // int
+    protected $id; // array
+    protected $context; // array
+    protected $textContext; // for text-align classes.
+    protected $caption; // string
+    protected $title; // string
+    protected $align; // int or array(), Bootstrap Grids System
+    protected $verticalAlign; // int
+    protected $size; // ratio, 16by9 or 4by3
+    protected $border; // boolean
+    protected $items; // boolean
+    protected $textClass; // boolean
+    protected $textAlign; // boolean
     protected $textTransform; // string
-    protected $bgContext; // string
-    protected $grid; // int or array(), Bootstrap Grids System
-    protected $gridOffset; // int
-    protected $embedResponsive; // ratio, 16by9 or 4by3
-    protected $isLead; // boolean
-    protected $isListUnstyled; // boolean
-    protected $isListInline; // boolean
-    protected $clearFix; // boolean
-    protected $jQuery; // string
-    
-    protected static $alignArr          = array("right", "left", "center", "");
-    protected static $vAlignArr         = array("top", "middle", "bottom", "");
-    protected static $textAlignArr      = array ("left", "center", "right", "justify", "nowrap", "");
-    protected static $textTransformArr  = array ("uppercase", "lowercase", "capitalize", "");
-    protected static $contextArr        = array ("success", "default", "primary", "danger", "warning", "info", "");
-    protected static $textContextArr    = array ("success", "muted", "primary", "danger", "warning", "info", "");
-    protected static $embedTagsArr      = array("iframe", "embed", "video", "object");
-    
-    private static $instanceCounter = 0; // int
-    
-    public static $AUTO_ID = false;
-    
+    protected $bgContext;
+    protected $grid;
+    protected $gridOffset;
+    protected $embedResponsive;
+    protected $isLead;
+    protected $isListUnstyled;
+    protected $isListInline;
+    protected $clearFix; // int
+    protected $jQuery;
 
     /**
-     * @param string $type
+     * Typography constructor.
+     * @param $type
      * @param array $vars
      * @param array $attrs
-     * @return \model\bootstrap\basic\Typography
      */
-    public function __construct($type, $vars = array (), $attrs = array ())
+    public function __construct($type, $vars = array(), $attrs = array())
     {
         $divX = explode(":", $type); // div:row, div:badge, :page-header etc... 
         $tagName = isset($divX [0]) ? $divX [0] : (isset($divX [1]) ? "div" : $type);
-        
+
         parent::__construct($tagName, $attrs);
-        
+
         if (isset($divX [1])) {
             $type = $divX [1];
             $this->customClass [] = $type;
         }
-        
+
         // other attributes initialize.
         ++self::$instanceCounter;
         if (self::$AUTO_ID == true && !isset($vars['id'])) {
@@ -68,32 +68,70 @@ class Typography extends HtmlTag
         } else if (isset($vars['id']) && !empty($vars['id'])) {
             $this->id = $vars ['id'];
         }
-        
-        $this->type         = strtolower($type);
+
+        $this->type = strtolower($type);
         // HtmlTag attrs.
-        $this->innerText        = isset($vars['text']) ? $vars['text'] : "";
-        $this->innerText        = isset($vars['innerText']) ? $vars['innerText'] : $this->innerText;
-        $this->innerHtml        = isset($vars['innerHtml']) ? $vars['innerHtml'] : "";
-        $this->cdata            = isset($vars['cdata']) ? $vars['cdata'] : "";
-        $this->innerElements    = isset($vars['innerElements']) ? $vars['innerElements'] : array();
+        $this->innerText = isset($vars['text']) ? $vars['text'] : "";
+        $this->innerText = isset($vars['innerText']) ? $vars['innerText'] : $this->innerText;
+        $this->innerHtml = isset($vars['innerHtml']) ? $vars['innerHtml'] : "";
+        $this->cdata = isset($vars['cdata']) ? $vars['cdata'] : "";
+        $this->innerElements = isset($vars['innerElements']) ? $vars['innerElements'] : array();
         // Typography attrs.
-        $this->context          = isset($vars['context']) ? $vars['context'] : "";
-        $this->textContext      = isset($vars['textContext']) ? $vars ['textContext'] : "";
-        $this->caption          = isset($vars ['caption']) ? $vars ['caption'] : "";
-        $this->title            = isset($vars ['title']) ? $vars ['title'] : "";
-        $this->align            = isset($vars ['align']) ? $vars ['align'] : "";
-        $this->size             = isset($vars ['size']) ? $vars ['size'] : 0;
-        $this->border           = isset($vars ['border']) ? $vars ['border'] : 0;
-        $this->items            = isset($vars ['items']) ? (is_array($vars ['items']) ? $vars ['items'] : array ($vars ['items'])) : array ();
-        $this->textClass        = isset($vars ['textClass']) ? (is_array($vars ['textClass']) ? $vars ['textClass'] : array ($vars ['textClass'])) : array ();
-        $this->grid             = isset($vars ['grid']) ? $vars ['grid'] : null;
-        $this->mode             = isset($vars ['mode']) ? $vars ['mode'] : null;
-        $this->embedResponsive  = isset ($vars ['embedResponsive']) ? $vars ['embedResponsive'] : "";
-        $this->isListUnstyled   = isset($vars ['isListUnstyled']) ? $vars ['isListUnstyled'] : false;
-        $this->isListInline     = isset($vars ['isListInline']) ? $vars ['isListInline'] : false;
-        $this->clearFix         = isset($vars ['clearFix']) ? $vars ['clearFix'] : false;
+        $this->context = isset($vars['context']) ? $vars['context'] : "";
+        $this->textContext = isset($vars['textContext']) ? $vars ['textContext'] : "";
+        $this->caption = isset($vars ['caption']) ? $vars ['caption'] : "";
+        $this->title = isset($vars ['title']) ? $vars ['title'] : "";
+        $this->align = isset($vars ['align']) ? $vars ['align'] : "";
+        $this->size = isset($vars ['size']) ? $vars ['size'] : 0;
+        $this->border = isset($vars ['border']) ? $vars ['border'] : 0;
+        $this->items = isset($vars ['items']) ? (is_array($vars ['items']) ? $vars ['items'] : array($vars ['items'])) : array();
+        $this->textClass = isset($vars ['textClass']) ? (is_array($vars ['textClass']) ? $vars ['textClass'] : array($vars ['textClass'])) : array();
+        $this->grid = isset($vars ['grid']) ? $vars ['grid'] : null;
+        $this->mode = isset($vars ['mode']) ? $vars ['mode'] : null;
+        $this->embedResponsive = isset ($vars ['embedResponsive']) ? $vars ['embedResponsive'] : "";
+        $this->isListUnstyled = isset($vars ['isListUnstyled']) ? $vars ['isListUnstyled'] : false;
+        $this->isListInline = isset($vars ['isListInline']) ? $vars ['isListInline'] : false;
+        $this->clearFix = isset($vars ['clearFix']) ? $vars ['clearFix'] : false;
     }
-    
+
+    /**
+     * @desc generate an id for tag (based on counter)
+     * @return string
+     */
+    protected static function generateTagId($obj)
+    {
+        $namespace = explode("\\", get_class($obj));
+        $className = isset($namespace [count($namespace) - 1]) ? $namespace [count($namespace) - 1] : str_replace(__NAMESPACE__, "", __CLASS__);
+
+        return strtolower($className) . self::$instanceCounter;
+    }
+
+    /**
+     * @return the $instanceCounter
+     */
+    public static function getInstanceCounter()
+    {
+        return Typography::$instanceCounter;
+    }
+
+    /**
+     * magic function to string.
+     * @return string
+     */
+    function __toString()
+    {
+        if (!empty($this->html)) {
+            return $this->html;
+        } else {
+            try {
+                return $this->render();
+            } catch (\Exception $e) {
+                $this->setErrMsg("[Error] Some errors occur during rendering: " . $this->getTagName() . ":" . $this->type);
+                return "";
+            }
+        }
+    }
+
     /**
      * @param string $display
      * @return unknown
@@ -101,7 +139,7 @@ class Typography extends HtmlTag
     public function render($display = false)
     {
         if (!empty($this->items)) { // ol/ul/dl
-            if (in_array ($this->getTagName(), array ("ul", "ol"))) {
+            if (in_array($this->getTagName(), array("ul", "ol"))) {
                 foreach ($this->items as $item) {
                     if ($item instanceof HtmlTag && $item->getTagName() == "li") {
                         // if the element are tag li already, it doesn't modify it.
@@ -131,9 +169,9 @@ class Typography extends HtmlTag
                 }
             }
         }
-        
-        if (!empty($this->id)) $this->appendAttrs(array ("id" => $this->id));
-        
+
+        if (!empty($this->id)) $this->appendAttrs(array("id" => $this->id));
+
         if (!empty($this->grid)) { // handle grids system.
             if (is_array($this->grid)) {
                 foreach ($this->grid as $grid) {
@@ -151,92 +189,92 @@ class Typography extends HtmlTag
                 }
             }
         }
-        
+
         if (!empty($this->embedResponsive)) {
             $embedRatio = explode(":", $this->embedResponsive);
             $this->customClass [] = "embed-responsive";
-            $this->customClass [] = "embed-responsive-" . join("by", $embedRatio);    
+            $this->customClass [] = "embed-responsive-" . join("by", $embedRatio);
         }
-        
+
         if (!empty($this->textContext)) {
             $this->customClass [] = "text-" . $this->textContext;
         }
-        
+
         if (!empty($this->textAlign)) {
             $this->customClass [] = "text-" . $this->textAlign;
         }
-        
+
         if (!empty($this->textTransform)) {
             $this->customClass [] = "text-" . $this->textTransform;
         }
-        
+
         if (!empty($this->bgContext)) {
             $this->customClass [] = "bg-" . $this->bgContext;
         }
-        
+
         if ($this->isLead == true) {
             $this->customClass [] = "lead";
         }
-        
+
         if ($this->isListUnstyled == true) {
             $this->customClass [] = "list-unstyled";
         }
-        
+
         if ($this->isListInline == true) {
             $this->customClass [] = "list-inline";
         }
-        
+
         if ($this->clearFix == true) {
             $this->customClass [] = "clearfix";
         }
-        
+
         // @todo scan all innerElements, if you want to do any operation to those childs, add it here.
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as &$ele) {
                 // dropdown issue, if this dropdown is not a button-group and it's type not in class yet.
                 if ($ele instanceof HtmlTag) {
                     // for responsive table
-                    if ($ele instanceof Table && $ele->getIsResponsive() == true 
+                    if ($ele instanceof Table && $ele->getIsResponsive() == true
                         && !in_array("table-responsive", $this->customClass)) {
-                            $this->customClass [] = "table-responsive";
+                        $this->customClass [] = "table-responsive";
                     }
-                    
+
                     // for inline dropdown elements
                     if (method_exists($ele, "getType") && method_exists($ele, "getMode")) {
                         $_type = $ele->getType();
-                        $_mode = $ele->getMode ();
+                        $_mode = $ele->getMode();
                         if (($_type == "dropdown" || $_type == "dropup") && $_mode != "button" && !in_array($_type, $this->customClass)) {
                             $this->customClass [] = $_type;
                         }
                     }
-                    
+
                     // for embed responsive
-                    if (!empty($this->embedResponsive) 
+                    if (!empty($this->embedResponsive)
                         && !in_array("embed-responsive-item", $ele->getCustomClass())
                         && in_array($ele->getTagName(), self::$embedTagsArr)) {
-                            $ele->appendCustomClass("embed-responsive-item");
+                        $ele->appendCustomClass("embed-responsive-item");
                     }
                 }
-                
+
                 // reset the order left to right.
                 if ($ele instanceof Typography && !empty($ele->getAlign())) {
                     $ele->appendCustomClass("pull-" . $ele->getAlign());
                 }
             }
         }
-        
+
         parent::render();
-        
+
         // gathering jQuery scripts.
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as &$ele) {
                 if (empty($ele)) continue;
-                if ($ele instanceof Typography && method_exists($ele, "getJQuery") && !empty($ele->getJQuery ())) {
-                    $this->jQuery = (!empty($this->jQuery) ? $this->jQuery . "\n" : "" ) . trim($ele->getJQuery ());
+                if ($ele instanceof Typography && method_exists($ele, "getJQuery") && !empty($ele->getJQuery())) {
+                    $this->jQuery = (!empty($this->jQuery) ? $this->jQuery . "\n" : "") . trim($ele->getJQuery());
                 }
             }
         }
-        
+
         if ($display == true) {
             echo $this->html;
         } else {
@@ -245,218 +283,11 @@ class Typography extends HtmlTag
     }
 
     /**
-     * magic function to string.
-     *
-     * @return string
-     */
-    function __toString()
-    {
-        if (!empty($this->html)) {
-            return $this->html;
-        } else {
-            try {
-                return $this->render();
-            } catch (\Exception $e) {
-                $this->setErrMsg("[Error] Some errors occur during rendering: " . $this->getTagName() . ":" . $this->type);
-                return "";
-            }
-        }
-    }
-
-    /**
-     *
-     * @param string $border            
-     */
-    public function setBorder($border)
-    {
-        $this->border = $border;
-        return $this;
-    }
-
-    /**
-     * @desc HTML ID. auto-generating if not specified.
-     * @param unknown $id
-     * @return \model\bootstrap\basic\Typography
-     */
-    public function setId($id = "")
-    {
-        if (empty($id) && empty($this->id)) {
-            $this->id = self::generateTagId($this);
-        } else {
-            $this->id = $id;
-        }
-        
-        return $this;
-    }
-    
-    /**
-     * @desc return id value.
-     * @return string id;
-     */
-    public function getId () {
-        return $this->id;
-    }
-
-    /**
-     * @return the $jQuery
-     */
-    public function getJQuery()
-    {
-        return $this->jQuery;
-    }
-    
-    /**
-     * 
-     * @param string $jquery
-     * @return unknown
-     */
-    public function setJQuery($jquery = "")
-    {
-        $this->jQuery .= $jquery . "\n";
-    }
-    
-    
-    /**
-     * title setter.
-     * @param string $title
-     * @return \Bootstrap\Aceadmin\Typography
-     */
-    public function setTitle ($title) {
-        $this->title = $title;
-        return $this;
-    }
-    
-    
-    /**
-     * @desc for ol,ul,select, navi... items are different from innerElements that will be decorated before input into inner elements.
-     * @param array $items
-     * @return \model\bootstrap\basic\Typography
-     */
-    public function setItems ($items) {
-        if (empty($items)) return $this;
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
-            $items = func_get_args();
-        } else if (!is_array($items)) {
-            $items = array ($items);
-        }
-        
-        $this->items = $items;
-        return $this;
-    }
-     
-    /**
-     * @desc setter, merge all argvs.
-     * @param array $items
-     * @return \model\bootstrap\hplus\Typography
-     */
-    public function appendItems ($items) {
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
-            $items = func_get_args();
-        } else if (!is_array($items)) {
-            $items = array ($items);
-        }
-        
-        if ($this->items) $this->items = array_merge($this->items, $items);
-        else $this->items = $items;
-        return $this;
-    }
-    
-    /**
-     * @return the $caption
-     */
-    public function getCaption()
-    {
-        return $this->caption;
-    }
-    
-    /**
-     * @param field_type $caption
-     */
-    public function setCaption($caption)
-    {
-        $this->caption = $caption;
-        return $this;
-    }
-    /**
-     * @return the $attrs
-     */
-    public function getAttrs()
-    {
-        return $this->attrs;
-    }
-
-    /**
      * @return the $type
      */
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * @return the $context
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
-
-    /**
-     * @return the $textContext
-     */
-    public function getTextContext()
-    {
-        return $this->textContext;
-    }
-
-    /**
-     * @return the $title
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @return the $align
-     */
-    public function getAlign()
-    {
-        return $this->align;
-    }
-
-    /**
-     * @return the $size
-     */
-    public function getSize()
-    {
-        return $this->size;
-    }
-
-    /**
-     * @return the $border
-     */
-    public function getBorder()
-    {
-        return $this->border;
-    }
-
-    /**
-     * @return the $items
-     */
-    public function getItems()
-    {
-        return $this->items;
-    }
-
-    /**
-     * @return the $textClass
-     */
-    public function getTextClass()
-    {
-        return $this->textClass;
     }
 
     /**
@@ -469,92 +300,28 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @desc set up scene color.
-     * @param Ambigous <string, array> $context
+     * @return the $mode
      */
-    public function setContext($context)
+    public function getMode()
     {
-        $context = strtolower($context);
-        if (in_array($context, self::$contextArr)) {
-            $this->context = strtolower($context);
-        }
-        
-        return $this;
+        return $this->mode;
     }
-    
-    // contextual class setter start.
-    public function setContextSuccess () {
-        $this->context = "success";
-        return $this;
-    }
-    
-    public function setContextInfo () {
-        $this->context = "info";
-        return $this;
-    }
-    
-    public function setContextWarning () {
-        $this->context = "warning";
-        return $this;
-    }
-    
-    public function setContextDanger () {
-        $this->context = "danger";
-        return $this;
-    }
-    
-    public function setContextPrimary () {
-        $this->context = "primary";
-        return $this;
-    }
-    
-    public function setContextDefault () {
-        $this->context = "default";
-        return $this;
-    }
-    // contextual class setter end.
-    
+
     /**
-     * @param Ambigous <string, array> $textContext
+     * @param field_type $mode
      */
-    public function setTextContext($textContext)
+    public function setMode($mode)
     {
-        $textContext = strtolower($textContext);
-        if (in_array($textContext, self::$textContextArr)) {
-            $this->textContext = $textContext;
-        }
-        
-        return $this;
-    }
-    
-    public function setTextContextMuted () {
-        $this->textContext = "muted";
+        $this->mode = $mode;
         return $this;
     }
 
-    public function setTextContextSuccess () {
-        $this->textContext = "success";
-        return $this;
-    }
-    
-    public function setTextContextPrimary () {
-        $this->textContext = "primary";
-        return $this;
-    }
-
-    public function setTextContextInfo () {
-        $this->textContext = "info";
-        return $this;
-    }
-
-    public function setTextContextWarning () {
-        $this->textContext = "warning";
-        return $this;
-    }
-
-    public function setTextContextDanger () {
-        $this->textContext = "danger";
-        return $this;
+    /**
+     * @return the $align
+     */
+    public function getAlign()
+    {
+        return $this->align;
     }
 
     /**
@@ -564,29 +331,145 @@ class Typography extends HtmlTag
     public function setAlign($align)
     {
         $align = strtolower($align);
-        if (!in_array($align,  self::$alignArr)) {
+        if (!in_array($align, self::$alignArr)) {
             $align = "";
-            $this->setErrMsg("[Warning] You set a wrong alignment: ". $align); // todo formatting err msg.
+            $this->setErrMsg("[Warning] You set a wrong alignment: " . $align); // todo formatting err msg.
         }
         $this->align = $align;
         return $this;
     }
-    
-    public function setAlignLeft () {
-        $this->verticalAlign = "left";
+
+    /**
+     * @return the $jQuery
+     */
+    public function getJQuery()
+    {
+        return $this->jQuery;
+    }
+
+    /**
+     * concat input jQuery scripts.
+     * @param string $jquery
+     */
+    public function setJQuery($jquery = "")
+    {
+        $this->jQuery .= $jquery . "\n";
+    }
+
+    /**
+     * items setter, append arrays.
+     * @param $items
+     * @return $this
+     */
+    public function appendItems($items)
+    {
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $items = func_get_args();
+        } else if (!is_array($items)) {
+            $items = array($items);
+        }
+
+        if ($this->items) $this->items = array_merge($this->items, $items);
+        else $this->items = $items;
         return $this;
     }
-    
-    public function setAlignCenter () {
-        $this->verticalAlign = "center";
+
+    /**
+     * @return string
+     */
+    public function getCaption()
+    {
+        return $this->caption;
+    }
+
+    /**
+     * @param mixed $caption
+     */
+    public function setCaption($caption)
+    {
+        $this->caption = $caption;
         return $this;
     }
-    
-    public function setAlignRight () {
-        $this->verticalAlign = "right";
+
+    /**
+     * @return array
+     */
+    public function getAttrs()
+    {
+        return $this->attrs;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @desc set up scene color.
+     * @param Ambigous <string, array> $context
+     */
+    public function setContext($context)
+    {
+        $context = strtolower($context);
+        if (in_array($context, self::$contextArr)) {
+            $this->context = strtolower($context);
+        }
+
         return $this;
     }
-    
+
+    /**
+     * @return the $textContext
+     */
+    public function getTextContext()
+    {
+        return $this->textContext;
+    }
+
+    /**
+     * @param Ambigous <string, array> $textContext
+     */
+    public function setTextContext($textContext)
+    {
+        $textContext = strtolower($textContext);
+        if (in_array($textContext, self::$textContextArr)) {
+            $this->textContext = $textContext;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return the $title
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Title setter.
+     * @param $title
+     * @return $this
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return the $size
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
     /**
      * @desc three sizes [xs|sm|lg]
      * @param string $size
@@ -612,34 +495,176 @@ class Typography extends HtmlTag
                 break;
             default:
                 $this->size = $size;
-                
+
         }
-        
-        return $this;
-    }
-    
-    public function setSizeLg() {
-        $this->size = "lg";
+
         return $this;
     }
 
-    public function setSizeMd() {
-        $this->size = "md";
-        return $this;
+    // contextual class setter start.
+
+    /**
+     * @return the $border
+     */
+    public function getBorder()
+    {
+        return $this->border;
     }
-    
-    public function setSizeSm() {
-        $this->size = "sm";
+
+    /**
+     * @param $border
+     * @return $this
+     */
+    public function setBorder($border)
+    {
+        $this->border = $border;
         return $this;
     }
 
     /**
-     * @return the $instanceCounter
+     * @return the $items
      */
-    public static function getInstanceCounter()
+    public function getItems()
     {
-        return Typography::$instanceCounter;
+        return $this->items;
     }
+
+    /**
+     * @desc for ol,ul,select, navi... items are different from innerElements that will be decorated before input into inner elements.
+     * @param array $items
+     * @return \model\bootstrap\basic\Typography
+     */
+    public function setItems($items)
+    {
+        if (empty($items)) return $this;
+        $numargs = func_num_args();
+        if ($numargs >= 2) {
+            $items = func_get_args();
+        } else if (!is_array($items)) {
+            $items = array($items);
+        }
+
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * @return the $textClass
+     */
+    public function getTextClass()
+    {
+        return $this->textClass;
+    }
+
+    public function setContextSuccess()
+    {
+        $this->context = "success";
+        return $this;
+    }
+    // contextual class setter end.
+
+    public function setContextInfo()
+    {
+        $this->context = "info";
+        return $this;
+    }
+
+    public function setContextWarning()
+    {
+        $this->context = "warning";
+        return $this;
+    }
+
+    public function setContextDanger()
+    {
+        $this->context = "danger";
+        return $this;
+    }
+
+    public function setContextPrimary()
+    {
+        $this->context = "primary";
+        return $this;
+    }
+
+    public function setContextDefault()
+    {
+        $this->context = "default";
+        return $this;
+    }
+
+    public function setTextContextMuted()
+    {
+        $this->textContext = "muted";
+        return $this;
+    }
+
+    public function setTextContextSuccess()
+    {
+        $this->textContext = "success";
+        return $this;
+    }
+
+    public function setTextContextPrimary()
+    {
+        $this->textContext = "primary";
+        return $this;
+    }
+
+    public function setTextContextInfo()
+    {
+        $this->textContext = "info";
+        return $this;
+    }
+
+    public function setTextContextWarning()
+    {
+        $this->textContext = "warning";
+        return $this;
+    }
+
+    public function setTextContextDanger()
+    {
+        $this->textContext = "danger";
+        return $this;
+    }
+
+    public function setAlignLeft()
+    {
+        $this->verticalAlign = "left";
+        return $this;
+    }
+
+    public function setAlignCenter()
+    {
+        $this->verticalAlign = "center";
+        return $this;
+    }
+
+    public function setAlignRight()
+    {
+        $this->verticalAlign = "right";
+        return $this;
+    }
+
+    public function setSizeLg()
+    {
+        $this->size = "lg";
+        return $this;
+    }
+
+    public function setSizeMd()
+    {
+        $this->size = "md";
+        return $this;
+    }
+
+    public function setSizeSm()
+    {
+        $this->size = "sm";
+        return $this;
+    }
+
     /**
      * @return the $grid
      */
@@ -658,42 +683,15 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @desc generate an id for tag (based on counter)
-     * @return string
-     */
-    protected static function generateTagId ($obj) {
-        $namespace = explode("\\", get_class($obj));
-        $className = isset($namespace [count($namespace)-1]) ? $namespace [count($namespace)-1] : str_replace(__NAMESPACE__, "", __CLASS__);
-        
-        return strtolower($className) . self::$instanceCounter;
-    }
-    
-    /**
-     * @return the $mode
-     */
-    public function getMode()
-    {
-        return $this->mode;
-    }
-
-    /**
-     * @param field_type $mode
-     */
-    public function setMode($mode)
-    {
-        $this->mode = $mode;
-        return $this;
-    }
-
-    /**
      * @desc a search method like DOM does.
      * @desc use "%" to search a $keyword Xantico classes. like "%PageHeader" or "%ProgressBar"
      * @param unknown $keyword
-     * @return array 
+     * @return array
      */
-    public function search ($keyword) {
+    public function search($keyword)
+    {
         $keyword = trim(strtolower($keyword));
-        $results = array ();
+        $results = array();
         if (!empty($this->innerElements)) {
             foreach ($this->innerElements as &$ele) {
                 if ($ele instanceof HtmlTag) {
@@ -713,13 +711,13 @@ class Typography extends HtmlTag
                         }
                     } else if (substr($keyword, 0, 1) == "%") {
                         $haystack = explode("\\", strtolower(get_class($ele)));
-                        if (isset($haystack [@count($haystack)-1]) && "%".$haystack [@count($haystack)-1] == $keyword) {
+                        if (isset($haystack [@count($haystack) - 1]) && "%" . $haystack [@count($haystack) - 1] == $keyword) {
                             $results [] = $ele;
                         }
                     } else if ($keyword == $ele->getTagName()) {
                         $results [] = $ele;
                     }
-                    
+
                     // only innerElements will be searched, else like items and grids will coming later.
                     if (!empty($ele->getInnerElements()) && method_exists($ele, "search")) {
                         $innerResults = $ele->search($keyword);
@@ -728,15 +726,40 @@ class Typography extends HtmlTag
                         }
                     }
                 } // end of ele instance of HtmlTag
-                
+
             } /// end of foreach ele
         }
-        
+
         if (!empty($results)) {
             return $results;
         } else {
-            return array ();
+            return array();
         }
+    }
+
+    /**
+     * @desc return id value.
+     * @return string id;
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * set html tag id, auto generate one if not specified.
+     * @param string $id
+     * @return $this
+     */
+    public function setId($id = "")
+    {
+        if (empty($id) && empty($this->id)) {
+            $this->id = self::generateTagId($this);
+        } else {
+            $this->id = $id;
+        }
+
+        return $this;
     }
 
     /**
@@ -744,27 +767,29 @@ class Typography extends HtmlTag
      * @param unknown $index
      * @return unknown|NULL
      */
-    public function getItem($index) {
+    public function getItem($index)
+    {
         if (isset ($this->items [$index])) {
             return $this->items [$index];
         } else {
             return null;
         }
     }
-    
+
     /**
      * @desc set item by index.
-     * @param unknown $index
-     * @param unknown $ele
+     * @param int $index
+     * @param mixed $item
      * @return \model\bootstrap\HtmlTag
      */
-    public function setItem($index, $item) {
+    public function setItem($index, $item)
+    {
         $this->items [$index] = $item;
         return $this;
     }
-    
+
     /**
-     * @return the $verticalAlign
+     * @return string
      */
     public function getVerticalAlign()
     {
@@ -772,7 +797,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $verticalAlign [top|middle|bottom]
+     * @param string $verticalAlign [top|middle|bottom]
      */
     public function setVerticalAlign($verticalAlign)
     {
@@ -782,22 +807,25 @@ class Typography extends HtmlTag
         }
         return $this;
     }
-    
-    public function setVerticalAlignTop () {
+
+    public function setVerticalAlignTop()
+    {
         $this->verticalAlign = "top";
         return $this;
     }
 
-    public function setVerticalAlignMiddle () {
+    public function setVerticalAlignMiddle()
+    {
         $this->verticalAlign = "middle";
         return $this;
     }
-    
-    public function setVerticalAlignBottom () {
+
+    public function setVerticalAlignBottom()
+    {
         $this->verticalAlign = "bottom";
         return $this;
     }
-    
+
     /**
      * @return the $isEmbedResponsiveItem
      */
@@ -812,15 +840,15 @@ class Typography extends HtmlTag
     public function setEmbedResponsive($embedResponsive = "16:9")
     {
         $embedRatio = explode(":", $embedResponsive);
-        
-        if (!empty($embedRatio) && isset($embedRatio[0]) && isset($embedRatio [1]) && is_numeric($embedRatio[1]/$embedRatio[0])) {
+
+        if (!empty($embedRatio) && isset($embedRatio[0]) && isset($embedRatio [1]) && is_numeric($embedRatio[1] / $embedRatio[0])) {
             $this->embedResponsive = $embedResponsive;
         }
         return $this;
     }
-    
+
     /**
-     * @return the $textAlign
+     * @return string
      */
     public function getTextAlign()
     {
@@ -828,7 +856,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $textAlign
+     * @param string $textAlign
      */
     public function setTextAlign($textAlign)
     {
@@ -836,36 +864,42 @@ class Typography extends HtmlTag
         if (in_array($textAlign, self::$textAlignArr)) {
             $this->textAlign = $textAlign;
         }
-        
+
         return $this;
     }
-    
-    public function setTextAlignLeft () {
+
+    public function setTextAlignLeft()
+    {
         $this->textAlign = "left";
         return $this;
     }
-    
-    public function setTextAlignCenter () {
+
+    public function setTextAlignCenter()
+    {
         $this->textAlign = "center";
         return $this;
     }
-    
-    public function setTextAlignRight () {
+
+    public function setTextAlignRight()
+    {
         $this->textAlign = "right";
         return $this;
     }
 
-    public function setTextAlignJustify () {
+    public function setTextAlignJustify()
+    {
         $this->textAlign = "justify";
         return $this;
     }
 
-    public function setTextAlignNowrap () {
+    public function setTextAlignNowrap()
+    {
         $this->textAlign = "nowrap";
         return $this;
     }
-/**
-     * @return the $isLead
+
+    /**
+     * @return boolean
      */
     public function getIsLead()
     {
@@ -873,16 +907,16 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $isLead
+     * @param boolean $isLead
      */
     public function setIsLead($isLead = true)
     {
         $this->isLead = $isLead;
         return $this;
     }
-    
+
     /**
-     * @return the $textTransform
+     * @return string
      */
     public function getTextTransform()
     {
@@ -890,7 +924,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $textTransform
+     * @param $textTransform
+     * @return $this
      */
     public function setTextTransform($textTransform)
     {
@@ -898,27 +933,30 @@ class Typography extends HtmlTag
         if (in_array($textTransform, self::$textTransformArr)) {
             $this->textTransform = $textTransform;
         }
-        
+
         return $this;
     }
-    
-    public function setTextUpperCase () {
+
+    public function setTextUpperCase()
+    {
         $this->textTransform = "uppercase";
         return $this;
     }
 
-    public function setTextLowerCase () {
+    public function setTextLowerCase()
+    {
         $this->textTransform = "uppercase";
         return $this;
     }
-    
-    public function setTextCapitalize () {
+
+    public function setTextCapitalize()
+    {
         $this->textTransform = "capitalize";
         return $this;
     }
-    
+
     /**
-     * @return the $isListUnstyled
+     * @return boolean
      */
     public function getIsListUnstyled()
     {
@@ -926,15 +964,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $isListInline
-     */
-    public function getIsListInline()
-    {
-        return $this->isListInline;
-    }
-
-    /**
-     * @param field_type $isListUnstyled
+     * @param bool $isListUnstyled
+     * @return $this
      */
     public function setIsListUnstyled($isListUnstyled = true)
     {
@@ -943,16 +974,25 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $isListInline
+     * @return boolean
+     */
+    public function getIsListInline()
+    {
+        return $this->isListInline;
+    }
+
+    /**
+     * @param bool $isListInline
+     * @return $this
      */
     public function setIsListInline($isListInline = true)
     {
         $this->isListInline = $isListInline;
         return $this;
     }
-    
+
     /**
-     * @return the $clearFix
+     * @return int
      */
     public function getClearFix()
     {
@@ -960,16 +1000,17 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $clearFix
+     * @param bool $clearFix
+     * @return $this
      */
     public function setClearFix($clearFix = true)
     {
         $this->clearFix = $clearFix;
         return $this;
     }
-    
+
     /**
-     * @return the $bgContext
+     * @return mixed
      */
     public function getBgContext()
     {
@@ -977,7 +1018,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $bgContext
+     * @param $bgContext
+     * @return $this
      */
     public function setBgContext($bgContext)
     {
@@ -985,34 +1027,39 @@ class Typography extends HtmlTag
         if (in_array($bgContext, self::$contextArr)) {
             $this->bgContext = $bgContext;
         }
-        
+
         return $this;
     }
 
-    public function setBgContextPrimary () {
+    public function setBgContextPrimary()
+    {
         $this->bgContext = "primary";
         return $this;
     }
 
-    public function setBgContextSuccess () {
+    public function setBgContextSuccess()
+    {
         $this->bgContext = "success";
         return $this;
     }
-    
-    public function setBgContextInfo () {
+
+    public function setBgContextInfo()
+    {
         $this->bgContext = "info";
         return $this;
     }
-    
-    public function setBgContextWarning () {
+
+    public function setBgContextWarning()
+    {
         $this->bgContext = "warning";
         return $this;
     }
-    
-    public function setBgContextDanger () {
+
+    public function setBgContextDanger()
+    {
         $this->bgContext = "danger";
         return $this;
     }
-    
+
 }
 

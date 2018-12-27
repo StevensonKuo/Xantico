@@ -200,8 +200,8 @@ class Nav extends Typography
     }
 
     /**
-     * @desc pills or tabs
-     * @param field_type $style [pills|tabs]
+     * pills or tabs
+     * @param string $style [pills|tabs]
      */
     public function setStyle($style)
     {

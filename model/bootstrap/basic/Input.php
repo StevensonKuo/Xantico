@@ -426,11 +426,10 @@ class Input extends Typography implements iRequiredInput {
         
         return $this;
     }
-    
+
     /**
-     *
      * @param array $option
-     * @return \Bootstrap\basic\Input
+     * @return $this
      */
     public function setDisabledOption ($option = array ()) {
         if (!is_array($option)) $option = array ($option);
@@ -643,7 +642,7 @@ class Input extends Typography implements iRequiredInput {
     }
 
     /**
-     * @return the $help
+     * @return string
      */
     public function getHelp()
     {
@@ -651,7 +650,7 @@ class Input extends Typography implements iRequiredInput {
     }
 
     /**
-     * @param field_type $help
+     * @param string $help
      */
     public function setHelp($help)
     {
@@ -660,7 +659,7 @@ class Input extends Typography implements iRequiredInput {
     }
 
     /**
-     * @return the $isStatic
+     * @return bool
      */
     public function getIsStatic()
     {
@@ -668,25 +667,27 @@ class Input extends Typography implements iRequiredInput {
     }
 
     /**
-     * @param Ambigous <boolean, array> $isStatic
+     * @param bool $isStatic
+     * @return $this
      */
     public function setIsStatic($isStatic = true)
     {
         $this->isStatic = $isStatic;
         return $this;
     }
-    
+
     /**
-     * @param Ambigous <multitype:, array> $validation
+     * @param $validation
+     * @return $this
      */
     public function setValidation($validation)
     {
         $this->validation = $validation;
         return $this;
     }
-    
+
     /**
-     * @return the $inputType
+     * @return string
      */
     public function getInputType()
     {
@@ -779,7 +780,7 @@ class Input extends Typography implements iRequiredInput {
     }
     
     /**
-     * @return the $validationState
+     * @return string
      */
     public function getValidationState()
     {
@@ -787,7 +788,7 @@ class Input extends Typography implements iRequiredInput {
     }
 
     /**
-     * @param field_type $validationState
+     * @param string $validationState
      */
     public function setValidationState($validationState)
     {

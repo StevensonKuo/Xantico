@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="0b8117e3-f933-45e8-88e1-9dc142398955" name="shabbat.yhvh.tw" url="http://shabbat.yhvh.tw/">
+        <fileTransfer host="www.yhvh.tw" port="3322" rootFolder="/var/www/html/xantico-bt" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="3322" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

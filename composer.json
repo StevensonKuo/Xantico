@@ -1,0 +1,20 @@
+{
+  "name": "xantico/xantico",
+  "type": "library",
+  "description": "A PHP helper to build Bootstrap compatible html code automatically using OOP syntax.",
+  "keywords": [
+    "bootstrap",
+    "view model"
+  ],
+  "homepage": "http://xantico.yhvh.tw",
+  "license": "GPL-3.0",
+  "authors": [
+    {
+      "name": "Stevenson Kuo",
+      "email": "yhvh@yhvh.tw"
+    }
+  ],
+  "require": {
+    "php": ">=5.3"
+  }
+}

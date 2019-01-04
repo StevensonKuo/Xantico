@@ -16,10 +16,9 @@ class Navbar extends Typography
     protected $activeIndex; // int
 
     /**
-     * @param unknown $type
+     * Navbar constructor.
      * @param array $vars
      * @param array $attrs
-     * @return \model\Xantico\basic\Typography
      */
     public function __construct($vars = array(), $attrs = array())
     {
@@ -37,8 +36,7 @@ class Navbar extends Typography
     }
 
     /**
-     * @desc
-     * @param string $display
+     * @param bool $display
      * @return unknown
      */
     public function render($display = false)

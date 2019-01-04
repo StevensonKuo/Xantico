@@ -237,8 +237,8 @@ class BootstrapView
             array("text" => "Action", "url" => "#"),
             array("text" => "Another action", "url" => "#"),
             array("text" => "Something else here", "url" => "#"),
-            array("seperator" => true),
-            array("text" => "Seperated link", "url" => "#")
+            array("separator" => true),
+            array("text" => "Separated link", "url" => "#")
         );
         $dropdown->setMode("inline")->getButton()->appendCustomClass("sr-only");
         $dropdown->appendItems($ddItems)
@@ -514,52 +514,52 @@ class BootstrapView
         ));
         $codeExample = clone $code;
         $codeExample->setInnerText('
-        <?php
-        $row1 = new Row();
-        $row1->appendCustomClass("show-grid")
-        ->setItems(array (
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1),
-            array("text" => ".col-md-1", "width" => 1)
-        ));
-        $row2 = new Row();
-        $row2->appendCustomClass("show-grid")
-        ->setItems(array(
-            array("text" => ".col-md-8", "width" => 8),
-            array("text" => ".col-md-4", "width" => 4)
-        ));
-        $row3 = new Row();
-        $row3->appendCustomClass("show-grid")
-        ->setItems(array (
-            array("text" => ".col-md-4", "width" => 4),
-            array("text" => ".col-md-4", "width" => 4),
-            array("text" => ".col-md-4", "width" => 4)
-        ));
-        $row4 = new Row();
-        $row4->appendCustomClass("show-grid")
-        ->setColumns(array (
-            array("text" => ".col-md-6", "width" => 6),
-            array("text" => ".col-md-6", "width" => 6)
-        ));
-        $bs = new Typography("div:bs-example");
-        $bs->setInnerElements(array (
-            $row1,
-            $row2,
-            $row3,
-            $row4
-        ));
-        $bs->render(true);
-        ?>'
-        );
+            <?php
+            $row1 = new Row();
+            $row1->appendCustomClass("show-grid")
+            ->setItems(array (
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1),
+                array("text" => ".col-md-1", "width" => 1)
+            ));
+            $row2 = new Row();
+            $row2->appendCustomClass("show-grid")
+            ->setItems(array(
+                array("text" => ".col-md-8", "width" => 8),
+                array("text" => ".col-md-4", "width" => 4)
+            ));
+            $row3 = new Row();
+            $row3->appendCustomClass("show-grid")
+            ->setItems(array (
+                array("text" => ".col-md-4", "width" => 4),
+                array("text" => ".col-md-4", "width" => 4),
+                array("text" => ".col-md-4", "width" => 4)
+            ));
+            $row4 = new Row();
+            $row4->appendCustomClass("show-grid")
+            ->setColumns(array (
+                array("text" => ".col-md-6", "width" => 6),
+                array("text" => ".col-md-6", "width" => 6)
+            ));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array (
+                $row1,
+                $row2,
+                $row3,
+                $row4
+            ));
+            $bs->render(true);
+            ?>
+        ');
         $row5 = new Row();
         $row5->appendCustomClass("show-grid")
             ->setColumns(array(
@@ -586,33 +586,33 @@ class BootstrapView
         ));
         $codeExample2 = clone $code;
         $codeExample2->setInnerText('
-        <?php
-        $row1 = new Row();
-        $row1->appendCustomClass("show-grid")
-        ->setColumns(array (
-            array("text" => ".col-xs-12 .col-md-8", "width" => array ("col-xs-12", "col-md-8")),
-            array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4")),
-        ));
-        $row2 = new Row();
-        $row2->appendCustomClass("show-grid")
-        ->setColumns(array (
-            array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4")),
-            array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4")),
-            array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4"))
-        ));
-        $row3 = new Row();
-        $row3->appendCustomClass("show-grid")
-        ->setDefaultScreenSize("xs")
-        ->setColumns(array (
-            array("text" => ".col-xs-6", "width" => 6),
-            array("text" => ".col-xs-6", "width" => 6)
-        ));
-        $bs = new Typography("div:bs-example");
-        $bs->setInnerElements(array (
-            $row1, $row2, $row3
-        ));
-        $bs->render(true);
-        ?>
+            <?php
+            $row1 = new Row();
+            $row1->appendCustomClass("show-grid")
+            ->setColumns(array (
+                array("text" => ".col-xs-12 .col-md-8", "width" => array ("col-xs-12", "col-md-8")),
+                array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4")),
+            ));
+            $row2 = new Row();
+            $row2->appendCustomClass("show-grid")
+            ->setColumns(array (
+                array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4")),
+                array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4")),
+                array("text" => ".col-xs-6 .col-md-4", "width" => array ("col-xs-6", "col-md-4"))
+            ));
+            $row3 = new Row();
+            $row3->appendCustomClass("show-grid")
+            ->setDefaultScreenSize("xs")
+            ->setColumns(array (
+                array("text" => ".col-xs-6", "width" => 6),
+                array("text" => ".col-xs-6", "width" => 6)
+            ));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array (
+                $row1, $row2, $row3
+            ));
+            $bs->render(true);
+            ?>
         ');
 
         $row8 = new Row();
@@ -637,29 +637,30 @@ class BootstrapView
                 $row8, $row9, $row10
             ));
         $codeExample3 = new Code('
-        <?php
-        $row1 = new Row();
-        $row1->appendCustomClass("show-grid")
-            ->setColumns(array(
-                array("text" => "col-md-4", "width" => 4),
-                array("text" => "col-md-4 col-md-offset-4", "width" => 4, "offset" => 4),
+            <?php
+            $row1 = new Row();
+            $row1->appendCustomClass("show-grid")
+                ->setColumns(array(
+                    array("text" => "col-md-4", "width" => 4),
+                    array("text" => "col-md-4 col-md-offset-4", "width" => 4, "offset" => 4),
+                ));
+            $row2 = new Row();
+            $row2->appendCustomClass("show-grid")
+                ->setColumns(array(
+                    array("text" => ".col-md-3 .col-md-offset-3", "width" => 3, "offset" => 3),
+                    array("text" => ".col-md-3 .col-md-offset-3", "width" => 3, "offset" => 3)
+                ));
+            $row3 = new Row();
+            $row3->appendCustomClass("show-grid")
+                ->setColumns(array(
+                    array("text" => ".col-md-6 .col-md-offset-3", "width" => 6, "offset" => 3)
+                ));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $row1, $row2, $row3
             ));
-        $row2 = new Row();
-        $row2->appendCustomClass("show-grid")
-            ->setColumns(array(
-                array("text" => ".col-md-3 .col-md-offset-3", "width" => 3, "offset" => 3),
-                array("text" => ".col-md-3 .col-md-offset-3", "width" => 3, "offset" => 3)
-            ));
-        $row3 = new Row();
-        $row3->appendCustomClass("show-grid")
-            ->setColumns(array(
-                array("text" => ".col-md-6 .col-md-offset-3", "width" => 6, "offset" => 3)
-            ));
-        $bs = new Typography("div:bs-example");
-        $bs->setInnerElements(array(
-            $row1, $row2, $row3
-        ));
-        $bs->render(true);
+            $bs->render(true);
+            ?>
         ');
 
         $pageHeader_2 = new PageHeader("Typography");
@@ -675,31 +676,31 @@ class BootstrapView
                 $h1, $h2, $h3, $h4, $h5, $h6
             ));
         $codeExample4 = new Code('
-        <?php
-        $h1 = new Typography("h1", array("innerText" => "h1. Bootstrap heading"));
-        $h2 = new Typography("h2", array("innerText" => "h2. Bootstrap heading"));
-        $h3 = new Typography("h3", array("innerText" => "h3. Bootstrap heading"));
-        $h4 = new Typography("h4", array("innerText" => "h4. Bootstrap heading"));
-        $h5 = new Typography("h5", array("innerText" => "h5. Bootstrap heading"));
-        $h6 = new Typography("h6", array("innerText" => "h6. Bootstrap heading"));
-        $bs = Typography("div:bs-example");
-        $bs->setInnerElements(array(
-            $h1, $h2, $h3, $h4, $h5, $h6
-        ));
-        $bs->render(true);
-        ?>
+            <?php
+            $h1 = new Typography("h1", array("innerText" => "h1. Bootstrap heading"));
+            $h2 = new Typography("h2", array("innerText" => "h2. Bootstrap heading"));
+            $h3 = new Typography("h3", array("innerText" => "h3. Bootstrap heading"));
+            $h4 = new Typography("h4", array("innerText" => "h4. Bootstrap heading"));
+            $h5 = new Typography("h5", array("innerText" => "h5. Bootstrap heading"));
+            $h6 = new Typography("h6", array("innerText" => "h6. Bootstrap heading"));
+            $bs = Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $h1, $h2, $h3, $h4, $h5, $h6
+            ));
+            $bs->render(true);
+            ?>
         ');
 
         $pLead = new Typography("p");
         $pLead->setIsLead()
             ->setInnerText("Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.");
         $codeExample5 = new Code('
-        <?php
-        $pLead = new Typography("p");
-        $pLead->setIsLead()
-            ->setInnerText("Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.");
-        $pLead->enclose(new Typography("div:bs-example"))->render(true);
-        ?>
+            <?php
+            $pLead = new Typography("p");
+            $pLead->setIsLead()
+                ->setInnerText("Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.");
+            $pLead->enclose(new Typography("div:bs-example"))->render(true);
+            ?>
         ');
 
         $pLeft = new Typography("p");
@@ -722,28 +723,28 @@ class BootstrapView
                 $pLeft, $pCenter, $pRight, $pJustify, $pNowrap
             ));
         $codeExample6 = new Code('
-        <?php
-        $pLeft = new Typography("p");
-        $pLeft->setTextAlign("left")
-            ->setText("Left aligned text.");
-        $pCenter = new Typography("p");
-        $pCenter->setTextAlign("center")
-            ->setText("Center aligned text.");
-        $pRight = new Typography("p");
-        $pRight->setTextAlignRight()
-            ->setText("Right aligned text.");
-        $pJustify = new Typography("p");
-        $pJustify->setTextAlignJustify()
-            ->setText("Justified text.");
-        $pNowrap = new Typography("p");
-        $pNowrap->setTextAlignNowrap()
-            ->setText("No wrap text.");
-        $bs = new Typography("div:bs-example");
-        $bs->setInnerElements(array(
-            $pLeft, $pCenter, $pRight, $pJustify, $pNowrap
-        ));
-        $bs->render(true);
-        ?>
+            <?php
+            $pLeft = new Typography("p");
+            $pLeft->setTextAlign("left")
+                ->setText("Left aligned text.");
+            $pCenter = new Typography("p");
+            $pCenter->setTextAlign("center")
+                ->setText("Center aligned text.");
+            $pRight = new Typography("p");
+            $pRight->setTextAlignRight()
+                ->setText("Right aligned text.");
+            $pJustify = new Typography("p");
+            $pJustify->setTextAlignJustify()
+                ->setText("Justified text.");
+            $pNowrap = new Typography("p");
+            $pNowrap->setTextAlignNowrap()
+                ->setText("No wrap text.");
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $pLeft, $pCenter, $pRight, $pJustify, $pNowrap
+            ));
+            $bs->render(true);
+            ?>
         ');
 
         $pLower = new Typography("p");
@@ -760,21 +761,22 @@ class BootstrapView
                 $pLower, $pUpper, $pCap
             ));
         $codeExample7 = new Code('
-        <?php
-        $pLower = new Typography("p");
-        $pLower->setTextTransform("lowercase")
-            ->setText("Lowercased text.");
-        $pUpper = new Typography("p");
-        $pUpper->setTextTransform("uppercase")
-            ->setText("Uppercased text.");
-        $pCap = new Typography("p");
-        $pCap->setTextTransform("capitalize")
-            ->setText("capitalized text.");
-        $bs = new Typography("div:bs-example");
-        $bs->setInnerElements(array(
-            $pLower, $pUpper, $pCap
-        ));
-        $bs->render(true);
+            <?php
+            $pLower = new Typography("p");
+            $pLower->setTextTransform("lowercase")
+                ->setText("Lowercased text.");
+            $pUpper = new Typography("p");
+            $pUpper->setTextTransform("uppercase")
+                ->setText("Uppercased text.");
+            $pCap = new Typography("p");
+            $pCap->setTextTransform("capitalize")
+                ->setText("capitalized text.");
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $pLower, $pUpper, $pCap
+            ));
+            $bs->render(true);
+            ?>
         ');
 
         $list = new Typography("ul");
@@ -795,22 +797,95 @@ class BootstrapView
             "Aenean sit amet erat nunc",
             "Eget porttitor lorem",
         ));
+        $codeExample8 = new Code('
+            <?php
+            $list = new Typography("ul");
+            $listNested = new Typography("ul");
+            $listNested->setItems(array(
+                "Phasellus iaculis neque",
+                "Purus sodales ultricies",
+                "Vestibulum laoreet porttitor sem",
+                "Ac tristique libero volutpat at",
+            ));
+            $list->setItems(array(
+                "Lorem ipsum dolor sit amet",
+                "Consectetur adipiscing elit",
+                "Integer molestie lorem at massa",
+                "Facilisis in pretium nisl aliquet",
+                array("Nulla volutpat aliquam velit", $listNested),
+                "Faucibus porta lacus fringilla vel",
+                "Aenean sit amet erat nunc",
+                "Eget porttitor lorem",
+            ));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($list);
+            $bs->render(true);
+            ?>
+        ');
 
         $listUnstyled = clone $list;
         $listUnstyled->setIsListUnstyled();
-
+        $codeExample9 = new Code('
+        <?php
+        $listUnstyled = new Typography("ul");
+        $listNested = new Typography("ul");
+        $listNested->setItems(array(
+            "Phasellus iaculis neque",
+            "Purus sodales ultricies",
+            "Vestibulum laoreet porttitor sem",
+            "Ac tristique libero volutpat at",
+        ));
+        $listUnstyled->setItems(array(
+            "Lorem ipsum dolor sit amet",
+            "Consectetur adipiscing elit",
+            "Integer molestie lorem at massa",
+            "Facilisis in pretium nisl aliquet",
+            array("Nulla volutpat aliquam velit", $listNested),
+            "Faucibus porta lacus fringilla vel",
+            "Aenean sit amet erat nunc",
+            "Eget porttitor lorem",
+        ));
+        $listUnstyled->setIsListUnstyled();
+        $bs = new Typography("div:bs-example");
+        $bs->setInnerElements($listUnstyled);
+        $bs->render(true);
+        ');
         // Lorem ipsum Phasellus iaculis Nulla volutpat
         $listInline = new Typography("ul");
         $listInline->setIsListInline()
             ->setItems(array(
                 "Lorem ipsum", "Phasellus iaculis", "Nulla volutpat"
             ));
+        $codeExample10 = new Code('
+            <?php
+            $listInline = new Typography("ul");
+            $listInline->setIsListInline()
+                ->setItems(array(
+                    "Lorem ipsum", "Phasellus iaculis", "Nulla volutpat"
+                ));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($listInline);
+            $bs->render(true);
+            ?>
+        ');
 
         $pageHeader_3 = new PageHeader("Code");
         $codeInline = new HtmlTag("code");
         $codeInline->setInnerText("<section>");
         $codeSection = new HtmlTag("p");
         $codeSection->setInnerHtml("For example, $codeInline should be wrapped as inline.");
+        $codeExample11 = new Code('
+            <?php
+            $codeInline = new HtmlTag("code");
+            $codeInline->setInnerText("<section>");
+            $codeSection = new HtmlTag("p");
+            $codeSection->setInnerHtml("For example, $codeInline should be wrapped as inline.");
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($codeSection);
+            $bs->render(true);
+            ?>
+        ');
+
         $codeUserInput = new HtmlTag("kbd");
         $codeUserInput->setInnerText("cd");
         $codeUserInput2 = new HtmlTag("kbd");
@@ -819,7 +894,21 @@ class BootstrapView
         $sectionUserInput->setInnerHtml(
             "To switch directories, type $codeUserInput followed by the name of the directory.<br>
             To edit settings, press $codeUserInput2");
-
+        $codeExample12 = new Code('
+            <?php
+            $codeUserInput = new HtmlTag("kbd");
+            $codeUserInput->setInnerText("cd");
+            $codeUserInput2 = new HtmlTag("kbd");
+            $codeUserInput2->setInnerText("ctrl + ,");
+            $sectionUserInput = new HtmlTag("p");
+            $sectionUserInput->setInnerHtml(
+                "To switch directories, type $codeUserInput followed by the name of the directory.<br>
+                To edit settings, press $codeUserInput2");
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($sectionUserInput);
+            $bs->render(true);
+            ?>
+        ');
         $phpCode = new Code('
             <?php
             $codeInline = new HtmlTag("code");
@@ -828,8 +917,25 @@ class BootstrapView
             $codeSection->setInnerHtml("For example, $codeInline should be wrapped as inline.");
             ?>
         ');
+        $codeExample13 = new Code('
+            <?php
+            $phpCode = new Code(\'
+                <?php
+                $codeInline = new HtmlTag("code");
+                $codeInline->setInnerText("<section>");
+                $codeSection = new HtmlTag("p");
+                $codeSection->setInnerHtml("For example, $codeInline should be wrapped as inline.");
+                ?>
+            \');
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($phpCode);
+            $bs->render(true);
+            ?>
+        ');
+
 
         $pageHeader_4 = new PageHeader("Tables");
+
         $table1 = new Table();
         $table1->setCaption("Optional table caption.");
         $tableHeaders = array(
@@ -844,6 +950,60 @@ class BootstrapView
             array("3", "Larry", "the Bird", "@twitter")
         );
         $table1->setHeaders($tableHeaders)->setCells($tableCells);
+        $codeExample14 = new Code('
+            <?php
+            $table = new Table();
+            $table->setCaption("Optional table caption.");
+            $tableHeaders = array(
+                array("text" => "#"),
+                array("text" => "First Name"),
+                array("text" => "Last Name"),
+                array("text" => "Username")
+            );
+            $tableCells = array(
+                array("1", "Mark", "Otto", "@mdo"),
+                array("2", "Jacob", "Thornton", "@fat"),
+                array("3", "Larry", "the Bird", "@twitter")
+            );
+            $table->setHeaders($tableHeaders)->setCells($tableCells);
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($table);
+            $bs->render(true);
+            ?>
+        ');
+        $codeExample14_1 = new Code('
+            <?php
+            $table = new Table();
+            // ... 
+            $table->setIsStriped();
+            // ...
+            ?>
+        ');
+        $codeExample14_2 = new Code('
+            <?php
+            $table = new Table();
+            // ...
+            $table->setIsBordered();
+            // ...
+            ?>
+        ');
+
+        $codeExample14_3 = new Code('
+            <?php
+            $table = new Table();
+            // ...
+            $table->setWithHoverState();
+            // ...
+            ?>
+        ');
+        $codeExample14_4 = new Code('
+            <?php
+            $table = new Table();
+            // ...
+            $table->setIsCondensed();
+            // ...
+            ?>
+        ');
 
         $table2 = new Table();
         $tableHeaders2 = array(
@@ -861,6 +1021,29 @@ class BootstrapView
             array("context" => "danger", "td" => array(9, "Column content", "Column content", "Column content")),
         );
         $table2->setHeaders($tableHeaders2)->setCells($tableCells2);
+        $codeExample15 = new Code('
+            <?php
+            $table = new Table();
+            $tableHeaders = array(
+                "#", "Column heading", "Column heading", "Column heading"
+            );
+            $tableCells = array(
+                array("isActive" => true, "td" => array(1, "Column content", "Column content", "Column content")),
+                array(2, "Column content", "Column content", "Column content"),
+                array("context" => "success", "td" => array(3, "Column content", "Column content", "Column content")),
+                array("td" => array(4, "Column content", "Column content", "Column content")),
+                array("context" => "info", "td" => array(5, "Column content", "Column content", "Column content")),
+                array("td" => array(6, "Column content", "Column content", "Column content")),
+                array("context" => "warning", "td" => array(7, "Column content", "Column content", "Column content")),
+                array("td" => array(8, "Column content", "Column content", "Column content")),
+                array("context" => "danger", "td" => array(9, "Column content", "Column content", "Column content")),
+            );
+            $table->setHeaders($tableHeaders)->setCells($tableCells);
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($table);
+            $bs->render(true);
+            ?>
+        ');
 
         $table3 = new Table();
         $tableHeaders3 = array(
@@ -879,6 +1062,28 @@ class BootstrapView
         $bsExample8 = $bsExample->cloneInstance()->setInnerElements(array(
             $divTable, $divTable2
         ));
+        $codeExample16 = new Code('
+            <?php
+            $table = new Table();
+            $tableHeaders = array(
+                "#", "Table heading", "Table heading", "Table heading", "Table heading", "Table heading", "Table heading"
+            );
+            $tableCells = array(
+                array(1, "Table cell", "Table cell", "Table cell", "Table cell", "Table cell", "Table cell"),
+                array(2, "Table cell", "Table cell", "Table cell", "Table cell", "Table cell", "Table cell"),
+                array(3, "Table cell", "Table cell", "Table cell", "Table cell", "Table cell", "Table cell")
+            );
+            $table->setHeader($tableHeaders)->setCells($tableCells);
+            $divTable = new Typography("div");
+            $divTable->setInnerElements($table->setIsResponsive());
+            $divTable2 = new Typography("div");
+            $divTable2->setInnerElements($table->cloneInstance()->setIsBordered());
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $divTable, $divTable2
+            ));
+            $bs->render(true);
+        ');
 
         $pageHeader = new PageHeader("Forms");
         $form1 = new Form();
@@ -895,19 +1100,24 @@ class BootstrapView
         $check->setOptions(array("Check me out"));
         $form1->setFormAction()
             ->appendInnerElements(array($inputEmail, $inputPwd, $check));
-        $form1Code = $code->cloneInstance()->setText('
+        $codeExample17 = $code->cloneInstance()->setText('
             <?php
-            $form1 = new Form();
+            $form = new Form();
             $inputEmail = new Input("email");
             $inputEmail->setCaption("Email Address")
-            ->setHelp("We\'ll never share your email with anyone else.")->setPlaceholder("Enter Email")->setId("exampleInputEmail1");
+                ->setHelp("We\'ll never share your email with anyone else.")->setPlaceholder("Enter Email")->setId("exampleInputEmail1");
             $inputPwd = new Input("password");
             $inputPwd->setCaption("Password")->setPlaceholder("password")->setId("exampleInputPassword1");
             $check = new Input("checkbox");
             $check->setOptions(array ("Check me out"));
-            $form1->setFormAction()->setInnerElements(array ($inputEmail, $inputPwd, $check));
-            $form1->render(true);
-            ?>');
+            $form->setFormAction()->setInnerElements(array ($inputEmail, $inputPwd, $check));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $form
+            ));
+            $bs->render(true);
+            ?>
+            ');
 
         // form-control for select, textarea
         $form2 = new Form();
@@ -932,6 +1142,37 @@ class BootstrapView
             ->setId("exampleFormControlTextarea1");
 
         $form2->appendInnerElements(array($inputEmail2, $inputSelect, $inputSelect2, $textarea));
+        $codeExample18 = new Code('
+            <?php
+            $form = new Form();
+            $inputEmail = new Input("email");
+            $inputEmail->setPlaceholder("name@example.com")
+                ->setId("exampleFormControlInput1")
+                ->setCaption("Email address");
+    
+            $inputSelect = new Select();
+            $inputSelect->setCaption("Example select")
+                ->setId("exampleFormControlSelect1")
+                ->setOptions(array(1, 2, 3, 4, 5));
+    
+            $inputSelect2 = clone $inputSelect;
+            $inputSelect2->setIsMultiple(true)
+                ->setCaption("Example multiple select")
+                ->setId("exampleFormControlSelect2");
+    
+            $textarea = new Textarea();
+            $textarea->setRows(3)
+                ->setCaption("Example textarea")
+                ->setId("exampleFormControlTextarea1");
+    
+            $form->appendInnerElements(array($inputEmail, $inputSelect, $inputSelect2, $textarea));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $form
+            ));
+            $bs->render(true);
+            ?>
+        ');
 
         // file input
         $form3 = new Form();
@@ -939,7 +1180,20 @@ class BootstrapView
         $inputFile->setId("exampleFormControlFile1")
             ->setCaption("Example file input");
         $form3->appendInnerElements($inputFile);
-
+        $codeExample19 = new Code('
+            <?php
+            $form = new Form();
+            $inputFile = new Input("file");
+            $inputFile->setId("exampleFormControlFile1")
+                ->setCaption("Example file input");
+            $form->appendInnerElements($inputFile);
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $form
+            ));
+            $bs->render(true);
+            ?>
+        ');
         // sizing @todo bs 4.0
         $form4 = new Form();
         /*
@@ -958,7 +1212,19 @@ class BootstrapView
             ->setPlaceholder("Readonly input here…");
 
         $form4->appendInnerElements(array($inputRO));
+        $codeExample20 = new Code('
+            <?php
+            $form = new Form();
+            $inputRO = new Input();
+            $inputRO->setIsReadonly(true)
+                ->setPlaceholder("Readonly input here…");
 
+            $form->appendInnerElements(array($inputRO));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($form);
+            $bs->render(true);
+            ?>
+        ');
         // plaintext
         $form5 = new Form();
         $form5->setFormType("horizontal")
@@ -972,6 +1238,25 @@ class BootstrapView
         $inputPwd2->setId("inputPassword");
 
         $form5->appendInnerElements(array($inputPlain, $inputPwd2));
+        $codeExample21 = new Code('
+            <?php
+            $form = new Form();
+            $form->setFormType("horizontal")
+                ->setLabelRatio("2:10");
+            $inputPlain = new Input();
+            $inputPlain->setIsStatic()
+                ->setDefaultValue("email@example.com")
+                ->setCaption("Email")
+                ->setId("staticEmail");
+            $inputPwd = clone $inputPwd;
+            $inputPwd->setId("inputPassword");
+    
+            $form->appendInnerElements(array($inputPlain, $inputPwd));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($form);
+            $bs->render(true);
+            ?>
+        ');
 
         // form inline
         $form6 = clone $form5;
@@ -981,6 +1266,25 @@ class BootstrapView
         if ($form6Element instanceof Input) {
             $form6Element->setIsReadonly(true)->setIsStatic(false);
         }
+        $codeExample22 = new Code('
+            <?php
+            $form = new Form();
+            $form->setFormType("inline")
+                ->setFormAction();
+            $inputPlain = new Input();
+            $inputPlain->setIsReadonly(true)
+                ->setDefaultValue("email@example.com")
+                ->setCaption("Email")
+                ->setId("staticEmail");
+            $inputPwd = clone $inputPwd;
+            $inputPwd->setId("inputPassword");
+    
+            $form->appendInnerElements(array($inputPlain, $inputPwd));
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($form);
+            $bs->render(true);
+            ?>
+        ');
 
         // checkboxes and radios
         $pageHeader2 = new PageHeader("Checkboxes and radios");
@@ -990,6 +1294,18 @@ class BootstrapView
         $checkbox1->setOptions(array("Default checkbox", "Disabled checkbox"))
             ->setDisabledOption(array(1));
         $form7->appendInnerElements($checkbox1);
+        $codeExample23 = new Code('
+            <?php
+            $form = new Form();
+            $checkbox = new Input("checkbox");
+            $checkbox->setOptions(array("Default checkbox", "Disabled checkbox"))
+                ->setDisabledOption(array(1));
+            $form->appendInnerElements($checkbox);
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($form);
+            $bs->render(true);
+            ?>
+        ');
 
         // radio
         $form8 = new Form();
@@ -998,6 +1314,19 @@ class BootstrapView
             ->setDisabledOption(array(2))
             ->setName("exampleRadios");
         $form8->appendInnerElements($radio1);
+        $codeExample24 = new Code('
+            <?php
+            $form = new Form();
+            $radio = new Input("radio");
+            $radio->setOptions(array("Default radio", "Second default radio", "Disabled radio"))
+                ->setDisabledOption(array(2))
+                ->setName("exampleRadios");
+            $form->appendInnerElements($radio1);
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements($form);
+            $bs->render(true);
+            ?>
+        ');
 
         // inline checkbox @todo bs 4.0
         $form9 = new Form();
@@ -1006,7 +1335,17 @@ class BootstrapView
             ->setDisabledOption(array("option3"))
             ->setIsStacked(false);
         $form9->appendInnerElements($checkbox2);
-
+        $codeExample25 = new Code('
+            <?php
+            $form = new Form();
+            $checkbox = new Input("checkbox");
+            $checkbox->setOptions(array("option1" => "1", "option2" => "2", "option3" => "3 (disabled)"))
+                ->setDisabledOption(array("option3"))
+                ->setIsStacked(false);
+            $form->appendInnerElements($checkbox);
+            // do render... 
+            ?>
+        ');
         // without labels
         $form10 = new Form();
         $checkboxNoLbl = new Input("checkbox");
@@ -1017,7 +1356,18 @@ class BootstrapView
             ->setName("blankRadio");
 //         ->appendCustomClass("position-static"); // @todo bs 4.0... I don't catch this.
         $form10->appendInnerElements(array($checkboxNoLbl, $radioNoLbl));
-
+        $codeExample26 = new Code('
+            <?php
+            $form = new Form();
+            $checkboxNoLbl = new Input("checkbox");
+            $checkboxNoLbl->setOptions(array("option1" => ""))
+                ->appendCustomClass("position-static");
+            $radioNoLbl = new Input ("radio");
+            $radioNoLbl->setOptions(array("option1" => ""))
+                ->setName("blankRadio");
+            $form->appendInnerElements(array($checkboxNoLbl, $radioNoLbl));
+            // do render... 
+        ');
         // layout
         $pageHeader3 = new PageHeader("Layout");
 
@@ -1031,7 +1381,21 @@ class BootstrapView
             ->setPlaceholder("Another input")
             ->setId();
         $form11->appendInnerElements(array($input1, $input2));
-
+        $codeExample27 = new Code('
+            <?php
+            $form = new Form();
+            $input1 = new Input();
+            $input1->setCaption("Example label")
+                ->setPlaceholder("Example input")
+                ->setId();
+            $input2 = new Input();
+            $input2->setCaption("Another label")
+                ->setPlaceholder("Another input")
+                ->setId();
+            $form->appendInnerElements(array($input1, $input2));
+            // do render...
+            ?>
+        ');
         // form grid
         $form12 = new Form();
         $inputFirstName = new Input();
@@ -1043,6 +1407,19 @@ class BootstrapView
         $form12->appendInnerElements($formRow);
         $form12Well = clone $bsExample;
         $form12Well->appendInnerElements($form12);
+        $codeExample28 = new Code('
+            <?php
+            $form = new Form();
+            $inputFirstName = new Input();
+            $inputFirstName->setPlaceholder("First name");
+            $inputLastName = new Input();
+            $inputLastName->setPlaceholder("Last name");
+            $formRow = new Row();
+            $formRow->appendItems(array($inputFirstName, $inputLastName));
+            $form->appendInnerElements($formRow);
+            // do render... 
+            ?>
+        ');
 
         // a complex example
         $form13 = new Form();
@@ -1086,6 +1463,50 @@ class BootstrapView
         $form13->setFormAction($btnSignin);
         $form13Well = clone $bsExample;
         $form13Well->appendInnerElements($form13);
+        $codeExample29 = new Code('
+            <?php
+            $form = new Form();
+            $inputEmail = new Input("email", array("caption" => "Email"), array("id" => "inputEmail4", "placeholder" => "Email"));
+            $inputPwd = new Input("password", array("caption" => "Password"), array("id" => "inputPassword4", "placeholder" => "Password",));
+            $formRow = new Row();
+            $formRow->appendItems(array($inputEmail, $inputPwd));
+            $inputAddress = new Input();
+            $inputAddress->setCaption("Address")
+                ->setPlaceholder("1234 Main St")
+                ->setId("inputAddress");
+            $inputAddress2 = new Input();
+            $inputAddress2->setPlaceholder("Apartment, studio, or floor")
+                ->setId("inputAddress2")
+                ->setCaption("Address 2");
+            $inputCity = new Input ();
+            $inputCity->setCaption("City")
+                ->setId("inputCity");
+            $selectState = new Select();
+            $selectState->setOptions(array("Choose...", "..."))
+                ->setDefaultOption(array(0))
+                ->setId("inputState")
+                ->setCaption("State");
+            $inputZip = new Input();
+            $inputZip->setCaption("Zip")
+                ->setId("inputZip");
+            $formRow2 = new Row();
+            $formRow2->appendItems(array(
+                array("text" => $inputCity, "width" => 6),
+                array("text" => $selectState, "width" => 4),
+                array("text" => $inputZip, "width" => 2)
+            ));
+            $check = new Input("checkbox");
+            $check->setOptions(array("Check me out"))
+                ->setId("gridCheck");
+            $form->appendInnerElements($formRow, $inputAddress, $inputAddress2, $formRow2, $check);
+            $btnSignin = new Button();
+            $btnSignin->setIsSubmit()
+                ->setContext("primary")
+                ->setText("Sign in");
+            $form->setFormAction($btnSignin);
+            // do render...
+            ?>
+        ');
 
         // forizontal form
         $form14 = new Form ();
@@ -1099,7 +1520,7 @@ class BootstrapView
             ->setPlaceholder("Password")
             ->setId("inputPassword3");
         $radio2 = new Input("radio");
-        $radio2->setOptions(array("First radio", "Second radio", "Thrid disabled radio"))
+        $radio2->setOptions(array("First radio", "Second radio", "Third disabled radio"))
             ->setCaption("Radios")
             ->setName("gridRadios")
             ->setDisabledOption(array(2));
@@ -1111,6 +1532,36 @@ class BootstrapView
             ->setLabelRatio("2:10");
         $form14Well = clone $bsExample;
         $form14Well->appendInnerElements($form14);
+        $codeExample30 = new Code('
+            <?php
+            $form = new Form();
+            $form->setFormType("horizontal");
+            $inputEmail = new Input("email");
+            $inputEmail->setCaption("Email")
+                ->setPlaceholder("Email")
+                ->setId("inputEmail3");
+            $inputPwd = new Input("password");
+            $inputPwd->setCaption("Password")
+                ->setPlaceholder("Password")
+                ->setId("inputPassword3");
+            $radio = new Input("radio");
+            $radio->setOptions(array("First radio", "Second radio", "Third disabled radio"))
+                ->setCaption("Radios")
+                ->setName("gridRadios")
+                ->setDisabledOption(array(2));
+            $check = new Input("checkbox");
+            $check->setCaption("Checkbox")
+                ->setOptions(array("Example checkbox"));
+            $btnSignin = new Button();
+            $btnSignin->setIsSubmit()
+                ->setContext("primary")
+                ->setText("Sign in");
+            $form14->appendInnerElements(array($inputEmail, $inputPwd, $radio, $check))
+                ->setFormAction($btnSignin)
+                ->setLabelRatio("2:10");
+            // do render...
+            ?>
+        ');
 
         // inline form with grid
         $form15 = new Form();
@@ -1133,10 +1584,36 @@ class BootstrapView
             array("text" => $inputUserGrp, "width" => 4),
             array("text" => $check4, "width" => 2),
             array("text" => $btn, "width" => 2)
-        ))
-            ->appendCustomClass("align-items-center");
+        ))->appendCustomClass("align-items-center");
+
         $form15Well = $form15->appendInnerElements(array($formRow4))
             ->setFormType("inline")->enclose(clone $bsExample);
+        $codeExample31 = new Code('
+            <?php
+            $form = new Form();
+            $inputName = new Input();
+            $inputName->setPlaceholder("Jane Doe")
+                ->setCaption("Name")
+                ->setId("inlineFormInput");
+            $inputUserGrp = new InputGroup();
+            $inputUserGrp->setLeftAddon("@")
+                ->setCaption("Username")
+                ->setId("inlineFormInputGroup")
+                ->setPlaceHolder("Username");
+            $check = new Input("checkbox");
+            $check->setOptions(array("Remember me"));
+            $btn = new Button();
+            $btn->setIsSubmit()->setText("Submit")->setContext("primary");
+            $formRow = new Row();
+            $formRow->appendItems(array(
+                array("text" => $inputName, "width" => 4),
+                array("text" => $inputUserGrp, "width" => 4),
+                array("text" => $check, "width" => 2),
+                array("text" => $btn, "width" => 2)
+            ))->appendCustomClass("align-items-center");
+            // do render...
+            ?>
+        ');
 
         // direct set form to inline
         $form16 = new Form();
@@ -1145,6 +1622,16 @@ class BootstrapView
             ->setFormAction(clone $btn);
         $form16Well = clone $bsExample;
         $form16Well->appendInnerElements($form16);
+        $codeExample32 = new Code('
+            <?php
+            $form = new Form();
+            // ...
+            $form->appendInnerElements(array($inputName, $inputUserGrp, $check))
+                ->setFormType("inline")
+                ->setFormAction($btn);
+            // do render...
+            ?>
+        ');
 
         // inline form with select, this one failed, but you can insert the checkbox and button into a row before.
         $form17 = new Form();
@@ -1159,6 +1646,22 @@ class BootstrapView
             ->setFormAction()
             ->setFormType("inline")
             ->enclose(clone $bsExample);
+        $codeExample33 = new Code('
+            <?php
+            $form = new Form();
+            $select = new Select();
+            $select->setCaption("Preference")
+                ->setOptions(array("Choose...", "One", "Two", "Three"))
+                ->setId("inlineFormCustomSelectPref");
+            $check = new Input("checkbox");
+            $check->setOptions(array("Remember my preference"))
+                ->setId("customControlInline");
+            $form->appendInnerElements(array($select, $check))
+                ->setFormAction()
+                ->setFormType("inline");
+            // do your render...
+            ?>
+        ');
 
         // Help text
         $pageHeader4 = new PageHeader("Help text");
@@ -1168,12 +1671,33 @@ class BootstrapView
             ->setId("inputPassword5")
             ->setHelp("Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.");
         $form18Well = $form18->appendInnerElements($inputPwd5)->enclose(clone $bsExample);
+        $codeExample34 = new Code('
+            <?php
+            $form = new Form();
+            $inputPwd = new Input("password");
+            $inputPwd->setCaption("Password")
+                ->setId("inputPassword5")
+                ->setHelp("Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.");
+            $form->appendInnerElements($inputPwd);
+            // do render...
+            ?>
+        ');
 
         $inputPwd6 = new Input("password");
         $well19 = $inputPwd6->setHelp("Must be 8-20 characters long.")
             ->setId("inputPassword6")
             ->setCaption("inputPassword6")
             ->enclose(new Form())->setFormType("inline")->enclose(clone $bsExample);
+        $codeExample35 = new Code('
+            <?php
+            $inputPwd = new Input("password");
+            $form = $inputPwd->setHelp("Must be 8-20 characters long.")
+                ->setId("inputPassword6")
+                ->setCaption("inputPassword6")
+                ->enclose(new Form())->setFormType("inline");
+            // do render...
+            ?>
+        ');
 
         // disabled forms
         $pageHeader5 = new PageHeader("Disabled forms");
@@ -1193,6 +1717,26 @@ class BootstrapView
             ->setIsDisabled()
             ->appendInnerElements(array($inputDisabled, $selectDisabled, $checkDisabled))
             ->enclose(clone $bsExample);
+        $codeExample36 = new Code('
+            <?php
+            $form = new Form();
+            $inputDisabled = new Input();
+            $inputDisabled->setCaption("Disabled input")
+                ->setPlaceholder("Disabled input")
+                ->setId("disabledTextInput");
+            $selectDisabled = new Select();
+            $selectDisabled->setCaption("Disabled select menu")
+                ->setOptions(array("Disabled select"))
+                ->setId("disabledSelect");
+            $checkDisabled = new Input("checkbox");
+            $checkDisabled->setOptions(array("Can\'t check this"))
+                ->setId("disabledFieldsetCheck");
+            $form->setFormAction()
+                ->setIsDisabled()
+                ->appendInnerElements(array($inputDisabled, $selectDisabled, $checkDisabled));
+            // do render then...
+            ?>
+        ');
 
         $pageHeader6 = new PageHeader("Validation");
         Input::$AUTO_NAMING = true;
@@ -1237,6 +1781,64 @@ class BootstrapView
         $form21->appendInnerElements(array($formRow5, $formRow6, $check6))
             ->setRequireIcon(null)
             ->setFormAction($btn2);
+        $codeExample37 = new Code('
+            <?php
+            Input::$AUTO_NAMING = true; // Input fields will be named as their id.
+            $form = new Form();
+            $inputFirstName = new Input();
+            $inputFirstName->setCaption("First name")
+                ->setPlaceholder("First name")
+                ->setDefaultValue("Mark")
+                ->setIsRequired()
+                ->setId("validationCustom01");
+            $inputLastName = new Input();
+            $inputLastName->setCaption("Last name")
+                ->setPlaceholder("Last name")
+                ->setDefaultValue("Otto")
+                ->setIsRequired()
+                ->setId("validationCustom02");
+            $inputGrp = new InputGroup();
+            $inputGrp->setPlaceholder("Username")
+                ->setId("validationCustomUsername")
+                ->setIsRequired()
+                ->setLeftAddon(array("@"))
+                ->setCaption("Username");
+            $formRow = new Row();
+            $formRow->setForForm()
+                ->appendItems(array($inputFirstName, $inputLastName, $inputGrp));
+            $inputCity = new Input ();
+            $inputCity->setCaption("City")
+                ->setIsRequired()
+                ->setPlaceHolder("City");
+            $selectState = new Input();
+            $selectState->setPlaceHolder("State")
+                ->setCaption("State")
+                ->setIsRequired()
+                ->setId("inputState");
+            $inputZip = new Input();
+            $inputZip->setCaption("Zip")
+                ->setId("inputZip")
+                ->setIsRequired()
+                ->setPlaceHolder("Zip");
+            $formRow2 = new Row();
+            $formRow2->appendItems(array(
+                array("text" => $inputCity, "width" => 6),
+                array("text" => $selectState, "width" => 3),
+                array("text" => $inputZip, "width" => 3)
+            ));
+            $check = new Input("checkbox");
+            $check->setOptions(array("Agree to terms and conditions "))
+                ->setIsRequired();
+            $btn = new Button();
+            $btn->setIsSubmit()
+                ->setContext("primary")
+                ->setText("Submit form");
+            $form->appendInnerElements(array($formRow, $formRow2, $check))
+                ->setRequireIcon(null)
+                ->setFormAction($btn);
+            // do your render... 
+            ?>
+        ');
         // server-side validation @todo bs 4.0.0
         /*
         $form22 = new Form();
@@ -1295,6 +1897,42 @@ class BootstrapView
         $form22->setInnerElements(array(
             $inputVldt, $inputVldt2, $inputVldt3, $inputVldt4, $inputVldt5, $inputVldt6
         ));
+        $codeExample38 = new Code('
+            <?php
+            $form = new Form();
+            $inputVldt = new Input();
+            $inputVldt->setCaption("Input with success")
+                ->setValidationState("success")
+                ->setHasFeedback(false)
+                ->setId("inputSuccess1")
+                ->setHelp("A block of help text that breaks onto a new line and may extend beyond one line.");
+            $inputVldt2 = new Input();
+            $inputVldt2->setCaption("Input with warning")
+                ->setValidationState("warning")
+                ->setHasFeedback(false)
+                ->setId("inputWarning1");
+            $inputVldt3 = new Input();
+            $inputVldt3->setCaption("Input with error")
+                ->setValidationState("error")
+                ->setHasFeedback(false)
+                ->setId("inputError1");
+            $inputVldt4 = new Input("checkbox");
+            $inputVldt4->setOptions(array("Checkbox with success"))
+                ->setValidationState("success")
+                ->setId("checkboxSuccess");
+            $inputVldt5 = new Input("checkbox");
+            $inputVldt5->setOptions(array("Checkbox with warning"))
+                ->setValidationStateWarning()
+                ->setId("checkboxWarning");
+            $inputVldt6 = new Input("checkbox");
+            $inputVldt6->setOptions(array("Checkbox with error"))
+                ->setValidationStateDanger()
+                ->setId("checkboxError");
+            $form->setInnerElements(array(
+                $inputVldt, $inputVldt2, $inputVldt3, $inputVldt4, $inputVldt5, $inputVldt6
+            ));
+            // do render... 
+        ');
 
         $inputFeedback = $inputVldt->cloneInstance()->setHasFeedback(true)->setHelp("");
         $inputFeedback2 = $inputVldt2->cloneInstance()->setHasFeedback(true);
@@ -1308,16 +1946,68 @@ class BootstrapView
         $form23->setInnerElements(array(
             $inputFeedback, $inputFeedback2, $inputFeedback3, $inputFeedback4
         ));
+        $codeExample39 = new Code('
+            <?php
+            $inputFeedback = new Input();
+            $inputFeedback->setCaption("Input with success")
+                ->setValidationState("success")
+                ->setHasFeedback(false)
+                ->setId("inputSuccess1")
+                ->setHasFeedback(true);
+            $inputFeedback2 = new Input();
+            $inputFeedback2->setCaption("Input with warning")
+                ->setValidationState("warning")
+                ->setHasFeedback(false)
+                ->setId("inputWarning1")
+                ->setHasFeedback(true);
+            $inputFeedback3 = new Input();
+            $inputFeedback3->setCaption("Input with error")
+                ->setValidationState("error")
+                ->setHasFeedback(false)
+                ->setId("inputError1")
+                ->setHasFeedback(true);
+            $inputFeedback4 = new InputGroup();
+            $inputFeedback4->setCaption("Input group with success")
+                ->setLeftAddon("@")
+                ->setId("inputGroupSuccess1")
+                ->setValidationState("success");
+            $form = new Form();
+            $form->setInnerElements(array(
+                $inputFeedback, $inputFeedback2, $inputFeedback3, $inputFeedback4
+            ));
+            // do render then... 
+            ?>
+        ');
 
         $form24 = new Form();
         $form24->setFormTypeHorizontal()->setInnerElements(array(
             clone $inputFeedback, clone $inputFeedback4
         ));
+        $codeExample40 = new Code('
+            <?php
+            $form = new Form();
+            // ... 
+            $form->setFormTypeHorizontal()->setInnerElements(array(
+                $inputFeedback, $inputFeedback2
+            ));
+            // do render then... 
+            ?>
+        ');
 
         $form25 = new Form ();
         $form25->setFormType("form-inline")->setInnerElements(array(
             clone $inputFeedback, clone $inputFeedback4
         ));
+        $codeExample41 = new Code('
+            <?php
+            $form = new Form();
+            // ... 
+            $form->setFormType("form-inline")->setInnerElements(array(
+                $inputFeedback, $inputFeedback2
+            ));
+            // do render then... 
+            ?>
+        ');
 
         $pageHeader_5 = new PageHeader("Buttons");
         $basicBtn = new Button();
@@ -1331,6 +2021,23 @@ class BootstrapView
         $bsExample9 = $bsExample->cloneInstance()->setInnerElements(array(
             $basicBtn, $basicBtn2, $basicBtn3, $basicBtn4
         ));
+        $codeExample42 = new Code('
+            <?php
+            $basicBtn = new Button();
+            $basicBtn->setUrl("#")->setText("Link");
+            $basicBtn2 = new Button();
+            $basicBtn2->setText("Button");
+            $basicBtn3 = new Button();
+            $basicBtn3->setText("Input"); // actually can\'t do a button by Input class yet.
+            $basicBtn4 = new Button();
+            $basicBtn4->setIsSubmit()->setText("Submit");
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $basicBtn, $basicBtn2, $basicBtn3, $basicBtn4
+            ));
+            $bs->render(true);
+            ?>
+        ');
 
         $defaultBtn = new Button();
         $defaultBtn->setText("Default");
@@ -1349,6 +2056,28 @@ class BootstrapView
         $bsExample10 = $bsExample->cloneInstance()->setInnerElements(array(
             $defaultBtn, $defaultBtn2, $defaultBtn3, $defaultBtn4, $defaultBtn5, $defaultBtn6, $defaultBtn7
         ));
+        $codeExample43 = new Code('
+            <?php
+            $defaultBtn = new Button();
+            $defaultBtn->setText("Default");
+            $defaultBtn2 = new Button();
+            $defaultBtn2->setText("Primary")->setContext("primary");
+            $defaultBtn3 = new Button();
+            $defaultBtn3->setText("success")->setContext("success");
+            $defaultBtn4 = new Button();
+            $defaultBtn4->setText("Info")->setContext("info");
+            $defaultBtn5 = new Button();
+            $defaultBtn5->setText("Warning")->setContextWarning();
+            $defaultBtn6 = new Button();
+            $defaultBtn6->setText("Danger")->setContextDanger();
+            $defaultBtn7 = new Button();
+            $defaultBtn7->setText("Link")->setIsLink();
+            $bs = new Typography("div:bs-example");
+            $bs->setInnerElements(array(
+                $defaultBtn, $defaultBtn2, $defaultBtn3, $defaultBtn4, $defaultBtn5, $defaultBtn6, $defaultBtn7
+            ));
+            $bs-render(true);
+        ');
 
         $blockBtn = new Button();
         $blockBtn->setIsBlock()->setContextPrimary()->setText("Block level button")->setSizeLg();
@@ -1359,6 +2088,21 @@ class BootstrapView
             ->setInnerElements(array(
                 $blockBtn, $blockBtn2
             ));
+        $codeExample44 = new Code('
+            <?php
+            $blockBtn = new Button();
+            $blockBtn->setIsBlock()->setContextPrimary()->setText("Block level button")->setSizeLg();
+            $blockBtn2 = new Button();
+            $blockBtn2->setIsBlock()->setContextDefault()->setText("Block level button")->setSizeLg();
+            $bs = new Typography("div");
+            $bs->setIsCenterBlock()->setCustomStyle("max-width:400px")
+                ->setInnerElements(array(
+                    $blockBtn, $blockBtn2
+                ));
+            $bs->render(true);
+            ?>
+        ');
+
         $activeBtn = new Button();
         $activeBtn->setText("Primary button")->setContextPrimary()->setSizeLg()->setIsActive();
         $activeBtn2 = new Button();
@@ -1366,6 +2110,19 @@ class BootstrapView
         $bsExample11 = $bsExample->cloneInstance()->setInnerElements(array(
             $activeBtn, $activeBtn2
         ));
+        $codeExample45 = new Code('
+            <?php
+            $activeBtn = new Button();
+            $activeBtn->setText("Primary button")->setContextPrimary()->setSizeLg()->setIsActive();
+            $activeBtn2 = new Button();
+            $activeBtn2->setText("Button")->setContextDefault()->setSizeLg()->setIsActive();
+            $bs = new Typography("div");
+            $bs->setInnerElements(array(
+                $activeBtn, $activeBtn2
+            ));
+            $bs->render(true);
+            ?>
+        ');
 
         $disabledBtn = new Button();
         $disabledBtn->setText("Primary button")->setContextPrimary()->setSize(5)->setIsDisabled();
@@ -1374,6 +2131,22 @@ class BootstrapView
         $bsExample12 = $bsExample->cloneInstance()->setInnerElements(array(
             $disabledBtn, $disabledBtn2
         ));
+        $codeExample46 = new Code(<<<'EXAMPLE46'
+        
+            <?php
+            $disabledBtn = new Button();
+            $disabledBtn->setText("Primary button")->setContextPrimary()->setSize(5)->setIsDisabled();
+            $disabledBtn2 = new Button();
+            $disabledBtn2->setText("Button")->setContextDefault()->setSize(5)->setIsDisabled();
+            $bs = new Typography("div");
+            $bs->setInnerElements(array(
+                $disabledBtn, $disabledBtn2
+            ));
+            $bs->render(true);
+            ?>
+EXAMPLE46
+);
+
 
         $pageHeader_6 = new PageHeader("Images");
         $img = new Image("rounded");
@@ -1385,6 +2158,23 @@ class BootstrapView
         $bsExample13 = $bsExample->cloneInstance()->setInnerElements(array(
             $img, $img2, $img3
         ));
+        $codeExample47 = new Code(<<<'EXAMPLE47'
+        
+            <?php
+            $img = new Image("rounded");
+            $img->setSource("holder.js/140x140");
+            $img2 = new Image("circle");
+            $img2->setSource("holder.js/140x140");
+            $img3 = new Image("thumbnail");
+            $img3->setSource("holder.js/140x140");
+            $bs = new Typography("div"):
+            $bs->setInnerElements(array(
+                $img, $img2, $img3
+            ));
+            $bs->render(true);
+            ?>        
+EXAMPLE47
+);
 
         $pageHeader_7 = new PageHeader("Helper classes");
         $text = new Typography("p");
@@ -1402,6 +2192,30 @@ class BootstrapView
         $bsExample14 = $bsExample->cloneInstance()->setInnerElements(array(
             $text, $text2, $text3, $text4, $text5, $text6
         ));
+        $codeExample48 = new Code(<<<'EXAMPLE48'
+        
+            <?php
+            $text = new Typography("p");
+            $text->setTextContext("muted")->setText("Fusce dapibus, tellus ac cursus commodo, tortor mauris nibh.");
+            $text2 = new Typography("p");
+            $text2->setTextContext("primary")->setText("Nullam id dolor id nibh ultricies vehicula ut id elit.");
+            $text3 = new Typography("p");
+            $text3->setTextContext("success")->setText("Duis mollis, est non commodo luctus, nisi erat porttitor ligula.");
+            $text4 = new Typography("p");
+            $text4->setTextContext("info")->setText("Maecenas sed diam eget risus varius blandit sit amet non magna.");
+            $text5 = new Typography("p");
+            $text5->setTextContext("warning")->setText("Etiam porta sem malesuada magna mollis euismod.");
+            $text6 = new Typography("p");
+            $text6->setTextContext("danger")->setText("Donec ullamcorper nulla non metus auctor fringilla.");
+            $bs = new Typography("div");
+            $bs->setInnerElements(array(
+                $text, $text2, $text3, $text4, $text5, $text6
+            ));
+            $bs->render(true);
+            ?>        
+EXAMPLE48
+);
+
         $bsExample15 = $bsExample->cloneInstance()
             ->appendCustomClass("bs-example-bg-classes")
             ->setInnerElements(array(
@@ -1411,6 +2225,31 @@ class BootstrapView
                 $text5->cloneInstance()->setBgContext("warning")->setTextContext(""),
                 $text6->cloneInstance()->setBgContext("danger")->setTextContext("")
             ));
+        $codeExample49 = new Code(<<<'EXAMPLE49'
+        
+            <?php
+            $text = new Typography("p");
+            $text->setTextContext("muted")->setText("Fusce dapibus, tellus ac cursus commodo, tortor mauris nibh.");
+            $text2 = new Typography("p");
+            $text2->setBgContext("primary")->setText("Nullam id dolor id nibh ultricies vehicula ut id elit.");
+            $text3 = new Typography("p");
+            $text3->setBgContext("success")->setText("Duis mollis, est non commodo luctus, nisi erat porttitor ligula.");
+            $text4 = new Typography("p");
+            $text4->setBgContext("info")->setText("Maecenas sed diam eget risus varius blandit sit amet non magna.");
+            $text5 = new Typography("p");
+            $text5->setBgContext("warning")->setText("Etiam porta sem malesuada magna mollis euismod.");
+            $text6 = new Typography("p");
+            $text6->setBgContext("danger")->setText("Donec ullamcorper nulla non metus auctor fringilla.");
+            $bs = new Typography("div");
+            $bs->appendCustomClass("bs-example-bg-classes")
+                ->setInnerElements(array(
+                    $text, $text2, $text3, $text4, $text5, $text6
+                ));
+            $bs->render(true);
+            ?>        
+        
+EXAMPLE49
+);
 
         // container
         $container = new Typography("div:container", null, array("role" => "main"));
@@ -1435,90 +2274,136 @@ class BootstrapView
             $codeExample6,
             new Typography("h2", array("innerText" => "Transformation classes")),
             $bsExample7,
+            $codeExample7,
             new Typography("h2", array("innerText" => "Lists")),
             $list->enclose(clone $bsExample),
+            $codeExample8,
             new Typography("h3", array("innerText" => "Unstyled")),
             $listUnstyled->enclose(clone $bsExample),
+            $codeExample9,
             new Typography("h3", array("innerText" => "Inline")),
             $listInline->enclose(clone $bsExample),
+            $codeExample10,
             $pageHeader_3,
             new Typography("h2", array("innerText" => "Inline")),
             $codeSection->enclose(clone $bsExample),
+            $codeExample11,
             new Typography("h2", array("innerText" => "User input")),
             $sectionUserInput->enclose(clone $bsExample),
+            $codeExample12,
             new Typography("h2", array("innerText" => "PHP code")),
             $phpCode->enclose(clone $bsExample),
+            $codeExample13,
             $pageHeader_4,
             $table1->enclose(clone $bsExample),
+            $codeExample14,
             new Typography("h2", array("innerText" => "Striped rows")),
             $table1->cloneInstance()->setIsStriped()->enclose(clone $bsExample),
+            $codeExample14_1,
             new Typography("h2", array("innerText" => "Bordered table")),
             $table1->cloneInstance()->setIsBordered()->enclose(clone $bsExample),
+            $codeExample14_2,
             new Typography("h2", array("innerText" => "Hover rows")),
             $table1->cloneInstance()->setWithHoverState()->enclose(clone $bsExample),
+            $codeExample14_3,
             new Typography("h2", array("innerText" => "Condensed table")),
             $table1->cloneInstance()->setIsCondensed()->enclose(clone $bsExample),
+            $codeExample14_4,
             new Typography("h2", array("innerText" => "Contextual classes")),
             $table2->enclose(clone $bsExample),
+            $codeExample15,
             new Typography("h2", array("innerText" => "Responsive tables")),
             $bsExample8,
+            $codeExample16,
             $pageHeader,
             $form1->enclose(clone $bsExample),
-            // $form1Code,
+            $codeExample17,
             new Typography("h2", array("innerText" => "Form controls")),
             $form2->enclose(clone $bsExample),
+            $codeExample18,
             $form3->enclose(clone $bsExample),
+            $codeExample19,
             new Typography("h2", array("innerText" => "Readonly")),
             $form4->enclose(clone $bsExample),
+            $codeExample20,
             $form5->enclose(clone $bsExample),
+            $codeExample21,
             $form6->enclose(clone $bsExample),
+            $codeExample22,
             $pageHeader2,
             $form7->enclose(clone $bsExample),
+            $codeExample23,
             $form8->enclose(clone $bsExample),
+            $codeExample24,
             $form9->enclose(clone $bsExample),
+            $codeExample25,
             new Typography("h2", array("innerText" => "Without labels")),
             $form10->enclose(clone $bsExample),
+            $codeExample26,
             $pageHeader3,
             new Typography("h2", array("innerText" => "Form group")),
             $form11->enclose(clone $bsExample),
+            $codeExample27,
             new Typography("h2", array("innerText" => "Form grid")),
             $form12Well,
+            $codeExample28,
             new Typography("h2", array("innerText" => "Form row")),
             $form13Well,
+            $codeExample29,
             new Typography("h2", array("innerText" => "Horizontal form")),
             $form14Well,
+            $codeExample30,
             new Typography("h2", array("innerText" => "Inline forms")),
             $form15Well,
+            $codeExample31,
             $form16Well,
+            $codeExample32,
             $form17Well,
+            $codeExample33,
             $pageHeader4,
             $form18Well,
+            $codeExample34,
             $well19,
+            $codeExample35,
             $pageHeader5,
             $fieldset20,
+            $codeExample36,
             $pageHeader6,
             new Typography("h2", array("innerText" => "Browser defaults")),
             $form21->enclose(clone $bsExample),
+            $codeExample37,
             new Typography("h2", array("innerText" => "Validation states")),
-            $form22,
+            $form22->enclose(clone $bsExample),
+            $codeExample38,
             $form23->enclose(clone $bsExample),
+            $codeExample39,
             $form24->enclose(clone $bsExample),
+            $codeExample40,
             $form25->enclose(clone $bsExample),
+            $codeExample41,
             $pageHeader_5,
             $bsExample9,
+            $codeExample42,
             $bsExample10,
+            $codeExample43,
             $well20->enclose(clone $bsExample),
+            $codeExample44,
             new Typography("h2", array("innerText" => "Active state")),
             $bsExample11,
+            $codeExample45,
             new Typography("h2", array("innerText" => "Disabled state")),
             $bsExample12,
+            $codeExample46,
             $pageHeader_6,
             $bsExample13,
+            $codeExample47,
             $pageHeader_7,
             new Typography("h2", array("innerText" => "Contextual colors")),
             $bsExample14,
+            $codeExample48,
             new Typography("h2", array("innerText" => "Contextual backgrounds")),
-            $bsExample15
+            $bsExample15,
+            $codeExample49
         ))
             ->setCaption("Example textarea");
 
@@ -1571,8 +2456,8 @@ class BootstrapView
             array("text" => "Action", "url" => "#"),
             array("text" => "Another action", "url" => "#"),
             array("text" => "Something else here", "url" => "#"),
-            array("seperator" => true),
-            array("text" => "Seperated link", "url" => "#")
+            array("separator" => true),
+            array("text" => "Separated link", "url" => "#")
         );
         $dropdown = new Dropdown();
         $dropdownDiv = $dropdown->appendItems($dropMenu)
@@ -1861,8 +2746,8 @@ class BootstrapView
         $dropdown5->setMode("inline")
             ->setText("Dropdown")
             ->setItems(array_merge($dropMenu, array(
-                array("seperator" => true),
-                array("text" => "One more seperated link", "url" => "#"))));
+                array("separator" => true),
+                array("text" => "One more separated link", "url" => "#"))));
         $navbar->setBrand("Brand")
             ->appendItems(array(
                 array("text" => "Link", "url" => "#", 'active' => true),

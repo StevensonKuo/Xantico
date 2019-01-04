@@ -48,7 +48,7 @@ class Dropdown extends Typography
             "text" => "&nbsp;",
             "url" => "",
             "head" => false,
-            "seperator" => false,
+            "separator" => false,
             "active" => false,
             "disabled" => false
         );
@@ -163,9 +163,9 @@ class Dropdown extends Typography
             foreach ($this->items as $key => $item) {
                 if ($item ['text'] instanceof HtmlTag && $item ['text']->getTagName() == "li") {
                     continue;
-                } else if ($item ['seperator'] == true) {
+                } else if ($item ['separator'] == true) {
                     $_li = new HtmlTag("li");
-                    $_li->appendAttrs(array("role" => "seperator"));
+                    $_li->appendAttrs(array("role" => "separator"));
                     $_li->appendCustomClass("divider")
                         ->setInnerText("\t");
                 } else {
@@ -332,7 +332,7 @@ class Dropdown extends Typography
     }
 
     /**
-     * @return the $menu
+     * @return |null
      */
     public function getMenu()
     {
@@ -344,7 +344,8 @@ class Dropdown extends Typography
     }
 
     /**
-     * @param Ambigous <NULL, \model\bootstrap\basic\Typography> $menu
+     * @param HtmlTag $menu
+     * @return $this
      */
     public function setMenu(HtmlTag $menu)
     {
@@ -353,9 +354,8 @@ class Dropdown extends Typography
     }
 
     /**
-     * @desc check if droplet
-     * {@inheritDoc}
-     * @see \model\Xantico\basic\Typography::appendItems()
+     * @param array $items
+     * @return $this|\model\Xantico\basic\Typography
      */
     public function setItems($items)
     {
@@ -365,14 +365,14 @@ class Dropdown extends Typography
                     $items[$i] ['text'] = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
                     $items[$i] ['url'] = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
                     $items[$i] ['head'] = isset($items[$i] ['head']) ? $items[$i] ['head'] : $this->screw ['head'];
-                    $items[$i] ['seperator'] = isset($items[$i] ['seperator']) ? $items[$i] ['seperator'] : $this->screw ['seperator'];
+                    $items[$i] ['separator'] = isset($items[$i] ['separator']) ? $items[$i] ['separator'] : $this->screw ['separator'];
                     $items[$i] ['active'] = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
                     $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
                 } else {
                     $_item ['text'] = $items[$i];
                     $_item ['url'] = $this->screw ['url'];
                     $_item ['head'] = $this->screw ['head'];
-                    $_item ['seperator'] = $this->screw ['seperator'];
+                    $_item ['separator'] = $this->screw ['separator'];
                     $_item ['active'] = $this->screw ['active'];
                     $_item ['disabled'] = $this->screw ['disabled'];
                     $items [$i] = $_item;
@@ -397,14 +397,14 @@ class Dropdown extends Typography
                     $items[$i] ['text'] = isset($items[$i] ['text']) ? $items[$i] ['text'] : $this->screw ['text'];
                     $items[$i] ['url'] = isset($items[$i] ['url']) ? $items[$i] ['url'] : $this->screw ['url'];
                     $items[$i] ['head'] = isset($items[$i] ['head']) ? $items[$i] ['head'] : $this->screw ['head'];
-                    $items[$i] ['seperator'] = isset($items[$i] ['seperator']) ? $items[$i] ['seperator'] : $this->screw ['seperator'];
+                    $items[$i] ['separator'] = isset($items[$i] ['separator']) ? $items[$i] ['separator'] : $this->screw ['separator'];
                     $items[$i] ['active'] = isset($items[$i] ['active']) ? $items[$i] ['active'] : $this->screw ['active'];
                     $items[$i] ['disabled'] = isset($items[$i] ['disabled']) ? $items[$i] ['disabled'] : $this->screw ['disabled'];
                 } else {
                     $_item ['text'] = $items[$i];
                     $_item ['url'] = $this->screw ['url'];
                     $_item ['head'] = $this->screw ['head'];
-                    $_item ['seperator'] = $this->screw ['seperator'];
+                    $_item ['separator'] = $this->screw ['separator'];
                     $_item ['active'] = $this->screw ['active'];
                     $_item ['disabled'] = $this->screw ['disabled'];
                     $items [$i] = $_item;
@@ -417,7 +417,7 @@ class Dropdown extends Typography
     }
 
     /**
-     * @return the $isDropup
+     * @return bool|mixed
      */
     public function getIsDropup()
     {
@@ -425,7 +425,8 @@ class Dropdown extends Typography
     }
 
     /**
-     * @param Ambigous <boolean, array> $isDropup
+     * @param bool $isDropup
+     * @return $this
      */
     public function setIsDropup($isDropup = true)
     {
@@ -437,7 +438,8 @@ class Dropdown extends Typography
 
     /**
      * Mode : [button|inline]
-     * @param string $mode [button|inline]
+     * @param string $mode
+     * @return $this|Typography
      */
     public function setMode($mode)
     {
@@ -466,7 +468,7 @@ class Dropdown extends Typography
     }
 
     /**
-     * @return the $isSplit
+     * @return bool|mixed
      */
     public function getIsSplit()
     {
@@ -474,7 +476,8 @@ class Dropdown extends Typography
     }
 
     /**
-     * @param Ambigous <boolean, array> $isSplit
+     * @param bool $isSplit
+     * @return $this
      */
     public function setIsSplit($isSplit = true)
     {
@@ -483,7 +486,7 @@ class Dropdown extends Typography
     }
 
     /**
-     * @return the $dropdownIcon
+     * @return Icon
      */
     public function getDropdownIcon()
     {

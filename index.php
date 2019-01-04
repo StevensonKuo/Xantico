@@ -1,10 +1,10 @@
 <?php
 include 'requires.php';
 require 'controller/BootstrapController.php';
-require 'controller/DevoopsController.php';
+//require 'controller/DevoopsController.php';
 
 use controller\BootstrapController;
-use controller\DevoopsController;
+//use controller\DevoopsController;
 
 ob_start('ob_gzhandler');
 

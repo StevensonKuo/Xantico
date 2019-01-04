@@ -23,6 +23,11 @@ This name is owned by a Mayan fire god. Btw it looks cool so I decide use it to 
 3. Include models how you usually do.
 4. Enjoy it!
 
+A trendy way to install, by composer:
+```
+composer require xantico/xantico
+```
+
 ## System requirements
 * I am not very sure, maybe PHP >= 5.3?
 * My development environ. is under XAMPP v3.2.2. Using Boostrap 3.3.7 standards.

@@ -58,7 +58,7 @@ $btPalette->setCustomScriptsFiles('https://v3.bootcss.com/assets/js/docs.min.js'
 
 (There still one line for customizing Style Sheet contents. I am going to skip it.)
 
-Then you can start to put some colour! (Suddenly realized that md is made by a British.)
+Then you can start to put some color!
 
 ### Create a Jumbotron for instance
 

@@ -41,7 +41,7 @@ $btPalette = new Xantico();
 
 (you can see my sample code in view/BootstrapView.php.)
 
-Although I wish that not too many prepare work to do, you still have to decide where you to load Bootstrap CSS/JS. I wrote down their CDN path inside Bootstrap model as const. var, and you can call them by this way:
+Although I wish that there ain't too many prepare works to do, you still have to decide where you to load Bootstrap CSS/JS. I wrote down their CDN path inside Bootstrap model as const. var, and you can call them by this way:
 
 ```php
 $btPalette->setIsLoadBootstrapFromCDN()->setIsLoadJQueryFromCDN();
@@ -82,7 +82,7 @@ $container = new Container();
 $container->setInnerElements($jumbotron);
 ```
 
-Now we finish it and render the HTML code to see your results.
+Now we finish it and render the HTML for your results.
 
 ```php
 $btPalette->setBodyContents($container);

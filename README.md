@@ -23,7 +23,7 @@ This name is owned by a Mayan fire god. Btw it looks cool so I decide use it to 
 3. Include models how you usually do.
 4. Enjoy it!
 
-A trendy way to install, by composer:
+A fashion way to install, by composer:
 ```
 composer require xantico/xantico
 ```

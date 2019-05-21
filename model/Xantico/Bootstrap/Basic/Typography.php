@@ -9,12 +9,12 @@ class Typography extends HtmlTag
     use ContextAwareTrait;
     use ContextualTextAwareTrait;
     use BackgroundContextAwareTrait;
+    use TextAlignAwareTrait;
 
     public static $AUTO_ID = false;    // string
 
     protected static $alignArr = array("right", "left", "center", ""); // for one more type/mode to switch what you want.
     protected static $vAlignArr = array("top", "middle", "bottom", "");      // string
-    protected static $textAlignArr = array("left", "center", "right", "justify", "nowrap", "");// string
     protected static $textTransformArr = array("uppercase", "lowercase", "capitalize", ""); // string
     protected static $embedTagsArr = array("iframe", "embed", "video", "object");   // string
 
@@ -33,7 +33,6 @@ class Typography extends HtmlTag
     protected $border; // boolean
     protected $items; // boolean
     protected $textClass; // boolean
-    protected $textAlign; // boolean
     protected $textTransform; // string
     protected $grid;
     protected $gridOffset;
@@ -388,7 +387,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param mixed $caption
+     * @param string $caption
+     * @return Typography
      */
     public function setCaption($caption)
     {
@@ -555,7 +555,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $grid
+     * @return array
      */
     public function getGrid()
     {
@@ -563,7 +563,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param Ambigous <NULL, array> $grid
+     * @param array|null $grid
+     * @return Typography
      */
     public function setGrid($grid)
     {
@@ -572,9 +573,9 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @desc a search method like DOM does.
-     * @desc use "%" to search a $keyword Xantico classes. like "%PageHeader" or "%ProgressBar"
-     * @param unknown $keyword
+     * a search method like DOM does.
+     * use "%" to search a $keyword Xantico classes. like "%PageHeader" or "%ProgressBar"
+     * @param string $keyword
      * @return array
      */
     public function search($keyword)
@@ -652,9 +653,9 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @desc get item by index.
-     * @param unknown $index
-     * @return unknown|NULL
+     * get item by index.
+     * @param int $index
+     * @return HtmlTag|string|NULL
      */
     public function getItem($index)
     {
@@ -666,10 +667,10 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @desc set item by index.
+     * set item by index.
      * @param int $index
      * @param mixed $item
-     * @return \model\Xantico\HtmlTag
+     * @return Typography
      */
     public function setItem($index, $item)
     {
@@ -686,7 +687,9 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param string $verticalAlign [top|middle|bottom]
+     * [top|middle|bottom]
+     * @param string $verticalAlign
+     * @return Typography
      */
     public function setVerticalAlign($verticalAlign)
     {
@@ -716,7 +719,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $isEmbedResponsiveItem
+     * @return bool
      */
     public function getEmbedResponsive()
     {
@@ -724,7 +727,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param Ambigous <boolean, array> $isEmbedResponsiveItem
+     * @param string $embedResponsive
+     * @return Typography
      */
     public function setEmbedResponsive($embedResponsive = "16:9")
     {
@@ -733,57 +737,6 @@ class Typography extends HtmlTag
         if (!empty($embedRatio) && isset($embedRatio[0]) && isset($embedRatio [1]) && is_numeric($embedRatio[1] / $embedRatio[0])) {
             $this->embedResponsive = $embedResponsive;
         }
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTextAlign()
-    {
-        return $this->textAlign;
-    }
-
-    /**
-     * @param string $textAlign
-     */
-    public function setTextAlign($textAlign)
-    {
-        $textAlign = strtolower($textAlign);
-        if (in_array($textAlign, self::$textAlignArr)) {
-            $this->textAlign = $textAlign;
-        }
-
-        return $this;
-    }
-
-    public function setTextAlignLeft()
-    {
-        $this->textAlign = "left";
-        return $this;
-    }
-
-    public function setTextAlignCenter()
-    {
-        $this->textAlign = "center";
-        return $this;
-    }
-
-    public function setTextAlignRight()
-    {
-        $this->textAlign = "right";
-        return $this;
-    }
-
-    public function setTextAlignJustify()
-    {
-        $this->textAlign = "justify";
-        return $this;
-    }
-
-    public function setTextAlignNowrap()
-    {
-        $this->textAlign = "nowrap";
         return $this;
     }
 

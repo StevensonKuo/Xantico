@@ -15,7 +15,7 @@ use Xantico\Bootstrap\Basic\Dropdown;
 use Xantico\Bootstrap\Basic\Form;
 use Xantico\Bootstrap\Basic\Icon;
 use Xantico\Bootstrap\Basic\Image;
-use Xantico\Bootstrap\Basic\InputInterface;
+use Xantico\Bootstrap\Basic\Input;
 use Xantico\Bootstrap\Basic\InputGroup;
 use Xantico\Bootstrap\Basic\Jumbotron;
 use Xantico\Bootstrap\Basic\Label;
@@ -1087,16 +1087,16 @@ class BootstrapView
 
         $pageHeader = new PageHeader("Forms");
         $form1 = new Form();
-        $inputEmail = new InputInterface("email");
+        $inputEmail = new Input("email");
         $inputEmail->setCaption("Email Address")
             ->setHelp("We'll never share your email with anyone else.")
             ->setPlaceholder("Enter Email")
             ->setId("exampleInputEmail1");
-        $inputPwd = new InputInterface("password");
+        $inputPwd = new Input("password");
         $inputPwd->setCaption("Password")
             ->setPlaceholder("password")
             ->setId("exampleInputPassword1");
-        $check = new InputInterface("checkbox");
+        $check = new Input("checkbox");
         $check->setOptions(array("Check me out"));
         $form1->setFormAction()
             ->appendInnerElements(array($inputEmail, $inputPwd, $check));
@@ -1121,7 +1121,7 @@ class BootstrapView
 
         // form-control for select, textarea
         $form2 = new Form();
-        $inputEmail2 = new InputInterface("email");
+        $inputEmail2 = new Input("email");
         $inputEmail2->setPlaceholder("name@example.com")
             ->setId("exampleFormControlInput1")
             ->setCaption("Email address");
@@ -1176,7 +1176,7 @@ class BootstrapView
 
         // file input
         $form3 = new Form();
-        $inputFile = new InputInterface("file");
+        $inputFile = new Input("file");
         $inputFile->setId("exampleFormControlFile1")
             ->setCaption("Example file input");
         $form3->appendInnerElements($inputFile);
@@ -1207,7 +1207,7 @@ class BootstrapView
          $inputSm->setSize(3)
          ->setPlaceholder(".form-control-sm");
          */
-        $inputRO = new InputInterface();
+        $inputRO = new Input();
         $inputRO->setIsReadonly(true)
             ->setPlaceholder("Readonly input here…");
 
@@ -1229,7 +1229,7 @@ class BootstrapView
         $form5 = new Form();
         $form5->setFormType("horizontal")
             ->setLabelRatio("2:10");
-        $inputPlain = new InputInterface();
+        $inputPlain = new Input();
         $inputPlain->setIsStatic()
             ->setDefaultValue("email@example.com")
             ->setCaption("Email")
@@ -1263,7 +1263,7 @@ class BootstrapView
         $form6->setFormType("inline")
             ->setFormAction();
         $form6Element = $form6->getElement(0);
-        if ($form6Element instanceof InputInterface) {
+        if ($form6Element instanceof Input) {
             $form6Element->setIsReadonly(true)->setIsStatic(false);
         }
         $codeExample22 = new Code('
@@ -1290,7 +1290,7 @@ class BootstrapView
         $pageHeader2 = new PageHeader("Checkboxes and radios");
         // checkbox
         $form7 = new Form();
-        $checkbox1 = new InputInterface("checkbox");
+        $checkbox1 = new Input("checkbox");
         $checkbox1->setOptions(array("Default checkbox", "Disabled checkbox"))
             ->setDisabledOption(array(1));
         $form7->appendInnerElements($checkbox1);
@@ -1309,7 +1309,7 @@ class BootstrapView
 
         // radio
         $form8 = new Form();
-        $radio1 = new InputInterface("radio");
+        $radio1 = new Input("radio");
         $radio1->setOptions(array("Default radio", "Second default radio", "Disabled radio"))
             ->setDisabledOption(array(2))
             ->setName("exampleRadios");
@@ -1330,7 +1330,7 @@ class BootstrapView
 
         // inline checkbox @todo bs 4.0
         $form9 = new Form();
-        $checkbox2 = new InputInterface("checkbox");
+        $checkbox2 = new Input("checkbox");
         $checkbox2->setOptions(array("option1" => "1", "option2" => "2", "option3" => "3 (disabled)"))
             ->setDisabledOption(array("option3"))
             ->setIsStacked(false);
@@ -1348,10 +1348,10 @@ class BootstrapView
         ');
         // without labels
         $form10 = new Form();
-        $checkboxNoLbl = new InputInterface("checkbox");
+        $checkboxNoLbl = new Input("checkbox");
         $checkboxNoLbl->setOptions(array("option1" => ""))
             ->appendCustomClass("position-static");
-        $radioNoLbl = new InputInterface ("radio");
+        $radioNoLbl = new Input ("radio");
         $radioNoLbl->setOptions(array("option1" => ""))
             ->setName("blankRadio");
 //         ->appendCustomClass("position-static"); // @todo bs 4.0... I don't catch this.
@@ -1372,11 +1372,11 @@ class BootstrapView
         $pageHeader3 = new PageHeader("Layout");
 
         $form11 = new Form();
-        $input1 = new InputInterface();
+        $input1 = new Input();
         $input1->setCaption("Example label")
             ->setPlaceholder("Example input")
             ->setId();
-        $input2 = new InputInterface();
+        $input2 = new Input();
         $input2->setCaption("Another label")
             ->setPlaceholder("Another input")
             ->setId();
@@ -1398,9 +1398,9 @@ class BootstrapView
         ');
         // form grid
         $form12 = new Form();
-        $inputFirstName = new InputInterface();
+        $inputFirstName = new Input();
         $inputFirstName->setPlaceholder("First name");
-        $inputLastName = new InputInterface();
+        $inputLastName = new Input();
         $inputLastName->setPlaceholder("Last name");
         $formRow = new Row();
         $formRow->appendItems(array($inputFirstName, $inputLastName));
@@ -1423,19 +1423,19 @@ class BootstrapView
 
         // a complex example
         $form13 = new Form();
-        $inputEmail3 = new InputInterface("email", array("caption" => "Email"), array("id" => "inputEmail4", "placeholder" => "Email"));
-        $inputPwd3 = new InputInterface("password", array("caption" => "Password"), array("id" => "inputPassword4", "placeholder" => "Password",));
+        $inputEmail3 = new Input("email", array("caption" => "Email"), array("id" => "inputEmail4", "placeholder" => "Email"));
+        $inputPwd3 = new Input("password", array("caption" => "Password"), array("id" => "inputPassword4", "placeholder" => "Password",));
         $formRow2 = new Row();
         $formRow2->appendItems(array($inputEmail3, $inputPwd3));
-        $inputAddress = new InputInterface();
+        $inputAddress = new Input();
         $inputAddress->setCaption("Address")
             ->setPlaceholder("1234 Main St")
             ->setId("inputAddress");
-        $inputAddress2 = new InputInterface();
+        $inputAddress2 = new Input();
         $inputAddress2->setPlaceholder("Apartment, studio, or floor")
             ->setId("inputAddress2")
             ->setCaption("Address 2");
-        $inputCity = new InputInterface ();
+        $inputCity = new Input ();
         $inputCity->setCaption("City")
             ->setId("inputCity");
         $selectState = new Select();
@@ -1443,7 +1443,7 @@ class BootstrapView
             ->setDefaultOption(array(0))
             ->setId("inputState")
             ->setCaption("State");
-        $inputZip = new InputInterface();
+        $inputZip = new Input();
         $inputZip->setCaption("Zip")
             ->setId("inputZip");
         $formRow3 = new Row();
@@ -1452,7 +1452,7 @@ class BootstrapView
             array("text" => $selectState, "width" => 4),
             array("text" => $inputZip, "width" => 2)
         ));
-        $check2 = new InputInterface("checkbox");
+        $check2 = new Input("checkbox");
         $check2->setOptions(array("Check me out"))
             ->setId("gridCheck");
         $form13->appendInnerElements($formRow2, $inputAddress, $inputAddress2, $formRow3, $check2);
@@ -1511,20 +1511,20 @@ class BootstrapView
         // forizontal form
         $form14 = new Form ();
         $form14->setFormType("horizontal");
-        $inputEmail4 = new InputInterface("email");
+        $inputEmail4 = new Input("email");
         $inputEmail4->setCaption("Email")
             ->setPlaceholder("Email")
             ->setId("inputEmail3");
-        $inputPwd4 = new InputInterface("password");
+        $inputPwd4 = new Input("password");
         $inputPwd4->setCaption("Password")
             ->setPlaceholder("Password")
             ->setId("inputPassword3");
-        $radio2 = new InputInterface("radio");
+        $radio2 = new Input("radio");
         $radio2->setOptions(array("First radio", "Second radio", "Third disabled radio"))
             ->setCaption("Radios")
             ->setName("gridRadios")
             ->setDisabledOption(array(2));
-        $check3 = new InputInterface("checkbox");
+        $check3 = new Input("checkbox");
         $check3->setCaption("Checkbox")
             ->setOptions(array("Example checkbox"));
         $form14->appendInnerElements(array($inputEmail4, $inputPwd4, $radio2, $check3))
@@ -1565,7 +1565,7 @@ class BootstrapView
 
         // inline form with grid
         $form15 = new Form();
-        $inputName = new InputInterface();
+        $inputName = new Input();
         $inputName->setPlaceholder("Jane Doe")
             ->setCaption("Name")
             ->setId("inlineFormInput");
@@ -1574,7 +1574,7 @@ class BootstrapView
             ->setCaption("Username")
             ->setId("inlineFormInputGroup")
             ->setPlaceHolder("Username");
-        $check4 = new InputInterface("checkbox");
+        $check4 = new Input("checkbox");
         $check4->setOptions(array("Remember me"));
         $btn = new Button();
         $btn->setIsSubmit()->setText("Submit")->setContext("primary");
@@ -1639,7 +1639,7 @@ class BootstrapView
         $select->setCaption("Preference")
             ->setOptions(array("Choose...", "One", "Two", "Three"))
             ->setId("inlineFormCustomSelectPref");
-        $check5 = new InputInterface("checkbox");
+        $check5 = new Input("checkbox");
         $check5->setOptions(array("Remember my preference"))
             ->setId("customControlInline");
         $form17Well = $form17->appendInnerElements(array($select, $check5))
@@ -1666,7 +1666,7 @@ class BootstrapView
         // Help text
         $pageHeader4 = new PageHeader("Help text");
         $form18 = new Form();
-        $inputPwd5 = new InputInterface("password");
+        $inputPwd5 = new Input("password");
         $inputPwd5->setCaption("Password")
             ->setId("inputPassword5")
             ->setHelp("Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.");
@@ -1683,7 +1683,7 @@ class BootstrapView
             ?>
         ');
 
-        $inputPwd6 = new InputInterface("password");
+        $inputPwd6 = new Input("password");
         $well19 = $inputPwd6->setHelp("Must be 8-20 characters long.")
             ->setId("inputPassword6")
             ->setCaption("inputPassword6")
@@ -1702,7 +1702,7 @@ class BootstrapView
         // disabled forms
         $pageHeader5 = new PageHeader("Disabled forms");
         $form20 = new Form();
-        $inputDisabled = new InputInterface();
+        $inputDisabled = new Input();
         $inputDisabled->setCaption("Disabled input")
             ->setPlaceholder("Disabled input")
             ->setId("disabledTextInput");
@@ -1710,7 +1710,7 @@ class BootstrapView
         $selectDisabled->setCaption("Disabled select menu")
             ->setOptions(array("Disabled select"))
             ->setId("disabledSelect");
-        $checkDisabled = new InputInterface("checkbox");
+        $checkDisabled = new Input("checkbox");
         $checkDisabled->setOptions(array("Can't check this"))
             ->setId("disabledFieldsetCheck");
         $fieldset20 = $form20->setFormAction()
@@ -1739,16 +1739,16 @@ class BootstrapView
         ');
 
         $pageHeader6 = new PageHeader("Validation");
-        InputInterface::$AUTO_NAMING = true;
+        Input::$AUTO_NAMING = true;
 //         Input::$FORM_VALIDATION_METHOD = "browser";
         $form21 = new Form();
-        $inputFirstName = new InputInterface();
+        $inputFirstName = new Input();
         $inputFirstName->setCaption("First name")
             ->setPlaceholder("First name")
             ->setDefaultValue("Mark")
             ->setIsRequired()
             ->setId("validationCustom01");
-        $inputLastName = new InputInterface();
+        $inputLastName = new Input();
         $inputLastName->setCaption("Last name")
             ->setPlaceholder("Last name")
             ->setDefaultValue("Otto")
@@ -1766,12 +1766,12 @@ class BootstrapView
         $formRow6 = clone $formRow3;
         $rowGrids = $formRow6->getItems();
         $rowGrids[0]['text']->setCaption("City")->setIsRequired()->setPlaceHolder("City");
-        $rowGrids[1]['text'] = new InputInterface();
+        $rowGrids[1]['text'] = new Input();
         $rowGrids[1]['text']->setPlaceHolder("State")->setCaption("State")->setIsRequired()->setId("inputState");
         $rowGrids[1]['width'] = 3;
         $rowGrids[2]['text']->setIsRequired()->setPlaceHolder("Zip");
         $rowGrids[2]['width'] = 3;
-        $check6 = new InputInterface("checkbox");
+        $check6 = new Input("checkbox");
         $check6->setOptions(array("Agree to terms and conditions "))
             ->setIsRequired();
         $btn2 = new Button();
@@ -1866,31 +1866,31 @@ class BootstrapView
         $form22->appendInnerElements(array ($checkValid, $radioValid, $selectValid, $fileValid));
         */
         $form22 = new Form();
-        $inputVldt = new InputInterface();
+        $inputVldt = new Input();
         $inputVldt->setCaption("Input with success")
             ->setValidationState("success")
             ->setHasFeedback(false)
             ->setId("inputSuccess1")
             ->setHelp("A block of help text that breaks onto a new line and may extend beyond one line.");
-        $inputVldt2 = new InputInterface();
+        $inputVldt2 = new Input();
         $inputVldt2->setCaption("Input with warning")
             ->setValidationState("warning")
             ->setHasFeedback(false)
             ->setId("inputWarning1");
-        $inputVldt3 = new InputInterface();
+        $inputVldt3 = new Input();
         $inputVldt3->setCaption("Input with error")
             ->setValidationState("error")
             ->setHasFeedback(false)
             ->setId("inputError1");
-        $inputVldt4 = new InputInterface("checkbox");
+        $inputVldt4 = new Input("checkbox");
         $inputVldt4->setOptions(array("Checkbox with success"))
             ->setValidationState("success")
             ->setId("checkboxSuccess");
-        $inputVldt5 = new InputInterface("checkbox");
+        $inputVldt5 = new Input("checkbox");
         $inputVldt5->setOptions(array("Checkbox with warning"))
             ->setValidationStateWarning()
             ->setId("checkboxWarning");
-        $inputVldt6 = new InputInterface("checkbox");
+        $inputVldt6 = new Input("checkbox");
         $inputVldt6->setOptions(array("Checkbox with error"))
             ->setValidationStateDanger()
             ->setId("checkboxError");
@@ -2624,9 +2624,9 @@ EXAMPLE49
         $form2->appendInnerElements(array($inputUserGrp4, $inputUserGrp5, $inputUserGrp6));
 
         $inputCheckGrp = new InputGroup();
-        $inputCheckGrp->setLeftAddon(new InputInterface("checkbox"));
+        $inputCheckGrp->setLeftAddon(new Input("checkbox"));
         $inputRadioGrp = new InputGroup();
-        $inputRadioGrp->setLeftAddon(new InputInterface("radio"));
+        $inputRadioGrp->setLeftAddon(new Input("radio"));
         $row4 = new Row();
         $row4->appendItems(array(
             array("text" => $inputCheckGrp, "width" => 6),
@@ -2756,7 +2756,7 @@ EXAMPLE49
             ));
         $formInNavbar = new Form ();
         $formInNavbar->setFormType("navbar-form")->appendCustomClass("navbar-left")->setFormAction();
-        $inputInNavbar = new InputInterface();
+        $inputInNavbar = new Input();
         $inputInNavbar->setPlaceholder("Search");
         $formInNavbar->appendInnerElements(array($inputInNavbar));
         $navInNavbar = new Nav();
@@ -3441,14 +3441,14 @@ EXAMPLE49
             $container->setInnerElements($table);
         } else {
             $form21 = new Form();
-            $inputFirstName = new InputInterface();
+            $inputFirstName = new Input();
             $inputFirstName->setCaption("First name")
                 ->setPlaceholder("First name")
                 ->setName("first_name")
                 ->setDefaultValue("Mark")
                 ->setIsRequired()
                 ->setId("validationCustom01");
-            $inputLastName = new InputInterface();
+            $inputLastName = new Input();
             $inputLastName->setCaption("Last name")
                 ->setPlaceholder("Last name")
                 ->setDefaultValue("Otto")
@@ -3465,7 +3465,7 @@ EXAMPLE49
             $formRow5 = new Row();
             $formRow5->setForForm()
                 ->appendItems(array($inputFirstName, $inputLastName, $inputGrp2));
-            $inputCity = new InputInterface ();
+            $inputCity = new Input ();
             $inputCity->setCaption("City")
                 ->setName("city")
                 ->setId("inputCity");
@@ -3475,7 +3475,7 @@ EXAMPLE49
                 ->setId("inputState")
                 ->setName("state")
                 ->setCaption("State");
-            $inputZip = new InputInterface();
+            $inputZip = new Input();
             $inputZip->setCaption("Zip")
                 ->setName("zip")
                 ->setId("inputZip");
@@ -3487,12 +3487,12 @@ EXAMPLE49
             ));
             $rowGrids = $formRow3->getItems();
             $rowGrids[0]['text']->setCaption("City")->setIsRequired()->setPlaceHolder("City");
-            $rowGrids[1]['text'] = new InputInterface();
+            $rowGrids[1]['text'] = new Input();
             $rowGrids[1]['text']->setPlaceHolder("State")->setCaption("State")->setIsRequired()->setId("inputState");
             $rowGrids[1]['width'] = 3;
             $rowGrids[2]['text']->setIsRequired()->setPlaceHolder("Zip");
             $rowGrids[2]['width'] = 3;
-            $check6 = new InputInterface("checkbox");
+            $check6 = new Input("checkbox");
             $check6->setOptions(array("Agree to terms and conditions "))
                 ->setIsRequired();
             $btn2 = new Button();

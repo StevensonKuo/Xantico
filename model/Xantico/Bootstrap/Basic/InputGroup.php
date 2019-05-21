@@ -2,7 +2,7 @@
 
 namespace Xantico\Bootstrap\Basic;
 
-class InputGroup extends InputInterface
+class InputGroup extends Input
 {
 
     protected $leftAddon; // icon, text ,button or an array of them.

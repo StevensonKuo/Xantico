@@ -2,7 +2,7 @@
 
 namespace Xantico\Bootstrap\Basic;
 
-class Textarea extends InputInterface
+class Textarea extends Input
 {
     protected $rows; // int
     protected $cols; // int

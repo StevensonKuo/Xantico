@@ -52,7 +52,7 @@ class Form extends Typography
      */
     public function render($display = false)
     {
-        if (InputInterface::$AUTO_NAMING == true AND empty($this->name)) { // auto naming.
+        if (Input::$AUTO_NAMING == true AND empty($this->name)) { // auto naming.
             if (empty($this->id)) $this->setId();
             $this->name = $this->id;
         }
@@ -68,7 +68,7 @@ class Form extends Typography
             $newElements = array();
             foreach ($this->innerElements as $ele) {
                 if (empty($ele)) continue; // pass
-                if ($ele instanceof InputInterface || $ele instanceof InputGroup || $ele instanceof Button) {
+                if ($ele instanceof Input || $ele instanceof InputGroup || $ele instanceof Button) {
                     $formGroup = new Typography("div:form-group");
                     if (method_exists($ele, "getValidationState") && !empty($ele->getValidationState())) {
                         $formGroup->appendCustomClass("has-" . $ele->getValidationState());
@@ -255,7 +255,7 @@ class Form extends Typography
 
         parent::render();
 
-        if (InputInterface::$FORM_VALIDATION_METHOD == "jquery") {
+        if (Input::$FORM_VALIDATION_METHOD == "jquery") {
             // search at this time when all inputs been put inside of innerElements
             $inputs = $this->search("input");
             $selects = $this->search("select");

@@ -29,7 +29,7 @@ composer require xantico/xantico
 ```
 
 ## System requirements
-* I am not very sure, maybe PHP >= 5.3?
+* PHP >= 5.4, I use traits feature.
 * My development environ. is under XAMPP v3.2.2. Using Boostrap 3.3.7 standards.
 
 ## Start a Bootstrap palette

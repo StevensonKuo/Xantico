@@ -13,6 +13,8 @@ class Button extends Typography
     protected $isActive; // boolean
     protected $url; // string
 
+    protected static $contextArr = array("default", "primary", "info", "success", "warning", "danger", "inverse", "pink", "yellow", "purple", "grey", "light", "white", "");
+
     public function __construct($text = "", $vars = array(), $attr = array())
     {
         $this->url = key_exists('url', $vars) ? $vars ['url'] : "";
@@ -78,29 +80,8 @@ class Button extends Typography
     }
 
     /**
-     * @param string $Context
-     * default
-     * primary
-     * info
-     * success
-     * warning
-     * danger
-     * inverse
-     * pink
-     * yellow
-     * purple
-     * grey
-     * light
-     * white
-     */
-    public function setContext($Context = "default")
-    {
-        $this->context = strtolower($Context);
-        return $this;
-    }
-
-    /**
      * @param boolean $isSubmit
+     * @return Button
      */
     public function setIsSubmit($isSubmit = true)
     {
@@ -109,7 +90,8 @@ class Button extends Typography
     }
 
     /**
-     * @param field_type $url
+     * @param string $url
+     * @return Button
      */
     public function setUrl($url = "")
     {
@@ -119,7 +101,7 @@ class Button extends Typography
 
     /**
      * @desc disabled button
-     * @param string $isDisabled
+     * @param bool $isDisabled
      * @return boolean
      */
     public function setIsDisabled($isDisabled = true)
@@ -138,7 +120,8 @@ class Button extends Typography
     }
 
     /**
-     * @param field_type $isOutline
+     * @param bool $isOutline
+     * @return Button
      */
     public function setIsOutline($isOutline = true)
     {
@@ -172,7 +155,8 @@ class Button extends Typography
     }
 
     /**
-     * @param field_type $isReset
+     * @param bool $isReset
+     * @return Button
      */
     public function setIsReset($isReset = true)
     {
@@ -181,7 +165,7 @@ class Button extends Typography
     }
 
     /**
-     * @return the $isLink
+     * @return bool
      */
     public function getIsLink()
     {
@@ -189,7 +173,8 @@ class Button extends Typography
     }
 
     /**
-     * @param Ambigous $isLink
+     * @param bool $isLink
+     * @return Button
      */
     public function setIsLink($isLink = true)
     {
@@ -206,13 +191,12 @@ class Button extends Typography
     }
 
     /**
-     * @param field_type $isActive
+     * @param bool $isActive
+     * @return Button
      */
     public function setIsActive($isActive = true)
     {
         $this->isActive = $isActive;
         return $this;
     }
-
-
 }

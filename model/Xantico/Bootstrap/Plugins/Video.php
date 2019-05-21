@@ -4,7 +4,7 @@ namespace Xantico\Bootstrap\Plugins;
 
 use Xantico\Bootstrap\Basic\Typography;
 use Xantico\Bootstrap\HtmlTag;
-use Xantico\Bootstrap\iCaption;
+use Xantico\Bootstrap\CaptionInterface;
 use Xantico\Bootstrap\Xantico;
 
 class Video extends Typography
@@ -102,7 +102,7 @@ class Video extends Typography
                             $_href = is_array($this->source) ? $this->source [0] ['src'] : $this->source;
                             $download = new HtmlTag("a", array("href" => $_href));
                             // for browser who didn't support video tag.
-                            $download->setText(iCaption::CAP_DOWNLOAD);
+                            $download->setText(CaptionInterface::CAP_DOWNLOAD);
                             $innerVideo [] = $download;
                         }
 
@@ -141,7 +141,7 @@ class Video extends Typography
                         if (!empty($_href)) {
                             $download = new HtmlTag("a", array("href" => $_href));
                             // for browser who didn't support video tag.
-                            $download->setText(iCaption::CAP_DOWNLOAD);
+                            $download->setText(CaptionInterface::CAP_DOWNLOAD);
                             $innerAudio [] = $download;
                         }
 

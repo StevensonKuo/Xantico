@@ -2,7 +2,7 @@
 namespace Xantico\Bootstrap\Basic;
 
 use Xantico\Bootstrap\HtmlTag;
-use Xantico\Bootstrap\iCaption;
+use Xantico\Bootstrap\CaptionInterface;
 
 class Pagination extends Typography 
 {
@@ -78,12 +78,12 @@ class Pagination extends Typography
                 $_prevSpan->appendAttrs(array ("aria-hidden" => "true"));
                 $_prevSpan->setCdata(self::$PREVIOUS_SIGN);
             } else if ($this->mode == "pager") {
-                $_prevSpan = iCaption::CAP_PREVIOUS;
+                $_prevSpan = CaptionInterface::CAP_PREVIOUS;
             } else { // aligned-pager
                 $_prevSpanInner = new HtmlTag("span");
                 $_prevSpanInner->appendAttrs(array ("aria-hidden" => "true"));
                 $_prevSpanInner->setCdata(self::$PREVIOUS_ALIGNED_SIGN);
-                $_prevSpan = $_prevSpanInner->render () . iCaption::CAP_OLDER;
+                $_prevSpan = $_prevSpanInner->render () . CaptionInterface::CAP_OLDER;
             }
             $_previous->appendInnerElements($_prevA->appendInnerElements($_prevSpan));
             unset ($_prevSpan);
@@ -128,12 +128,12 @@ class Pagination extends Typography
                 $_nextSpan->appendAttrs(array ("aria-hidden" => "true"));
                 $_nextSpan->setCdata(self::$NEXT_SIGN);
             } else if ($this->mode == "pager") {
-                $_nextSpan = iCaption::CAP_NEXT;
+                $_nextSpan = CaptionInterface::CAP_NEXT;
             } else { // aligned-pager
                 $_nextSpanInner = new HtmlTag("span");
                 $_nextSpanInner->appendAttrs(array ("aria-hidden" => "true"));
                 $_nextSpanInner->setCdata(self::$NEXT_ALIGNED_SIGN);
-                $_nextSpan = iCaption::CAP_NEWER . $_nextSpanInner->render ();
+                $_nextSpan = CaptionInterface::CAP_NEWER . $_nextSpanInner->render ();
             }
             $_next->appendInnerElements($_nextA->appendInnerElements($_nextSpan));
             unset ($_nextSpan);

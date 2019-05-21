@@ -2,7 +2,7 @@
 
 namespace Xantico\Bootstrap\Basic;
 
-interface iRequiredInput
+interface RequiredInputInterface
 {
     // interface for method model, abs class for attribute model.
     const INPUT_REQUIRED_DEFAULT = "This field is required.";

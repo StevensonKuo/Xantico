@@ -4,7 +4,7 @@ namespace Xantico\Bootstrap\Basic;
 
 use Xantico\Bootstrap\HtmlTag;
 
-class Input extends Typography implements iRequiredInput
+class InputInterface extends Typography implements RequiredInputInterface
 {
     public static $AUTO_NAMING = false; // enum [text|hidden|radio|checkbox|number]
     public static $FORM_VALIDATION_METHOD = "jquery"; // string
@@ -220,7 +220,7 @@ class Input extends Typography implements iRequiredInput
                                     $_checkDiv->setCustomClass($this->inputType);
                                 }
 
-                                $_check = new Input($this->inputType);
+                                $_check = new InputInterface($this->inputType);
 //                                 $_check->appendCustomClass($this->getCustomClass());
                                 $_check->appendAttrs($this->getAttrs());
                                 $_check->setDefaultValue($opt ['value']);
@@ -329,7 +329,7 @@ class Input extends Typography implements iRequiredInput
     {
         $this->isRequired = $isRequired;
         $this->validation ['required'] = $isRequired;
-        $this->validation ['requiredMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_DEFAULT;
+        $this->validation ['requiredMessage'] = $message ? $message : RequiredInputInterface::INPUT_REQUIRED_DEFAULT;
 
         return $this;
     }
@@ -535,7 +535,7 @@ class Input extends Typography implements iRequiredInput
         $this->isRequired = true;
 
         $this->validation ['minlength'] = $length;
-        $this->validation ['minlengthMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_MINLENGTH . $length;
+        $this->validation ['minlengthMessage'] = $message ? $message : RequiredInputInterface::INPUT_REQUIRED_MINLENGTH . $length;
 
         return $this;
     }
@@ -550,14 +550,14 @@ class Input extends Typography implements iRequiredInput
         $this->isRequired = true;
 
         $this->validation ['maxlength'] = $length;
-        $this->validation ['maxlengthMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_MAXLENGTH . $length;
+        $this->validation ['maxlengthMessage'] = $message ? $message : RequiredInputInterface::INPUT_REQUIRED_MAXLENGTH . $length;
 
         return $this;
     }
 
     /**
      *
-     * @param Input $input
+     * @param InputInterface $input
      * @param string $message
      */
     public function setRequiredEqualTo(Typography $input, $message = "")
@@ -570,7 +570,7 @@ class Input extends Typography implements iRequiredInput
         }
         $equalToId = $input->getId();
         $this->validation ['equalTo'] = '#' . $equalToId;
-        $this->validation ['equalToMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_EQUALTO . $input->getCaption();
+        $this->validation ['equalToMessage'] = $message ? $message : RequiredInputInterface::INPUT_REQUIRED_EQUALTO . $input->getCaption();
 
         return $this;
     }
@@ -603,7 +603,7 @@ class Input extends Typography implements iRequiredInput
         $this->isRequired = true;
 
         $this->validation ['email'] = true;
-        $this->validation ['emailMessage'] = $message ? $message : iRequiredInput::INPUT_REQUIRED_EMAIL;
+        $this->validation ['emailMessage'] = $message ? $message : RequiredInputInterface::INPUT_REQUIRED_EMAIL;
 
         return $this;
     }

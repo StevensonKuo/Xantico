@@ -3,7 +3,7 @@ namespace Xantico\Bootstrap;
 
 use Xantico\Bootstrap\Basic\Typography;
 
-class HtmlTag implements iCaption 
+class HtmlTag implements CaptionInterface
 {
     protected $innerText;    // string
     protected $innerHtml; // string. quick html.

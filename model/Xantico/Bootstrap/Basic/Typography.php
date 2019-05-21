@@ -6,24 +6,26 @@ use Xantico\Bootstrap\HtmlTag;
 
 class Typography extends HtmlTag
 {
+    use ContextAwareTrait;
+    use ContextualTextAwareTrait;
+    use BackgroundContextAwareTrait;
+
     public static $AUTO_ID = false;    // string
 
     protected static $alignArr = array("right", "left", "center", ""); // for one more type/mode to switch what you want.
     protected static $vAlignArr = array("top", "middle", "bottom", "");      // string
     protected static $textAlignArr = array("left", "center", "right", "justify", "nowrap", "");// string
     protected static $textTransformArr = array("uppercase", "lowercase", "capitalize", ""); // string
-    protected static $contextArr = array("success", "default", "primary", "danger", "warning", "info", ""); // string; !important different from text/innerText
-    protected static $textContextArr = array("success", "muted", "primary", "danger", "warning", "info", "");// string
     protected static $embedTagsArr = array("iframe", "embed", "video", "object");   // string
 
     private static $instanceCounter = 0; // string
 
-    protected $type; // int
+    /** @var string */
+    protected $type;
     protected $mode; // int
-    protected $id; // array
-    protected $context; // array
-    protected $textContext; // for text-align classes.
-    protected $caption; // string
+    protected $id;
+    /** @var string */
+    protected $caption;
     protected $title; // string
     protected $align; // int or array(), Bootstrap Grids System
     protected $verticalAlign; // int
@@ -33,7 +35,6 @@ class Typography extends HtmlTag
     protected $textClass; // boolean
     protected $textAlign; // boolean
     protected $textTransform; // string
-    protected $bgContext;
     protected $grid;
     protected $gridOffset;
     protected $embedResponsive;
@@ -107,7 +108,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $instanceCounter
+     * @return int
      */
     public static function getInstanceCounter()
     {
@@ -133,8 +134,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param string $display
-     * @return unknown
+     * @param bool $display
+     * @return string
      */
     public function render($display = false)
     {
@@ -277,13 +278,13 @@ class Typography extends HtmlTag
 
         if ($display == true) {
             echo $this->html;
-        } else {
-            return $this->html;
         }
+
+        return $this->html;
     }
 
     /**
-     * @return the $align
+     * @return string
      */
     public function getAlign()
     {
@@ -292,7 +293,8 @@ class Typography extends HtmlTag
 
     /**
      * @desc universal alignment [left|center|right]
-     * @param Ambigous <string, array> $align
+     * @param string $align
+     * @return Typography
      */
     public function setAlign($align)
     {
@@ -306,7 +308,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $jQuery
+     * @return string
      */
     public function getJQuery()
     {
@@ -323,7 +325,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $type
+     * @return string
      */
     public function getType()
     {
@@ -332,6 +334,7 @@ class Typography extends HtmlTag
 
     /**
      * @param string $type
+     * @return Typography
      */
     protected function setType($type)
     {
@@ -340,7 +343,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $mode
+     * @return string
      */
     public function getMode()
     {
@@ -348,7 +351,8 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @param field_type $mode
+     * @param string $mode
+     * @return Typography
      */
     public function setMode($mode)
     {
@@ -403,49 +407,6 @@ class Typography extends HtmlTag
     /**
      * @return string
      */
-    public function getContext()
-    {
-        return $this->context;
-    }
-
-    /**
-     * @desc set up scene color.
-     * @param Ambigous <string, array> $context
-     */
-    public function setContext($context)
-    {
-        $context = strtolower($context);
-        if (in_array($context, self::$contextArr)) {
-            $this->context = strtolower($context);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return the $textContext
-     */
-    public function getTextContext()
-    {
-        return $this->textContext;
-    }
-
-    /**
-     * @param Ambigous <string, array> $textContext
-     */
-    public function setTextContext($textContext)
-    {
-        $textContext = strtolower($textContext);
-        if (in_array($textContext, self::$textContextArr)) {
-            $this->textContext = $textContext;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return the $title
-     */
     public function getTitle()
     {
         return $this->title;
@@ -463,7 +424,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $size
+     * @return int|string
      */
     public function getSize()
     {
@@ -473,6 +434,7 @@ class Typography extends HtmlTag
     /**
      * @desc three sizes [xs|sm|lg]
      * @param string $size
+     * @return Typography
      */
     public function setSize($size)
     {
@@ -504,7 +466,7 @@ class Typography extends HtmlTag
     // contextual class setter start.
 
     /**
-     * @return the $border
+     * @return mixed
      */
     public function getBorder()
     {
@@ -522,7 +484,7 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $items
+     * @return array
      */
     public function getItems()
     {
@@ -532,7 +494,7 @@ class Typography extends HtmlTag
     /**
      * @desc for ol,ul,select, navi... items are different from innerElements that will be decorated before input into inner elements.
      * @param array $items
-     * @return \model\Xantico\basic\Typography
+     * @return Typography
      */
     public function setItems($items)
     {
@@ -549,85 +511,11 @@ class Typography extends HtmlTag
     }
 
     /**
-     * @return the $textClass
+     * @return array
      */
     public function getTextClass()
     {
         return $this->textClass;
-    }
-
-    public function setContextSuccess()
-    {
-        $this->context = "success";
-        return $this;
-    }
-
-    // contextual class setter end.
-
-    public function setContextInfo()
-    {
-        $this->context = "info";
-        return $this;
-    }
-
-    public function setContextWarning()
-    {
-        $this->context = "warning";
-        return $this;
-    }
-
-    public function setContextDanger()
-    {
-        $this->context = "danger";
-        return $this;
-    }
-
-    public function setContextPrimary()
-    {
-        $this->context = "primary";
-        return $this;
-    }
-
-    public function setContextDefault()
-    {
-        $this->context = "default";
-        return $this;
-    }
-
-    public function setTextContextMuted()
-    {
-        $this->textContext = "muted";
-        return $this;
-    }
-
-    public function setTextContextSuccess()
-    {
-        $this->textContext = "success";
-        return $this;
-    }
-
-    public function setTextContextPrimary()
-    {
-        $this->textContext = "primary";
-        return $this;
-    }
-
-    public function setTextContextInfo()
-    {
-        $this->textContext = "info";
-        return $this;
-    }
-
-    public function setTextContextWarning()
-    {
-        $this->textContext = "warning";
-        return $this;
-    }
-
-    public function setTextContextDanger()
-    {
-        $this->textContext = "danger";
-        return $this;
     }
 
     public function setAlignLeft()
@@ -1009,58 +897,5 @@ class Typography extends HtmlTag
         $this->clearFix = $clearFix;
         return $this;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getBgContext()
-    {
-        return $this->bgContext;
-    }
-
-    /**
-     * @param $bgContext
-     * @return $this
-     */
-    public function setBgContext($bgContext)
-    {
-        $bgContext = strtolower($bgContext);
-        if (in_array($bgContext, self::$contextArr)) {
-            $this->bgContext = $bgContext;
-        }
-
-        return $this;
-    }
-
-    public function setBgContextPrimary()
-    {
-        $this->bgContext = "primary";
-        return $this;
-    }
-
-    public function setBgContextSuccess()
-    {
-        $this->bgContext = "success";
-        return $this;
-    }
-
-    public function setBgContextInfo()
-    {
-        $this->bgContext = "info";
-        return $this;
-    }
-
-    public function setBgContextWarning()
-    {
-        $this->bgContext = "warning";
-        return $this;
-    }
-
-    public function setBgContextDanger()
-    {
-        $this->bgContext = "danger";
-        return $this;
-    }
-
 }
 

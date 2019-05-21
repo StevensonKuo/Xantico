@@ -3,7 +3,7 @@
 namespace Xantico\Bootstrap\Basic;
 
 use Xantico\Bootstrap\HtmlTag;
-use Xantico\Bootstrap\iCaption;
+use Xantico\Bootstrap\CaptionInterface;
 use Xantico\Bootstrap\Xantico;
 
 class Form extends Typography
@@ -27,14 +27,14 @@ class Form extends Typography
 
     /**
      * @param string $formType
+     * @param array $vars
      * @param array $attrs
-     * @return \model\Xantico\basic\Form
      */
     public function __construct($formType = "", $vars = array(), $attrs = array())
     {
         parent::__construct("form", $vars, $attrs);
         // form-horizontal, form-inline, navbar-form, navbar-search
-        $this->formType = isset($formType) ? $formType : null; // formtype alowed to be empty.
+        $this->formType = isset($formType) ? $formType : null; // form type allowed to be empty.
         $this->method = isset($vars['method']) ? $vars['method'] : null; // get
         $this->name = isset($vars['name']) ? $vars['name'] : null;
         $this->id = isset($vars['id']) ? $vars['id'] : null;
@@ -47,13 +47,12 @@ class Form extends Typography
     }
 
     /**
-     * @desc decorated input dependiing on form type.
+     * @desc decorated input depending on form type.
      * {@inheritDoc}
-     * @see \model\Xantico\basic\Typography::render()
      */
     public function render($display = false)
     {
-        if (Input::$AUTO_NAMING == true AND empty($this->name)) { // auto naming.
+        if (InputInterface::$AUTO_NAMING == true AND empty($this->name)) { // auto naming.
             if (empty($this->id)) $this->setId();
             $this->name = $this->id;
         }
@@ -69,7 +68,7 @@ class Form extends Typography
             $newElements = array();
             foreach ($this->innerElements as $ele) {
                 if (empty($ele)) continue; // pass
-                if ($ele instanceof Input || $ele instanceof InputGroup || $ele instanceof Button) {
+                if ($ele instanceof InputInterface || $ele instanceof InputGroup || $ele instanceof Button) {
                     $formGroup = new Typography("div:form-group");
                     if (method_exists($ele, "getValidationState") && !empty($ele->getValidationState())) {
                         $formGroup->appendCustomClass("has-" . $ele->getValidationState());
@@ -256,7 +255,7 @@ class Form extends Typography
 
         parent::render();
 
-        if (Input::$FORM_VALIDATION_METHOD == "jquery") {
+        if (InputInterface::$FORM_VALIDATION_METHOD == "jquery") {
             // search at this time when all inputs been put inside of innerElements
             $inputs = $this->search("input");
             $selects = $this->search("select");
@@ -292,7 +291,7 @@ class Form extends Typography
 
     /**
      * @desc build form validation script (json). Have to note it uses input's name to recognize, not id.
-     * @param unknown $validation
+     * @param array $validation
      * @return string
      */
     private function generateValidationRulesScript($validation)
@@ -334,7 +333,7 @@ class Form extends Typography
     /**
      * @desc set form method [get|post]
      * @param string $method
-     * @return \model\Xantico\basic\Form
+     * @return Form
      */
     public function setMethod($method = "get")
     {
@@ -351,7 +350,8 @@ class Form extends Typography
     }
 
     /**
-     * @param Ambigous <NULL, string> $name
+     * @param string|null $name
+     * @return Form
      */
     public function setName($name)
     {
@@ -360,7 +360,7 @@ class Form extends Typography
     }
 
     /**
-     * @return the $formType
+     * @return string
      */
     public function getFormType()
     {
@@ -368,7 +368,9 @@ class Form extends Typography
     }
 
     /**
-     * @param string $formType [inline|horizontal|navbar|fieldset]
+     * Form type: [inline|horizontal|navbar|fieldset]
+     * @param string $formType
+     * @return Form
      */
     public function setFormType($formType = "")
     {
@@ -414,8 +416,8 @@ class Form extends Typography
 
     /**
      * @desc form action, an url.
-     * @param unknown $action
-     * @return \model\Xantico\basic\Form
+     * @param string $action
+     * @return Form
      */
     public function setAction($action)
     {
@@ -424,7 +426,7 @@ class Form extends Typography
     }
 
     /**
-     * @return the $enctype
+     * @return string
      */
     public function getEnctype()
     {
@@ -432,8 +434,9 @@ class Form extends Typography
     }
 
     /**
-     * @desc [text/plain|application/x-www-form-urlencoded]
-     * @param field_type $enctype
+     * [text/plain|application/x-www-form-urlencoded]
+     * @param string $enctype
+     * @return Form
      */
     public function setEnctype($enctype)
     {
@@ -466,7 +469,7 @@ class Form extends Typography
             $submit = new Button();
             $submit->setIsSubmit()
                 ->setContext("primary")
-                ->setText(iCaption::CAP_SUBMIT);
+                ->setText(CaptionInterface::CAP_SUBMIT);
 
             $this->formAction [] = $submit;
         }

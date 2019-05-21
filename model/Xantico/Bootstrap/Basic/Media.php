@@ -12,6 +12,7 @@ class Media extends Typography
     protected $bodyContents; // String, Array, HtmlTag
 
     /**
+     * @param string $type
      * @param array $vars
      * @param array $attr
      */

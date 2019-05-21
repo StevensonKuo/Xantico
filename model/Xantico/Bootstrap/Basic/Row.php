@@ -40,7 +40,7 @@ class Row extends Typography
         if (!empty($this->items)) {
             foreach ($this->items as $input) {
                 $item = $input ['text'];
-                if ($item instanceof Input || $item instanceof InputGroup
+                if ($item instanceof InputInterface || $item instanceof InputGroup
                     || $item instanceof Select || $item instanceof Textarea
                     || $item instanceof Button || $item instanceof ButtonGroup || $item instanceof ButtonToolbar) {
                     // for form is different from for usual.

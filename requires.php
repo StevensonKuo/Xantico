@@ -1,7 +1,10 @@
 <?php
 require 'model/Xantico/Bootstrap/Xantico.php';
-require 'model/Xantico/Bootstrap/iCaption.php';
+require 'model/Xantico/Bootstrap/CaptionInterface.php';
 require 'model/Xantico/Bootstrap/HtmlTag.php';
+require 'model/Xantico/Bootstrap/Basic/ContextAwareTrait.php';
+require 'model/Xantico/Bootstrap/Basic/ContextualTextAwareTrait.php';
+require 'model/Xantico/Bootstrap/Basic/BackgroundContextAwareTrait.php';
 require 'model/Xantico/Bootstrap/Basic/Typography.php';
 require 'model/Xantico/Bootstrap/Basic/Container.php';
 require 'model/Xantico/Bootstrap/Basic/Jumbotron.php';
@@ -24,8 +27,8 @@ require 'model/Xantico/Bootstrap/Basic/Carousel.php';
 require 'model/Xantico/Bootstrap/Basic/PageHeader.php';
 require 'model/Xantico/Bootstrap/Basic/Well.php';
 require 'model/Xantico/Bootstrap/Basic/Form.php';
-require 'model/Xantico/Bootstrap/Basic/iRequiredInput.php';
-require 'model/Xantico/Bootstrap/Basic/Input.php';
+require 'model/Xantico/Bootstrap/Basic/RequiredInputInterface.php';
+require 'model/Xantico/Bootstrap/Basic/InputInterface.php';
 require 'model/Xantico/Bootstrap/Basic/InputGroup.php';
 require 'model/Xantico/Bootstrap/Basic/Select.php';
 require 'model/Xantico/Bootstrap/Basic/Textarea.php';

@@ -18,7 +18,6 @@ class Well extends Typography
     /**
      * @desc add a h1 tag for text.
      * {@inheritDoc}
-     * @see \model\Xantico\basic\Typography::render()
      */
     public function render($display = false)
     {
@@ -49,6 +48,7 @@ class Well extends Typography
 
         if ($display == true) {
             echo $this->html;
+            return true;
         } else {
             return $this->html;
         }
@@ -56,7 +56,7 @@ class Well extends Typography
     }
 
     /**
-     * @return the $isCenterBlock
+     * @return bool $isCenterBlock
      */
     public function getIsCenterBlock()
     {
@@ -64,16 +64,12 @@ class Well extends Typography
     }
 
     /**
-     * @param Ambigous <boolean, array> $isCenterBlock
+     * @param bool $isCenterBlock
+     * @return Well
      */
     public function setIsCenterBlock($isCenterBlock = true)
     {
         $this->isCenterBlock = $isCenterBlock;
         return $this;
     }
-
-
 }
-
-
-

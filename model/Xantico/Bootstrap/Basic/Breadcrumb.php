@@ -6,15 +6,17 @@ use Xantico\Bootstrap\HtmlTag;
 
 class Breadcrumb extends Typography
 {
+    /** @var array */
     public $screw; // crumb
 
+    /** @var int */
     protected $activeIndex; // int
-    protected $hideAfter; // boolean; hide levels after actived index.
+    /** @var bool */
+    protected $hideAfter;
 
     /**
      * @param array $vars
      * @param array $attrs
-     * @return Typography
      */
     public function __construct($vars = array(), $attrs = array())
     {
@@ -22,14 +24,14 @@ class Breadcrumb extends Typography
         parent::__construct("ol:breadcrumb", $vars, $attrs);
 
 //          $this->type         = "breadcrumb"; // will be set in parent class.
-        $this->activeIndex = isset ($vars ['activeIndex']) ? $vars ['activeIndex'] : 0;
-        $this->hideAfter = isset ($vars ['hideAfter']) ? $vars ['hideAfter'] : true;
+        $this->activeIndex = isset($vars['activeIndex']) ? intval($vars['activeIndex']) : 0;
+        $this->hideAfter = isset($vars['hideAfter']) ? (bool)$vars['hideAfter'] : true;
         $this->screw = array("text" => "&nbsp;", "url" => "#", "active" => false, "disabled" => false);
     }
 
     /**
-     * @param string $display
-     * @return unknown
+     * @param bool $display
+     * @return string|bool
      */
     public function render($display = false)
     {
@@ -53,16 +55,16 @@ class Breadcrumb extends Typography
                         }
                     } else if (!empty ($item ['url'])) { // breadcrumb 裡有 active 就沒 a
                         $_a = new HtmlTag("a");
-                        $_a->appendAttrs(array("href" => $item ['url']));
+                        $_a->appendAttrs(array("href" => $item['url']));
                         if (is_string($item ['text'])) {
-                            $_a->setInnerText($item ['text']);
+                            $_a->setInnerText($item['text']);
                         } else {
-                            $_a->appendInnerElements($item ['text']);
+                            $_a->appendInnerElements($item['text']);
                         }
 
                         $_li->appendInnerElements($_a);
                     } else {
-                        $_li->appendInnerElements($item ['text']);
+                        $_li->appendInnerElements($item['text']);
                     }
                 }
 
@@ -75,13 +77,14 @@ class Breadcrumb extends Typography
 
         if ($display == true) {
             echo $this->html;
+            return true;
         } else {
             return $this->html;
         }
     }
 
     /**
-     * @return the $activeIndex
+     * @return int $activeIndex
      */
     public function getActiveIndex()
     {
@@ -89,7 +92,8 @@ class Breadcrumb extends Typography
     }
 
     /**
-     * @param field_type $activeIndex
+     * @param int $activeIndex
+     * @return Breadcrumb
      */
     public function setActiveIndex($activeIndex)
     {
@@ -100,7 +104,6 @@ class Breadcrumb extends Typography
     /**
      * @desc check if items are instance of <class>Crumb
      * {@inheritDoc}
-     * @see \model\Xantico\basic\Typography::appendItems()
      */
     public function setItems($items)
     {
@@ -129,7 +132,6 @@ class Breadcrumb extends Typography
     /**
      * @desc check if items are instance of <class>Crumb
      * {@inheritDoc}
-     * @see \model\Xantico\basic\Typography::appendItems()
      */
     public function appendItems($items)
     {
@@ -157,6 +159,8 @@ class Breadcrumb extends Typography
 
     /**
      * @desc step forward, active index +1
+     * @param int $steps
+     * @return Breadcrumb
      */
     public function stepForward($steps = 1)
     {
@@ -176,7 +180,7 @@ class Breadcrumb extends Typography
     }
 
     /**
-     * @return the $hideAfter
+     * @return bool $hideAfter
      */
     public function getHideAfter()
     {
@@ -184,12 +188,12 @@ class Breadcrumb extends Typography
     }
 
     /**
-     * @param Ambigous <number, array> $hideAfter
+     * @param bool $hideAfter
+     * @return Breadcrumb
      */
     public function setHideAfter($hideAfter = true)
     {
         $this->hideAfter = $hideAfter;
         return $this;
     }
-
 }

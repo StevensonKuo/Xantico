@@ -6,9 +6,10 @@ class Badge extends Typography
 {
 
     /**
-     * @desc contructor
+     * @desc constructor
      * @param string $text
-     * @param string $align [right|left]
+     * @param array $vars
+     * @param array $attr
      */
     public function __construct($text = "", $vars = array(), $attr = array())
     {
@@ -21,8 +22,8 @@ class Badge extends Typography
 
     /**
      * generate HTML.
-     * @param string $display
-     * @return string
+     * @param bool $display
+     * @return string|bool
      */
     function render($display = false)
     {
@@ -30,7 +31,8 @@ class Badge extends Typography
         if (!empty($this->context)) $class [] = $this->type . '-' . $this->context;
         if (!empty($this->align)) $class [] = $this->type . '-' . $this->align;
 
-        $this->customClass = $class; // 本來用 set 的結果就一直產生 class 的累積
+        $this->customClass = $class;
+        // set will append classes.
 
         $html = parent::render();
 
@@ -38,11 +40,9 @@ class Badge extends Typography
 
         if ($display == true) {
             echo $this->html;
+            return true;
         } else {
             return $this->html;
         }
     }
-
 }
-
-

@@ -1,13 +1,16 @@
 <?php
+
 namespace Xantico\Bootstrap;
 
-use Xantico\Bootstrap\Basic\Typography;
+
+use Exception;
 
 class HtmlTag implements CaptionInterface
 {
     protected $innerText;    // string
     protected $innerHtml; // string. quick html.
     protected $cdata; // string
+    /** @var array */
     protected $innerElements; // array
     protected $customClass; // array 
     protected $customStyle; // array 
@@ -37,12 +40,11 @@ class HtmlTag implements CaptionInterface
     );
     
     private static $indentLevel = 0; // ing, for text indent.
-    
+
 
     /**
      * @param string $tagName
      * @param array $attrs
-     * @return \model\Xantico\HtmlTag
      */
     public function __construct($tagName, $attrs = array ())
     {
@@ -52,11 +54,11 @@ class HtmlTag implements CaptionInterface
         $this->customClass      = array ();
         $this->customStyle      = array ();
     }
-    
+
     /**
      * @desc render into a html tag.
-     * @param string $display
-     * @return unknown
+     * @param bool $display
+     * @return string|bool
      */
     public function render($display = false)
     {
@@ -79,7 +81,7 @@ class HtmlTag implements CaptionInterface
                 foreach ($this->attrs as $attrName => $attrValue) {
                     $html .= " {$attrName}=\"". htmlspecialchars($attrValue) ."\"";
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 self::$errMsg = "[Error] HtmlTag Render Fail." . json_encode($this);
             }
         }
@@ -99,7 +101,7 @@ class HtmlTag implements CaptionInterface
                 $html .= ">";
                 $html .= htmlspecialchars($this->innerText);
                 $html .= "</{$this->tagName}>";
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 self::$errMsg = "[Error] Something un-insertable: " . json_encode($this->innerText);
             }
         } else if (!empty($this->innerHtml)) {
@@ -110,7 +112,7 @@ class HtmlTag implements CaptionInterface
                     $html .= str_repeat("\t", self::$indentLevel+1) . trim($ln);
                 }
                 $html .= "</{$this->tagName}>";
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 self::$errMsg = "[Error] Something un-insertable: " . json_encode($this->innerHtml);
             }
         } else if (!empty($this->cdata)) { 
@@ -145,10 +147,10 @@ class HtmlTag implements CaptionInterface
         
         if ($display == true) {
             echo $this->html;
+            return true;
         } else {
             return $this->html;
         }
-                
     }
     
     /**
@@ -162,7 +164,7 @@ class HtmlTag implements CaptionInterface
         } else {
             try {
                 return $this->render();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 self::$errMsg = "[Warning] Something refused to become a string. " . $e->getMessage();
                 return "";
             }
@@ -264,10 +266,10 @@ class HtmlTag implements CaptionInterface
     {
         return $this->customStyle;
     }
-    
+
     /**
-     * @param array $customStyles
-     * @return \model\Xantico\basic\Button
+     * @param array $customStyle
+     * @return HtmlTag
      */
     public function appendCustomStyle($customStyle = array ())
     {
@@ -285,11 +287,11 @@ class HtmlTag implements CaptionInterface
         
         return $this;
     }
-    
+
     /**
      * html style setter
-     * @param array $customStyles
-     * @return \model\Xantico\basic\Button
+     * @param array $customStyle
+     * @return HtmlTag
      */
     public function setCustomStyle($customStyle = array ())
     {
@@ -304,17 +306,18 @@ class HtmlTag implements CaptionInterface
         
         return $this;
     }
-    
+
     /**
      * innerElements setter.
      * @param array <multitype:, unknown> $innerElements
+     * @return HtmlTag
      */
     public function appendInnerElements($innerElements = array ())
     {
-        // @todo perhaps need to get refered obj, to see how to pass by multiple arguments.
+        // @todo perhaps need to get referred obj, to see how to pass by multiple arguments.
         if (empty($innerElements)) return $this;
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
+        $numArgs = func_num_args();
+        if ($numArgs >= 2) {
             $innerElements = func_get_args();
         } else if (!is_array($innerElements)) {
             $innerElements = array ($innerElements);
@@ -324,10 +327,11 @@ class HtmlTag implements CaptionInterface
         else $this->innerElements = $innerElements;
         return $this;
     }
-    
+
     /**
      * do assign, not merge.
      * @param array <multitype:, unknown> $innerElements
+     * @return HtmlTag
      */
     public function setInnerElements($innerElements = array ())
     {
@@ -355,7 +359,7 @@ class HtmlTag implements CaptionInterface
     /**
      * innerText setter.
      * @param string $text
-     * @return Typography
+     * @return HtmlTag
      */
     public function setInnerText ($text) {
         $this->innerText = $text;
@@ -369,17 +373,18 @@ class HtmlTag implements CaptionInterface
     {
         return $this->attrs;
     }
-    
+
     /**
      * @desc append to attrs
-     * @param Ambigous <multitype:, array> $attrs
+     * @param array $attrs
+     * @return HtmlTag
      */
     public function appendAttrs($attrs =  array ())
     {
         if (empty($attrs)) return $this;
         
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
+        $numArgs = func_num_args();
+        if ($numArgs >= 2) {
             $attrs = func_get_args();
         } else {
             if (!is_array($attrs)) $attrs = array ($attrs);
@@ -434,8 +439,9 @@ class HtmlTag implements CaptionInterface
     {
         return $this->innerElements;
     }
-    
+
     /**
+     * @param bool $display
      * @return string $errMsg
      */
     public static function getErrMsg($display = false)
@@ -444,10 +450,8 @@ class HtmlTag implements CaptionInterface
             echo "<pre>\n";
             print_r(self::$errMsg);
             echo "\n</pre>";
-        } else {
-            return self::$errMsg;
         }
-        
+        return self::$errMsg;
     }
     
     /**
@@ -460,6 +464,7 @@ class HtmlTag implements CaptionInterface
 
     /**
      * @param string $tagName
+     * @return HtmlTag
      */
     protected function setTagName($tagName)
     {
@@ -487,15 +492,16 @@ class HtmlTag implements CaptionInterface
             return null;
         }
     }
-    
+
     /**
      * @desc set inner element by index.
-     * @param unknown $index
-     * @param unknown $ele
-     * @return \model\Xantico\HtmlTag
+     * @param int $index
+     * @param mixed $ele
+     * @return HtmlTag
      */
-    public function setElement($index, $ele) {
-        $this->innerElements [$index] = $ele;
+    public function setElement($index, $ele)
+    {
+        $this->innerElements[$index] = $ele;
         return $this;
     }
     
@@ -509,6 +515,7 @@ class HtmlTag implements CaptionInterface
 
     /**
      * @param string $innerHtml
+     * @return HtmlTag
      */
     public function setInnerHtml($innerHtml)
     {
@@ -545,7 +552,14 @@ class HtmlTag implements CaptionInterface
         }
         
     }
-    
-    
-}
 
+    /**
+     * @param $tagName
+     * @param array $attrs
+     * @return HtmlTag
+     */
+    public static function newInstance($tagName, $attrs = array ())
+    {
+        return new self($tagName, $attrs);
+    }
+}

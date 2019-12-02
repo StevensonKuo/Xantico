@@ -41,6 +41,8 @@ class Xantico
     protected $isLoadBootstrapFromCDN;
     protected $isLoadJQueryFromCDN;
     protected $isLoadJQueryUIFromCDN;
+    /** @var bool */
+    protected $isLoadOptionalCSS;
     // localization 
     // https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_zh_TW.min.js
 
@@ -74,13 +76,13 @@ class Xantico
             return $html;
         } else {
             echo $html;
+            return true;
         }
-
     }
 
     /**
      * @desc build html <body> tag.
-     * @return \model\Xantico\HtmlTag
+     * @return HtmlTag
      */
     private function buildBody()
     {
@@ -88,14 +90,14 @@ class Xantico
         if (!empty($this->bodyContents)) {
             $_html = "";
             $_jQuery = "";
-            foreach ($this->bodyContents as $ctnt) {
-                if ($ctnt instanceof HtmlTag) {
-                    $_html .= $ctnt->render() . "\n";
-                    if (method_exists($ctnt, "getJQuery") && $ctnt->getJQuery()) {
-                        $_jQuery = $ctnt->getJQuery() . "\n";
+            foreach ($this->bodyContents as $content) {
+                if ($content instanceof HtmlTag) {
+                    $_html .= $content->render() . "\n";
+                    if (method_exists($content, "getJQuery") && $content->getJQuery()) {
+                        $_jQuery = $content->getJQuery() . "\n";
                     }
                 } else {
-                    $_html .= htmlspecialchars($ctnt) . "\n";
+                    $_html .= htmlspecialchars($content) . "\n";
                 }
             }
 
@@ -171,20 +173,20 @@ class Xantico
 
     /**
      * @desc build the header part of html.
-     * @return \model\Xantico\HtmlTag
+     * @return HtmlTag
      */
     private function buildHead()
     {
         if (!empty(self::$defaultCSSFiles)) {
-            $_cfiles = array();
+            $cFiles = array();
             foreach (self::$defaultCSSFiles as $cfile) {
                 if (is_string($cfile)) {
-                    $_cfiles [] = array("rel" => "stylesheet", 'href' => $cfile);
+                    $cFiles [] = array("rel" => "stylesheet", 'href' => $cfile);
                 } else if (is_array($cfile)) {
-                    $_cfiles [] = $cfile;
+                    $cFiles [] = $cfile;
                 }
             }
-            self::$defaultCSSFiles = $_cfiles;
+            self::$defaultCSSFiles = $cFiles;
         }
 
         if ($this->isLoadBootstrapFromCDN == true) {
@@ -228,7 +230,7 @@ class Xantico
 
         if (!empty($this->keywords)) {
             array_walk($this->keywords, "htmlspecialchars");
-            $head->sppendInnerElements(new HtmlTag("meta",
+            $head->appendInnerElements(new HtmlTag("meta",
                 array(
                     "name" => "keywords",
                     "content" => join(",", $this->keywords)
@@ -237,7 +239,7 @@ class Xantico
         }
 
         if (!empty($this->description)) {
-            $head->sppendInnerElements(new HtmlTag("meta",
+            $head->appendInnerElements(new HtmlTag("meta",
                 array(
                     "name" => "description",
                     "content" => htmlspecialchars($this->description)
@@ -291,8 +293,8 @@ class Xantico
 
     /**
      * @desc build whole html string.
-     * @param unknown $head
-     * @param unknown $body
+     * @param mixed $head
+     * @param mixed $body
      * @return string
      */
     private function buildHtml($head, $body)
@@ -305,7 +307,7 @@ class Xantico
     }
 
     /**
-     * @return the $customCSSFiles
+     * @return array $customCSSFiles
      */
     public function getCustomCSSFiles()
     {
@@ -313,13 +315,14 @@ class Xantico
     }
 
     /**
-     * @param field_type $customCSSFiles
+     * @param array $customCSSFiles
+     * @return Xantico
      */
     public function setCustomCSSFiles($customCSSFiles = array())
     {
         if (empty($customCSSFiles)) return $this;
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
+        $numArgs = func_num_args();
+        if ($numArgs >= 2) {
             $customCSSFiles = func_get_args();
         } else {
             if (!is_array($customCSSFiles)) $customCSSFiles = array($customCSSFiles);
@@ -332,7 +335,7 @@ class Xantico
     }
 
     /**
-     * @return the $customScriptsFiles
+     * @return array $customScriptsFiles
      */
     public function getCustomScriptsFiles()
     {
@@ -340,7 +343,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $customScriptsFiles
+     * @param array $customScriptsFiles
+     * @return Xantico
      */
     public function setCustomScriptsFiles($customScriptsFiles = array())
     {
@@ -359,7 +363,7 @@ class Xantico
     }
 
     /**
-     * @return the $bodyContents
+     * @return array $bodyContents
      */
     public function getBodyContents()
     {
@@ -367,13 +371,14 @@ class Xantico
     }
 
     /**
-     * @param Ambigous <multitype:, field_type> $bodyContents
+     * @param array $bodyContents
+     * @return Xantico
      */
     public function setBodyContents($bodyContents = array())
     {
         if (empty($bodyContents)) return $this;
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
+        $numArgs = func_num_args();
+        if ($numArgs >= 2) {
             $bodyContents = func_get_args();
         } else {
             if (!is_array($bodyContents)) $bodyContents = array($bodyContents);
@@ -394,7 +399,7 @@ class Xantico
     }
 
     /**
-     * @return the $metaContents
+     * @return array $metaContents
      */
     public function getMetaContents()
     {
@@ -402,13 +407,14 @@ class Xantico
     }
 
     /**
-     * @param field_type $metaContents
+     * @param array $metaContents
+     * @return Xantico
      */
     public function setMetaContents($metaContents = array())
     {
         if (empty($metaContents)) return $this;
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
+        $numArgs = func_num_args();
+        if ($numArgs >= 2) {
             $metaContents = func_get_args();
         } else {
             if (!is_array($metaContents)) $metaContents = array($metaContents);
@@ -421,7 +427,7 @@ class Xantico
     }
 
     /**
-     * @return the $CSSContents
+     * @return string $CSSContents
      */
     public function getCSSContents()
     {
@@ -429,7 +435,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $CSSContents
+     * @param string $CSSContents
+     * @return Xantico
      */
     public function setCSSContents($CSSContents)
     {
@@ -438,7 +445,7 @@ class Xantico
     }
 
     /**
-     * @return the $scriptsContents
+     * @return string $scriptsContents
      */
     public function getScriptsContents()
     {
@@ -446,7 +453,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $scriptsContents
+     * @param string $scriptsContents
+     * @return Xantico
      */
     public function setScriptsContents($scriptsContents = "")
     {
@@ -455,7 +463,7 @@ class Xantico
     }
 
     /**
-     * @return the $lang
+     * @return string
      */
     public function getLang()
     {
@@ -463,7 +471,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $lang
+     * @param string $lang
+     * @return Xantico
      */
     public function setLang($lang = 'zh-tw')
     {
@@ -472,7 +481,7 @@ class Xantico
     }
 
     /**
-     * @return the $encoding
+     * @return string $encoding
      */
     public function getEncoding()
     {
@@ -480,7 +489,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $encoding
+     * @param string $encoding
+     * @return Xantico
      */
     public function setEncoding($encoding = "utf-8")
     {
@@ -489,7 +499,7 @@ class Xantico
     }
 
     /**
-     * @return the $isResponsive
+     * @return bool $isResponsive
      */
     public function getIsResponsive()
     {
@@ -497,7 +507,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $isResponsive
+     * @param bool $isResponsive
+     * @return Xantico
      */
     public function setIsResponsive($isResponsive = true)
     {
@@ -506,7 +517,7 @@ class Xantico
     }
 
     /**
-     * @return the $isLoadOptionalCSS
+     * @return bool $isLoadOptionalCSS
      */
     public function getIsLoadOptionalCSS()
     {
@@ -514,7 +525,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $isLoadOptionalCSS
+     * @param bool $isLoadOptionalCSS
+     * @return Xantico
      */
     public function setIsLoadOptionalCSS($isLoadOptionalCSS = false)
     {
@@ -523,7 +535,7 @@ class Xantico
     }
 
     /**
-     * @return the $isLoadBootstrapFromCDN
+     * @return bool $isLoadBootstrapFromCDN
      */
     public function getIsLoadCSSFromCDN()
     {
@@ -531,7 +543,7 @@ class Xantico
     }
 
     /**
-     * @return the $isLoadJQueryFromCDN
+     * @return bool $isLoadJQueryFromCDN
      */
     public function getIsLoadJQueryFromCDN()
     {
@@ -539,7 +551,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $isLoadJQueryFromCDN
+     * @param bool $isLoadJQueryFromCDN
+     * @return Xantico
      */
     public function setIsLoadJQueryFromCDN($isLoadJQueryFromCDN = true)
     {
@@ -548,7 +561,7 @@ class Xantico
     }
 
     /**
-     * @return the $isLoadBootstrapFromCDN
+     * @return bool $isLoadBootstrapFromCDN
      */
     public function getIsLoadBootstrapFromCDN()
     {
@@ -556,7 +569,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $isLoadBootstrapFromCDN
+     * @param bool $isLoadBootstrapFromCDN
+     * @return Xantico
      */
     public function setIsLoadBootstrapFromCDN($isLoadBootstrapFromCDN = true)
     {
@@ -565,13 +579,14 @@ class Xantico
     }
 
     /**
-     * @param Ambigous <multitype:, field_type> $bodyContents
+     * @param array $bodyContents
+     * @return Xantico
      */
     public function appendBodyContents($bodyContents = array())
     {
         if (empty($bodyContents)) return $this;
-        $numargs = func_num_args();
-        if ($numargs >= 2) {
+        $numArgs = func_num_args();
+        if ($numArgs >= 2) {
             $bodyContents = func_get_args();
         } else {
             if (!is_array($bodyContents)) $bodyContents = array($bodyContents);
@@ -590,7 +605,7 @@ class Xantico
     }
 
     /**
-     * @return the $keywords
+     * @return string $keywords
      */
     public function getKeywords()
     {
@@ -598,7 +613,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $keywords
+     * @param string $keywords
+     * @return Xantico
      */
     public function setKeywords($keywords)
     {
@@ -607,7 +623,7 @@ class Xantico
     }
 
     /**
-     * @return the $description
+     * @return string $description
      */
     public function getDescription()
     {
@@ -615,7 +631,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $description
+     * @param string $description
+     * @return Xantico
      */
     public function setDescription($description)
     {
@@ -624,7 +641,7 @@ class Xantico
     }
 
     /**
-     * @return the $title
+     * @return string $title
      */
     public function getTitle()
     {
@@ -632,7 +649,8 @@ class Xantico
     }
 
     /**
-     * @param field_type $title
+     * @param string $title
+     * @return Xantico
      */
     public function setTitle($title)
     {
@@ -641,7 +659,7 @@ class Xantico
     }
 
     /**
-     * @return the $isLoadJQueryUIFromCDN
+     * @return bool $isLoadJQueryUIFromCDN
      */
     public function getIsLoadJQueryUIFromCDN()
     {
@@ -649,14 +667,12 @@ class Xantico
     }
 
     /**
-     * @param field_type $isLoadJQueryUIFromCDN
+     * @param bool $isLoadJQueryUIFromCDN
+     * @return Xantico
      */
     public function setIsLoadJQueryUIFromCDN($isLoadJQueryUIFromCDN = true)
     {
         $this->isLoadJQueryUIFromCDN = $isLoadJQueryUIFromCDN;
         return $this;
     }
-
-
 }
-

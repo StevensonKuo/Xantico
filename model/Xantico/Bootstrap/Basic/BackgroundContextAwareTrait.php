@@ -26,6 +26,7 @@ trait BackgroundContextAwareTrait
         if (in_array($bgContext, self::$bgContextArr)) {
             $this->bgContext = $bgContext;
         } else {
+            false;
             // @todo trigger set context exception or something else.
         }
 

@@ -18,6 +18,7 @@ trait ContextAwareTrait
         if (in_array($context, self::$contextArr)) {
             $this->context = strtolower($context);
         } else {
+            false;
             // @todo trigger warning for set context failed.
         }
 

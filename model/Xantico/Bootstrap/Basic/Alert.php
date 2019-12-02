@@ -25,7 +25,7 @@ class Alert extends Typography
     /**
      * generate HTML.
      * @param boolean $display
-     * @return string
+     * @return string|bool
      */
     function render($display = false)
     {
@@ -59,6 +59,7 @@ class Alert extends Typography
 
         if ($display == true) {
             echo $this->html;
+            return true;
         } else {
             return $this->html;
         }
@@ -81,8 +82,4 @@ class Alert extends Typography
         $this->isDismissible = $withCloseButton;
         return $this;
     }
-
-
 }
-
-
